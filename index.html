@@ -236,7 +236,8 @@ label.field input,label.field select,label.field textarea{margin-top:5px;font-we
 .pastebox:empty::before{content:attr(data-ph);color:var(--muted)}
 .pastebox:focus{border-color:var(--text);border-style:solid}
 .footer{font-size:12px;color:var(--muted);margin-top:22px}
-.gate h2{font-size:26px;letter-spacing:-.6px;margin:0 0 6px}.gate form{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.gate h2{font-size:26px;letter-spacing:-.6px;margin:0 0 6px}.gate-tabs{display:flex;gap:6px;margin:12px 0 10px}
+body.gating .gate .tab{color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.18)}body.gating .gate .tab[aria-current="true"]{background:#fff;color:#060A1D}.gate form{display:flex;flex-direction:column;gap:10px;margin-top:16px}
 #gate-bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:#060A1D}
 #gate-bg video{position:absolute;left:50%;top:0;height:88vh;width:156.4vh;transform:translateX(-50%);object-fit:cover;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 45%,#000 55%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 45%,#000 55%,transparent 100%)}
 body.gating{background:#060A1D}
@@ -905,7 +906,7 @@ const STREAM_STATUS = ['Not started', 'In progress', 'Waiting', 'Blocked', 'Comp
 const PNL_STATUS = ['Paid', 'Part paid', 'Due', 'Quoted', 'Requested', 'Estimate', 'TBC', 'Free'];
 const PNL_GROUPS = {Income: ['Booth & Sponsorship Sales', 'Ticket Sales', 'Other Income'], Cost: ['Venue', 'Logistics & Production', 'Marketing & Promotion', 'Manpower & Commission', 'Programme & Speakers', 'F&B', 'Others']};
 
-const TABS = [['dashboard','Dashboard'],['commercial','Commercial & partnership'],['pnl','P&amp;L'],['programme','Programme & speakers'],['participants','Participant profiling'],['marketing','Marketing performance'],['ops','Operations & workstreams']];
+const TABS = [['dashboard','Dashboard'],['commercial','Commercial & partnership'],['pnl','P&amp;L'],['programme','Programme & speakers'],['participants','Participant profiling'],['marketing','Marketing performance'],['ops','Operations & workstreams'],['admins','Admins']];
 let tab = 'dashboard';
 let mode = 'team';
 try { if (localStorage.getItem('cdx-mode') === 'sales') mode = 'sales'; } catch (e) {}
@@ -988,7 +989,7 @@ function render() {
   if (gate !== 'ready') { renderGate(); return; }
   if ($('#gate-bg')) { $('#gate-bg').remove(); document.body.classList.remove('gating'); }
   const a = document.activeElement; const f = a && a.dataset && a.dataset.b ? a.dataset.b : null;
-  $('#tabs').innerHTML = TABS.map(([id, label]) => `<button class="tab" data-tab="${id}" aria-current="${tab === id}">${label}</button>`).join('');
+  $('#tabs').innerHTML = TABS.map(([id, label]) => `<button class="tab" data-tab="${id}" aria-current="${tab === id}">${label}${id === 'admins' && adminState.requests.length ? ` <span class="pill" style="margin:0 0 0 4px;background:var(--danger);color:#fff">${adminState.requests.length}</span>` : ''}</button>`).join('');
   const times = KEYS.map(k => state[k] && state[k].updatedAt).filter(Boolean).sort();
   const allLoaded = KEYS.every(k => loaded[k]) || offline;
   $('#asof').textContent = !allLoaded ? 'Loading…' : times.length ? 'Last updated ' + fmtDate(times[times.length - 1]) : 'No updates yet';
@@ -1660,6 +1661,20 @@ VIEWS.ops = () => {
   <div class="row-actions"><button class="btn primary" data-act="addStream">Add workstream</button></div></div>`;
 };
 
+VIEWS.admins = () => {
+  const me = (sb && sb.auth && adminState.me) || '';
+  const fmt = d => d ? new Date(d).toLocaleDateString('en-MY', {day: 'numeric', month: 'short', year: 'numeric'}) : '';
+  return `${adminState.msg ? `<div class="banner err">${esc(adminState.msg)}</div>` : ''}
+  <div class="section"><div class="sec-head"><h2>Requests waiting for approval</h2><p>People who registered on the sign-in page. Approving gives full access: all tabs, P&amp;L and editing.</p></div>
+  <div class="card">${!adminState.loaded ? '<div class="empty">Loading…</div>' : adminState.requests.length ? `<div class="tbl-wrap"><table class="tbl c-tbl"><thead><tr><th>Email</th><th style="width:140px">Registered</th><th style="width:150px">Email confirmed</th><th style="width:200px"></th></tr></thead><tbody>
+    ${adminState.requests.map(r => `<tr><td><b>${esc(r.email)}</b></td><td>${esc(fmt(r.created_at))}</td><td>${r.confirmed ? 'Yes' : '<span class="muted">Not yet</span>'}</td><td><div style="display:flex;gap:6px;justify-content:flex-end"><button class="btn primary" data-act="approveAdmin" data-id="${esc(r.email)}">Approve</button>${del('delRequest', esc(r.email)).replace('>Remove<', '>Reject<')}</div></td></tr>`).join('')}
+  </tbody></table></div>` : '<div class="empty">No requests waiting.</div>'}</div></div>
+  <div class="section"><div class="sec-head"><h2>Admins</h2><p>Admins can see and edit everything. You can't remove yourself.</p></div>
+  <div class="card">${adminState.admins.length ? `<div class="tbl-wrap"><table class="tbl c-tbl"><tbody>${adminState.admins.map(e => `<tr><td><b>${esc(e)}</b>${e.toLowerCase() === me.toLowerCase() ? ' <span class="pill">You</span>' : ''}</td><td style="width:120px;text-align:right">${e.toLowerCase() === me.toLowerCase() ? '' : del('delAdmin', esc(e))}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Loading…</div>'}</div></div>
+  <div class="section"><div class="card guide"><dl><dt>How someone becomes an admin</dt><dd>They open the tracker link, choose <b>Register as admin</b>, enter their email and a password, and confirm the email Supabase sends. Their request then shows up here for you to approve.</dd>
+  <dt>Contractor link</dt><dd>Share <b>${esc(location.origin + location.pathname)}#contractor</b>. It opens the booth layout without signing in.</dd></dl></div></div>`;
+};
+
 /* ---------- sales view ---------- */
 function barList(arr, total) {
   if (!arr || !arr.length) return '';
@@ -1797,6 +1812,9 @@ document.addEventListener('click', e => {
     delAuto: () => mut('pnl', d => { d.ov = d.ov || {}; (d.ov[id] = d.ov[id] || {}).hidden = true; }),
     showHidden: () => mut('pnl', d => { Object.values(d.ov || {}).forEach(o => { delete o.hidden; }); }),
     clearSummary: () => mut('participants', d => { d.summary = null; }),
+    approveAdmin: () => adminAction('approve_admin', id),
+    delRequest: () => adminAction('reject_admin', id),
+    delAdmin: () => adminAction('remove_admin', id),
     cancelUpload: () => { upload = null; uploadError = ''; render(); },
     genSummary: () => { const sm = summarize(upload.rows, upload.map); sm.fileName = upload.fileName; mut('participants', d => { d.summary = sm; d.confirmed = sm.pax; }); upload = null; }
   };
@@ -1994,21 +2012,30 @@ function placeRoi() {
 // Editors (listed in the database) read and write every section live; anyone else who signs in by email
 // gets the sales and contractor views only, from a trimmed copy of the data (no deal values, salespeople or P&L).
 const SUPABASE_URL = 'https://bujigmhlcfplldktmsko.supabase.co', SUPABASE_ANON_KEY = 'sb_publishable_RG4Rsqrg4pjT_vQePJCxWQ_tqG4f-yK';
-let sb = null, isEditor = false, gate = 'loading', gateMsg = '', gateEmail = '';
+let sb = null, isEditor = false, gate = 'loading', gateMsg = '', gateEmail = '', gateTab = 'signin', starting = false;
+const adminState = {requests: [], admins: [], msg: '', loaded: false};
 const VIEW_KEY = 'cdx-after-login';
 
 function renderGate() {
   document.body.classList.add('sales', 'gating');
   if (!$('#gate-bg')) document.body.insertAdjacentHTML('afterbegin', '<div id="gate-bg" aria-hidden="true"><video ' + (matchMedia('(prefers-reduced-motion: reduce)').matches ? '' : 'autoplay ') + 'muted loop playsinline preload="auto" poster="assets/signin-poster.jpg"><source src="assets/signin-loop.mp4" type="video/mp4"></video></div>');
   let h;
+  const err = gateMsg ? `<p class="help" style="margin-top:12px" role="alert">${esc(gateMsg)}</p>` : '';
+  const tabs = `<div class="gate-tabs" role="tablist"><button class="tab" role="tab" data-gtab="signin" aria-current="${gateTab === 'signin'}">Sign in</button><button class="tab" role="tab" data-gtab="register" aria-current="${gateTab === 'register'}">Register as admin</button></div>`;
   if (gate === 'loading') h = '<div class="empty">Loading…</div>';
-  else if (gate === 'sent') h = `<h2>Check your inbox</h2><p class="help" style="font-size:15px">We sent a sign-in link to <b>${esc(gateEmail)}</b>. Open it on this device to continue.</p><div class="row-actions"><button class="btn" data-gate="login">Use a different email</button></div>`;
-  else h = `<div class="kicker">CONNECTD X 2026</div><h2>Progress Tracker</h2><p class="help" style="font-size:15px">This is the CONNECTD X Progress Tracker. Sign in with your email and password.</p>
+  else if (gate === 'sent') h = `<h2>Check your inbox</h2><p class="help" style="font-size:15px">We sent a sign-in link to <b>${esc(gateEmail)}</b>. Open it on this device to continue.</p><div class="row-actions"><button class="btn" data-gate="login">Back</button></div>`;
+  else if (gate === 'registered') h = `<div class="kicker">Request sent</div><h2>Confirm your email</h2><p class="help" style="font-size:15px">We sent a confirmation email to <b>${esc(gateEmail)}</b>. Open it to confirm your address. After that, an existing admin needs to approve your access. Once approved, sign in here with your email and password.</p><div class="row-actions"><button class="btn" data-gate="login">Back to sign in</button></div>`;
+  else if (gate === 'pending') h = `<div class="kicker">Waiting for approval</div><h2>Almost there</h2><p class="help" style="font-size:15px">You're signed in as <b>${esc(gateEmail)}</b>, but an admin hasn't approved your access yet. Ask an existing admin to approve you in the <b>Admins</b> tab of the tracker.</p>${err}<div class="row-actions"><button class="btn primary" data-recheck>Check again</button><button class="btn" data-signout>Sign out</button></div>`;
+  else if (gateTab === 'register') h = `<div class="kicker">CONNECTD X 2026</div><h2>Progress Tracker</h2>${tabs}<p class="help" style="font-size:15px">Register with your email to request admin access. We'll send one email to confirm your address, then an existing admin approves you.</p>
+    <form id="register"><label class="field">Email<input type="email" id="reg-email" required autocomplete="email" value="${esc(gateEmail)}" placeholder="you@company.com"></label>
+    <label class="field">Password<input type="password" id="reg-pw1" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
+    <label class="field">Type the password again<input type="password" id="reg-pw2" required minlength="8" autocomplete="new-password"></label>
+    <button class="btn primary" type="submit">Register</button></form>${err}`;
+  else h = `<div class="kicker">CONNECTD X 2026</div><h2>Progress Tracker</h2>${tabs}<p class="help" style="font-size:15px">This is the CONNECTD X Progress Tracker. Sign in with your email and password.</p>
     <form id="login"><label class="field">Email<input type="email" id="login-email" required autocomplete="email" value="${esc(gateEmail)}" placeholder="you@company.com"></label>
     <label class="field">Password<input type="password" id="login-password" autocomplete="current-password" placeholder="Your password"></label>
     <button class="btn primary" type="submit">Sign in</button>
-    <button class="btn" type="button" data-otp>No password yet? Email me a sign-in link</button></form>
-    ${gateMsg ? `<p class="help" style="color:var(--danger);margin-top:12px" role="alert">${esc(gateMsg)}</p>` : ''}`;
+    <button class="btn" type="button" data-otp>Forgot password? Email me a sign-in link</button></form>${err}`;
   $('#main').innerHTML = `<div class="card gate">${h}</div>`;
 }
 async function sendLink() {
@@ -2022,6 +2049,17 @@ async function sendLink() {
 }
 document.addEventListener('submit', async e => {
   if (e.target.id === 'setpw') { e.preventDefault(); savePassword(); return; }
+  if (e.target.id === 'register') {
+    e.preventDefault();
+    gateEmail = $('#reg-email').value.trim(); gateMsg = '';
+    const a = $('#reg-pw1').value, b = $('#reg-pw2').value;
+    if (a !== b) { gateMsg = 'The two passwords are different. Type them again.'; renderGate(); return; }
+    const btn = e.target.querySelector('[type=submit]'); btn.disabled = true; btn.textContent = 'Registering…';
+    const {data, error} = await sb.auth.signUp({email: gateEmail, password: a, options: {emailRedirectTo: location.origin + location.pathname}});
+    if (error) { gateMsg = /rate|limit|seconds/i.test(error.message) ? 'Too many emails just now. Wait a few minutes, then try again.' : /password/i.test(error.message) ? 'Choose a stronger password: ' + error.message : 'Could not register: ' + error.message; renderGate(); return; }
+    if (!(data && data.session)) { gate = 'registered'; renderGate(); }
+    return;
+  }
   if (e.target.id !== 'login') return;
   e.preventDefault();
   gateEmail = $('#login-email').value.trim(); gateMsg = '';
@@ -2051,6 +2089,8 @@ async function savePassword() {
 document.addEventListener('click', e => {
   const g = e.target.closest('[data-gate]'); if (g) { gate = g.dataset.gate; gateMsg = ''; renderGate(); return; }
   if (e.target.closest('[data-otp]')) { sendLink(); return; }
+  const gt = e.target.closest('[data-gtab]'); if (gt) { gateTab = gt.dataset.gtab; gateMsg = ''; renderGate(); return; }
+  if (e.target.closest('[data-recheck]')) { gateMsg = ''; start(true); return; }
   if (e.target.closest('[data-setpw]')) { showPasswordForm(); return; }
   if (e.target.closest('[data-pwclose]')) { $('#banner').innerHTML = ''; return; }
   if (e.target.closest('[data-signout]')) sb.auth.signOut().finally(() => location.reload());
@@ -2119,20 +2159,38 @@ function subscribeAll() {
     }, () => setSync('err', 'Sync paused'));
   });
 }
-async function start() {
-  if (gate === 'ready') return;
-  gate = 'ready';
-  restoreView();
+async function start(recheck) {
+  if (gate === 'ready' || starting) return;
+  starting = true;
+  if (!recheck) restoreView();
   const {data} = await sb.rpc('is_editor');
+  starting = false;
   isEditor = data === true;
   if (!isEditor) {
-    readOnly = true;
-    if (mode === 'team') mode = 'sales';
-    render(); loadPublic(); setInterval(loadPublic, 60000);
+    const {data: u} = await sb.auth.getUser();
+    gateEmail = (u && u.user && u.user.email) || gateEmail;
+    if (recheck) gateMsg = 'Not approved yet. Try again after an admin approves you.';
+    gate = 'pending'; renderGate();
     return;
   }
+  gate = 'ready';
+  { const {data: u} = await sb.auth.getUser(); adminState.me = (u && u.user && u.user.email) || ''; }
   db = makeDb(); assetsNs = makeAssets(); assetsChecked = true;
-  render(); subscribeAll();
+  render(); subscribeAll(); loadAdmins(); setInterval(loadAdmins, 60000);
+}
+
+/* ---------- admins ---------- */
+async function loadAdmins() {
+  const [r, l] = await Promise.all([sb.rpc('admin_requests'), sb.rpc('admin_list')]);
+  adminState.requests = r.data || []; adminState.admins = (l.data || []).map(x => x.email); adminState.loaded = true;
+  if (r.error || l.error) adminState.msg = 'Could not load admins: ' + ((r.error || l.error).message);
+  remoteRender();
+}
+async function adminAction(fn, email) {
+  adminState.msg = '';
+  const {error} = await sb.rpc(fn, {target: email});
+  if (error) adminState.msg = error.message;
+  await loadAdmins();
 }
 
 /* ---------- boot ---------- */

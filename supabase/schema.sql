@@ -82,3 +82,49 @@ language sql stable security definer set search_path = public as $$
   from public.tracker c where c.key = 'commercial';
 $$;
 grant execute on function public.contractor_layout() to anon, authenticated;
+
+-- Admin registration with approval.
+-- Anyone can register (Supabase confirms the email once). They become an admin only after an existing admin approves them.
+create table if not exists public.admin_denied (email text primary key, denied_at timestamptz not null default now());
+alter table public.admin_denied enable row level security;  -- no policies: only reachable through the functions below
+
+-- Registered accounts waiting for approval (visible to admins only).
+create or replace function public.admin_requests() returns table (email text, created_at timestamptz, confirmed boolean)
+language sql stable security definer set search_path = public, auth as $$
+  select u.email::text, u.created_at, u.email_confirmed_at is not null
+  from auth.users u
+  where public.is_editor() and u.email is not null
+    and lower(u.email) not in (select lower(e.email) from public.editors e)
+    and lower(u.email) not in (select lower(d.email) from public.admin_denied d)
+  order by u.created_at desc;
+$$;
+
+create or replace function public.admin_list() returns table (email text)
+language sql stable security definer set search_path = public as $$
+  select e.email from public.editors e where public.is_editor() order by e.email;
+$$;
+
+create or replace function public.approve_admin(target text) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_editor() then raise exception 'Only admins can approve admins'; end if;
+  insert into public.editors (email) values (lower(trim(target))) on conflict do nothing;
+  delete from public.admin_denied where lower(email) = lower(trim(target));
+end $$;
+
+create or replace function public.reject_admin(target text) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_editor() then raise exception 'Only admins can reject requests'; end if;
+  insert into public.admin_denied (email) values (lower(trim(target))) on conflict do nothing;
+end $$;
+
+create or replace function public.remove_admin(target text) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_editor() then raise exception 'Only admins can remove admins'; end if;
+  if lower(trim(target)) = lower(auth.jwt() ->> 'email') then raise exception 'You cannot remove yourself'; end if;
+  delete from public.editors where lower(email) = lower(trim(target));
+end $$;
+
+grant execute on function public.admin_requests(), public.admin_list(), public.approve_admin(text), public.reject_admin(text), public.remove_admin(text) to authenticated;
