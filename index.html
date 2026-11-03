@@ -254,7 +254,7 @@ label.field input,label.field select,label.field textarea{margin-top:5px;font-we
   <div class="footer" id="foot">Internal working tracker. Participant profiling keeps only the summary; uploaded files never leave your browser.</div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.8.1/prop-types.min.js"></script>
@@ -1972,7 +1972,7 @@ function placeRoi() {
 /* ---------- Supabase connection ---------- */
 // Editors (listed in the database) read and write every section live; anyone else who signs in by email
 // gets the sales and contractor views only, from a trimmed copy of the data (no deal values, salespeople or P&L).
-const SUPABASE_URL = '__URL__', SUPABASE_ANON_KEY = '__KEY__';
+const SUPABASE_URL = 'https://bujigmhlcfplldktmsko.supabase.co', SUPABASE_ANON_KEY = 'sb_publishable_RG4Rsqrg4pjT_vQePJCxWQ_tqG4f-yK';
 let sb = null, isEditor = false, gate = 'loading', gateMsg = '', gateEmail = '';
 const VIEW_KEY = 'cdx-after-login';
 
