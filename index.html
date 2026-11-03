@@ -236,7 +236,27 @@ label.field input,label.field select,label.field textarea{margin-top:5px;font-we
 .pastebox:empty::before{content:attr(data-ph);color:var(--muted)}
 .pastebox:focus{border-color:var(--text);border-style:solid}
 .footer{font-size:12px;color:var(--muted);margin-top:22px}
-.gate{max-width:440px;margin:64px auto 0}.gate h2{font-size:26px;letter-spacing:-.6px;margin:0 0 6px}.gate form{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.gate h2{font-size:26px;letter-spacing:-.6px;margin:0 0 6px}.gate form{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+#gate-bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:#060A1D}
+#gate-bg video{position:absolute;left:50%;top:0;height:88vh;width:156.4vh;transform:translateX(-50%);object-fit:cover;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 45%,#000 55%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 45%,#000 55%,transparent 100%)}
+body.gating{background:#060A1D}
+body.gating .page{position:relative;z-index:1}
+body.gating #foot{display:none}
+body.gating .gate{position:fixed;left:50%;bottom:max(24px,5vh);transform:translateX(-50%);width:min(440px,calc(100% - 32px));box-sizing:border-box;
+  background:rgba(6,10,29,.58);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.16);color:#fff;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+body.gating .gate .kicker{color:#65D0EA;letter-spacing:.12em;text-transform:uppercase;font-size:12px;font-weight:800}
+body.gating .gate .help{color:rgba(255,255,255,.75)}
+body.gating .gate .help b{color:#fff}
+body.gating .gate label.field{color:rgba(255,255,255,.7)}
+body.gating .gate input{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22);color:#fff}
+body.gating .gate input::placeholder{color:rgba(255,255,255,.45)}
+body.gating .gate input:focus-visible{outline-color:#65D0EA}
+body.gating .gate .btn{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
+body.gating .gate .btn.primary{background:#65D0EA;border-color:#65D0EA;color:#060A1D;font-weight:800}
+body.gating .gate .empty{color:rgba(255,255,255,.75)}
+body.gating .gate [role=alert]{color:#ff9d94!important}
+@media (orientation:portrait){#gate-bg video{width:240vw;height:135vw;top:calc(30vh - 56vw)}}
+
 .muted{color:var(--muted)}
 @media(max-width:850px){.grid4,.grid3,.two{grid-template-columns:1fr}.header{flex-direction:column;align-items:flex-start}.meta{text-align:left}h1{font-size:32px}.grid4{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.grid4{grid-template-columns:1fr}.stream .fields{grid-template-columns:1fr}}
@@ -966,6 +986,7 @@ document.addEventListener('focusout', () => setTimeout(() => { if (remotePending
 
 function render() {
   if (gate !== 'ready') { renderGate(); return; }
+  if ($('#gate-bg')) { $('#gate-bg').remove(); document.body.classList.remove('gating'); }
   const a = document.activeElement; const f = a && a.dataset && a.dataset.b ? a.dataset.b : null;
   $('#tabs').innerHTML = TABS.map(([id, label]) => `<button class="tab" data-tab="${id}" aria-current="${tab === id}">${label}</button>`).join('');
   const times = KEYS.map(k => state[k] && state[k].updatedAt).filter(Boolean).sort();
@@ -1977,12 +1998,12 @@ let sb = null, isEditor = false, gate = 'loading', gateMsg = '', gateEmail = '';
 const VIEW_KEY = 'cdx-after-login';
 
 function renderGate() {
-  document.body.classList.add('sales');
-  $('#foot').textContent = 'CONNECTD X 2026 · #businessSynergy';
+  document.body.classList.add('sales', 'gating');
+  if (!$('#gate-bg')) document.body.insertAdjacentHTML('afterbegin', '<div id="gate-bg" aria-hidden="true"><video ' + (matchMedia('(prefers-reduced-motion: reduce)').matches ? '' : 'autoplay ') + 'muted loop playsinline preload="auto" poster="assets/signin-poster.jpg"><source src="assets/signin-loop.mp4" type="video/mp4"></video></div>');
   let h;
   if (gate === 'loading') h = '<div class="empty">Loading…</div>';
-  else if (gate === 'sent') h = `<h2>Check your inbox</h2><p class="help" style="font-size:15px">We sent a sign-in link to <b style="color:var(--text)">${esc(gateEmail)}</b>. Open it on this device to continue.</p><div class="row-actions"><button class="btn" data-gate="login">Use a different email</button></div>`;
-  else h = `<div class="kicker">CONNECTD X 2026</div><h2>Sign in</h2><p class="help" style="font-size:15px">Enter your email and we'll send you a sign-in link. No password needed.</p>
+  else if (gate === 'sent') h = `<h2>Check your inbox</h2><p class="help" style="font-size:15px">We sent a sign-in link to <b>${esc(gateEmail)}</b>. Open it on this device to continue.</p><div class="row-actions"><button class="btn" data-gate="login">Use a different email</button></div>`;
+  else h = `<div class="kicker">CONNECTD X 2026</div><h2>Progress Tracker</h2><p class="help" style="font-size:15px">This is the CONNECTD X Progress Tracker. Enter your email and we'll send you a sign-in link. No password needed.</p>
     <form id="login"><label class="field">Email<input type="email" id="login-email" required autocomplete="email" value="${esc(gateEmail)}" placeholder="you@company.com"></label><button class="btn primary" type="submit">Email me a sign-in link</button></form>
     ${gateMsg ? `<p class="help" style="color:var(--danger);margin-top:12px" role="alert">${esc(gateMsg)}</p>` : ''}`;
   $('#main').innerHTML = `<div class="card gate">${h}</div>`;
