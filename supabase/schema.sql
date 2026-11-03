@@ -67,3 +67,18 @@ drop policy if exists "editors delete logos" on storage.objects;
 create policy "editors upload logos" on storage.objects for insert to authenticated with check (bucket_id = 'logos' and public.is_editor());
 create policy "editors update logos" on storage.objects for update to authenticated using (bucket_id = 'logos' and public.is_editor());
 create policy "editors delete logos" on storage.objects for delete to authenticated using (bucket_id = 'logos' and public.is_editor());
+
+-- Contractor link (#contractor) opens without sign-in: booth layout only.
+-- Partner names, booth numbers and status; no prices, tiers, salespeople, notes or P&L.
+create or replace function public.contractor_layout() returns jsonb
+language sql stable security definer set search_path = public as $$
+  select jsonb_build_object('commercial', jsonb_build_object(
+    'islands', coalesce(c.data->'islands', '[]'::jsonb),
+    'tiers', '[]'::jsonb,
+    'partners', coalesce((select jsonb_agg(jsonb_build_object('id', p->'id', 'name', p->'name', 'status', p->'status',
+                                                              'island', p->'island', 'booths', p->'booths', 'boothNo', p->'boothNo'))
+                          from jsonb_array_elements(c.data->'partners') p where p->>'status' in ('Confirmed', 'Negotiating')), '[]'::jsonb),
+    'updatedAt', c.data->'updatedAt'))
+  from public.tracker c where c.key = 'commercial';
+$$;
+grant execute on function public.contractor_layout() to anon, authenticated;

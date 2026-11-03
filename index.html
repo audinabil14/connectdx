@@ -266,7 +266,7 @@ body.gating .gate [role=alert]{color:#ff9d94!important}
 <div class="page">
   <div class="header">
     <div><div class="kicker">CONNECTD X 2026 · Internal team tracker</div><h1>Event progress</h1></div>
-    <div class="meta"><button class="btn primary" data-mode="sales" style="margin-bottom:10px">Open sales view</button><div id="asof">Loading…</div><div class="sync" id="sync"><i></i><span>Connecting</span></div><div><button class="btn del" data-signout style="margin-top:8px">Sign out</button></div></div>
+    <div class="meta"><button class="btn primary" data-mode="sales" style="margin-bottom:10px">Open sales view</button><div id="asof">Loading…</div><div class="sync" id="sync"><i></i><span>Connecting</span></div><div style="display:flex;gap:6px;justify-content:flex-end;margin-top:8px"><button class="btn del" data-setpw>Set password</button><button class="btn del" data-signout>Sign out</button></div></div>
   </div>
   <nav class="tabs" id="tabs" aria-label="Sections"></nav>
   <div id="banner"></div>
@@ -2003,23 +2003,56 @@ function renderGate() {
   let h;
   if (gate === 'loading') h = '<div class="empty">Loading…</div>';
   else if (gate === 'sent') h = `<h2>Check your inbox</h2><p class="help" style="font-size:15px">We sent a sign-in link to <b>${esc(gateEmail)}</b>. Open it on this device to continue.</p><div class="row-actions"><button class="btn" data-gate="login">Use a different email</button></div>`;
-  else h = `<div class="kicker">CONNECTD X 2026</div><h2>Progress Tracker</h2><p class="help" style="font-size:15px">This is the CONNECTD X Progress Tracker. Enter your email and we'll send you a sign-in link. No password needed.</p>
-    <form id="login"><label class="field">Email<input type="email" id="login-email" required autocomplete="email" value="${esc(gateEmail)}" placeholder="you@company.com"></label><button class="btn primary" type="submit">Email me a sign-in link</button></form>
+  else h = `<div class="kicker">CONNECTD X 2026</div><h2>Progress Tracker</h2><p class="help" style="font-size:15px">This is the CONNECTD X Progress Tracker. Sign in with your email and password.</p>
+    <form id="login"><label class="field">Email<input type="email" id="login-email" required autocomplete="email" value="${esc(gateEmail)}" placeholder="you@company.com"></label>
+    <label class="field">Password<input type="password" id="login-password" autocomplete="current-password" placeholder="Your password"></label>
+    <button class="btn primary" type="submit">Sign in</button>
+    <button class="btn" type="button" data-otp>No password yet? Email me a sign-in link</button></form>
     ${gateMsg ? `<p class="help" style="color:var(--danger);margin-top:12px" role="alert">${esc(gateMsg)}</p>` : ''}`;
   $('#main').innerHTML = `<div class="card gate">${h}</div>`;
 }
+async function sendLink() {
+  gateEmail = $('#login-email').value.trim(); gateMsg = '';
+  if (!gateEmail) { gateMsg = 'Enter your email first.'; renderGate(); return; }
+  try { localStorage.setItem(VIEW_KEY, location.hash); } catch (err) {}
+  const {error} = await sb.auth.signInWithOtp({email: gateEmail, options: {emailRedirectTo: location.origin + location.pathname}});
+  if (error) { gateMsg = /rate|limit|seconds/i.test(error.message) ? 'Too many sign-in emails just now. Wait a few minutes, or sign in with your password.' : 'The sign-in email could not be sent: ' + error.message; gate = 'login'; }
+  else gate = 'sent';
+  renderGate();
+}
 document.addEventListener('submit', async e => {
+  if (e.target.id === 'setpw') { e.preventDefault(); savePassword(); return; }
   if (e.target.id !== 'login') return;
   e.preventDefault();
   gateEmail = $('#login-email').value.trim(); gateMsg = '';
-  try { localStorage.setItem(VIEW_KEY, location.hash); } catch (err) {}
-  const {error} = await sb.auth.signInWithOtp({email: gateEmail, options: {emailRedirectTo: location.origin + location.pathname}});
-  if (error) { gateMsg = /rate|limit|seconds/i.test(error.message) ? 'Too many sign-in emails just now. Wait a few minutes, then try again.' : 'The sign-in email could not be sent: ' + error.message; gate = 'login'; }
-  else gate = 'sent';
-  renderGate();
+  const password = $('#login-password').value;
+  if (!password) { gateMsg = 'Enter your password, or use "Email me a sign-in link".'; renderGate(); return; }
+  const btn = e.target.querySelector('[type=submit]'); btn.disabled = true; btn.textContent = 'Signing in…';
+  const {error} = await sb.auth.signInWithPassword({email: gateEmail, password});
+  if (error) { gateMsg = /invalid/i.test(error.message) ? 'Wrong email or password. No password yet? Use "Email me a sign-in link".' : 'Could not sign in: ' + error.message; renderGate(); }
 });
+
+// Editors set their own password once, then sign in without waiting for an email.
+function showPasswordForm(msg, ok) {
+  $('#banner').innerHTML = `<div class="banner"><form id="setpw" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+    <label class="field" style="flex:1;min-width:180px">New password<input type="password" id="pw1" autocomplete="new-password" minlength="8" required></label>
+    <label class="field" style="flex:1;min-width:180px">Type it again<input type="password" id="pw2" autocomplete="new-password" minlength="8" required></label>
+    <button class="btn primary" type="submit">Save password</button><button class="btn" type="button" data-pwclose>Close</button></form>
+    <p class="help" style="margin:10px 0 0;${ok ? 'color:var(--ok)' : msg ? 'color:var(--danger)' : ''}">${esc(msg || 'At least 8 characters. After this, sign in with your email and this password.')}</p></div>`;
+}
+async function savePassword() {
+  const a = $('#pw1').value, b = $('#pw2').value;
+  if (a.length < 8) return showPasswordForm('Use at least 8 characters.');
+  if (a !== b) return showPasswordForm('The two passwords are different. Type them again.');
+  const {error} = await sb.auth.updateUser({password: a});
+  if (error) return showPasswordForm('Not saved: ' + error.message);
+  $('#banner').innerHTML = '<div class="banner" style="color:var(--ok)">Password saved. Next time, sign in with your email and this password.</div>';
+}
 document.addEventListener('click', e => {
   const g = e.target.closest('[data-gate]'); if (g) { gate = g.dataset.gate; gateMsg = ''; renderGate(); return; }
+  if (e.target.closest('[data-otp]')) { sendLink(); return; }
+  if (e.target.closest('[data-setpw]')) { showPasswordForm(); return; }
+  if (e.target.closest('[data-pwclose]')) { $('#banner').innerHTML = ''; return; }
   if (e.target.closest('[data-signout]')) sb.auth.signOut().finally(() => location.reload());
 });
 
@@ -2058,6 +2091,16 @@ function makeAssets() {
 // Logos moved over from claude.ai keep their old id and are stored as <id>.png.
 const logoSrc = id => !sb || !id ? '' : sb.storage.from('logos').getPublicUrl(/\./.test(id) ? id : id + '.png').data.publicUrl;
 
+async function loadContractor() {
+  const {data, error} = await sb.rpc('contractor_layout');
+  if (error || !data) { setSync('err', 'Not connected'); showBanner('The layout could not be loaded. Reload the page to try again.', true); return; }
+  KEYS.forEach(k => { state[k] = data[k] ? withDefaults(k, data[k]) : null; loaded[k] = true; });
+  remoteRender();
+}
+function startContractor() {
+  gate = 'ready'; mode = 'contractor'; readOnly = true;
+  render(); loadContractor(); setInterval(loadContractor, 60000);
+}
 async function loadPublic() {
   const {data, error} = await sb.rpc('public_tracker');
   if (error || !data) { setSync('err', 'Not connected'); showBanner('The figures could not be loaded. Reload the page to try again.', true); return; }
@@ -2099,7 +2142,9 @@ setInterval(() => { if (gate === 'ready' && (tab === 'dashboard' || mode !== 'te
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   sb.auth.onAuthStateChange((ev, session) => { if (session && gate !== 'ready') start(); });
   const {data: {session}} = await sb.auth.getSession();
-  if (session) start(); else { gate = 'login'; renderGate(); }
+  if (session) start();
+  else if (/contractor/i.test(location.hash)) startContractor();
+  else { gate = 'login'; renderGate(); }
 })();
 </script>
 </body>
