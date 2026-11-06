@@ -1515,9 +1515,9 @@ function signupCard(daily) {
 const PIE_COLS = ['#1f4e79', '#e07a1f', '#2f8f5b', '#c23b4a', '#7a4fb3', '#d4a017', '#1aa3a3', '#8c564b', '#e377c2', '#5a6b7b', '#9bbb3c', '#3d7fd9', '#b5651d', '#6d2f6f', '#4f9e8f', '#a63d1f'];
 const pieCol = i => i < PIE_COLS.length ? PIE_COLS[i] : `hsl(${(i * 137.5) % 360} 55% 50%)`;
 // Pie chart plus one line per item: colour, name, exact number and share of answers.
-function pieList(arr, noPie) {
+function pieList(arr, noPie, base) {
   if (!arr || !arr.length) return '<div class="empty">Not in this upload. Map the column and upload again.</div>';
-  const total = arr.reduce((a, [, c]) => a + c, 0);
+  const total = arr.reduce((a, [, c]) => a + c, 0), den = base || total;
   let ang = -Math.PI / 2, paths = '';
   arr.forEach(([, c], i) => {
     const f = c / total, col = pieCol(i);
@@ -1526,8 +1526,8 @@ function pieList(arr, noPie) {
     paths += `<path d="M50 50L${x1.toFixed(3)} ${y1.toFixed(3)}A48 48 0 ${f > 0.5 ? 1 : 0} 1 ${x2.toFixed(3)} ${y2.toFixed(3)}Z" fill="${col}" stroke="var(--card)" stroke-width="0.6"/>`;
     ang = a2;
   });
-  const p = c => { const v = c / total * 100; return (v < 10 ? Math.round(v * 10) / 10 : Math.round(v)) + '%'; };
-  return `<div class="pie-wrap">${noPie ? '' : `<svg viewBox="0 0 100 100" role="img" aria-label="Pie chart">${paths}</svg>`}<ul class="mini-list">${arr.map(([n, c], i) => `<li><span>${noPie ? '' : `<i class="sw" style="background:${pieCol(i)}"></i>`}${esc(n)}</span><b>${fmtN(c)}<span class="pc">${p(c)}</span></b></li>`).join('')}</ul></div><p class="help" style="margin-top:10px">${fmtN(total)} answers in total.</p>`;
+  const p = c => { const v = c / den * 100; return (v < 10 ? Math.round(v * 10) / 10 : Math.round(v)) + '%'; };
+  return `<div class="pie-wrap">${noPie ? '' : `<svg viewBox="0 0 100 100" role="img" aria-label="Pie chart">${paths}</svg>`}<ul class="mini-list">${arr.map(([n, c], i) => `<li><span>${noPie ? '' : `<i class="sw" style="background:${pieCol(i)}"></i>`}${esc(n)}</span><b>${fmtN(c)}<span class="pc">${p(c)}</span></b></li>`).join('')}</ul></div><p class="help" style="margin-top:10px">${base ? `% of ${fmtN(base)} people who answered. People could tick more than one industry, so the %s add up to more than 100%.` : `${fmtN(total)} answers in total.`}</p>`;
 }
 async function profileReport(kind) {
   const el = document.getElementById('profileReport');
@@ -1569,7 +1569,7 @@ VIEWS.participants = () => {
   const list = (title, arr) => arr && arr.length ? `<div class="list-head">${title}</div><ul class="mini-list">${arr.map(([n, c]) => `<li><span>${esc(n)}</span><b>${fmtN(c)}</b></li>`).join('')}</ul>` : '';
   const gt3 = s.revenueGt3Pct != null ? s.revenueGt3Pct : s.revenueLe3Pct != null ? 100 - s.revenueLe3Pct : null;
   h += `<div class="strip">${s.pax ? stat(fmtN(s.pax), 'participants') : ''}${stat(s.leadershipPct == null ? '–' : Math.round(s.leadershipPct) + '%', 'leadership-level')}${stat(s.revenueLe3Pct == null ? '–' : Math.round(s.revenueLe3Pct) + '%', 'revenue RM3m or below')}${stat(gt3 == null ? '–' : Math.round(gt3) + '%', 'revenue above RM3m')}${stat(s.founders == null ? '–' : fmtN(s.founders), 'founders / co-founders')}</div>
-    <div class="two"><div class="card"><h3>Industry</h3>${pieList(s.industries, true)}</div>
+    <div class="two"><div class="card"><h3>Industry</h3>${pieList(s.industries, true, s.industryResp)}</div>
     <div class="card"><h3>Annual revenue</h3>${pieList(s.revenueBands)}</div></div>
     <div class="two" style="margin-top:18px"><div class="card">${list('Location', s.locations)}</div>
     <div class="card">${list('Top designations', s.designations)}${!(s.designations || []).length ? '<div class="empty">Designation breakdown appears after your next upload.</div>' : ''}</div></div>
@@ -2007,7 +2007,24 @@ function summarize(allRows, map) {
     out.revenueGt3Pct = ups.length ? pct(ups.filter(v => v > 3e6).length, ups.length) : null;
     out.revenueBands = tally(rows, map.revenue, clean, Infinity);
   } else { out.revenueLe3Pct = null; out.revenueBands = []; }
-  out.industries = tally(rows, map.industry, clean, Infinity);
+  out.industries = []; out.industryResp = 0;
+  if (map.industry) {
+    // Multi-select answers ("A, B") count once per ticked industry. Some option names contain a comma
+    // ("Creative, Media & Marketing"): a piece that never ends an answer and is always followed by the
+    // same next piece is treated as the first half of one name.
+    const cells = rows.map(r => clean(r[map.industry])).filter(v => v && !/^(-|n\/?a|nil|none)$/i.test(v)).map(v => v.split(/\s*,\s*/).filter(Boolean));
+    const next = new Map(), last = new Set();
+    cells.forEach(ps => ps.forEach((x, i) => { const k = x.toLowerCase(); if (i === ps.length - 1) { last.add(k); return; } const n = next.get(k) || new Set(); n.add(ps[i + 1].toLowerCase()); next.set(k, n); }));
+    const joins = k => !last.has(k) && next.has(k) && next.get(k).size === 1;
+    const m = new Map();
+    cells.forEach(ps => {
+      const names = [];
+      for (let i = 0; i < ps.length; i++) { let n = ps[i]; while (i < ps.length - 1 && joins(ps[i].toLowerCase())) n += ', ' + ps[++i]; names.push(n); }
+      new Set(names.map(n => n.toLowerCase())).forEach(k => { const lab = names.find(n => n.toLowerCase() === k); const c = m.get(k); if (c) c[1]++; else m.set(k, [lab, 1]); });
+    });
+    out.industries = [...m.values()].sort((a, b) => b[1] - a[1]);
+    out.industryResp = cells.length;
+  }
   if (map.company) out.companies = new Set(rows.map(r => clean(r[map.company]).toLowerCase()).filter(Boolean)).size;
   out.locations = tally(rows, map.location, normLoc, 6);
   if (map.date) {
