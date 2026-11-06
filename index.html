@@ -59,7 +59,7 @@ nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:v
 .mini-list{list-style:none;padding:0;margin:0}.mini-list li{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}.mini-list li:last-child{border-bottom:0}
 .list-head{font-size:13px;font-weight:700;margin:14px 0 2px;color:var(--muted)}
 .list-head:first-child{margin-top:0}
-.pie-wrap{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-top:6px}.pie-wrap svg{flex:0 0 170px;width:170px;height:170px}.pie-wrap .mini-list{flex:1 1 220px}.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:-1px}.mini-list .pc{color:var(--muted);font-weight:500;margin-left:6px}
+.pie-wrap{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-top:6px}.pie-wrap svg{flex:0 0 170px;width:170px;height:170px}.pie-wrap .mini-list{flex:1 1 220px}.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:-1px}.mini-list .pc,.b-v .pc{color:var(--muted);font-weight:500;margin-left:6px}.profile-stat strong .pc{display:inline;font-size:15px;color:var(--muted);font-weight:600;margin-left:8px}
 .notes{margin:0;padding-left:20px}.notes li{margin:10px 0;line-height:1.55}
 .pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--soft);vertical-align:1px;margin-right:6px}
 .pill.Completed{color:var(--ok)}.pill.Blocked{color:var(--danger)}.pill.Waiting{color:var(--warn)}
@@ -189,6 +189,7 @@ body.contractor #banner{display:none}
 .bars .b-l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bars .b-v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
 .bars .track{grid-column:1/-1;height:6px;margin:0}
+.bars li:has(.pc){grid-template-columns:minmax(0,1fr) 100px}
 .prof-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px}
 @media(max-width:850px){.s-hero{grid-template-columns:1fr}.s-hero .s-count{text-align:left}.s-hero h1{font-size:40px}.s-hero .s-count .cd-num{font-size:64px}}
 .boothtip .bt-logo{height:72px;margin:-2px 0 12px;padding:10px;border-radius:10px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
@@ -1508,10 +1509,11 @@ function signupStats(daily) {
   const order = [1, 2, 3, 4, 5, 6, 0].map(i => DOW[i]);
   return {byDow: order.map(d => [d, dow[d]]), peaks: [...daily].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([k, v]) => [new Date(k + 'T00:00:00').toLocaleDateString('en-MY', {weekday: 'short', day: 'numeric', month: 'short'}), v])};
 }
-function signupCard(daily) {
-  const {byDow, peaks} = signupStats(daily), mx = Math.max(...byDow.map(x => x[1]));
-  return `<div class="card"><h3>When people sign up</h3><div class="two"><div><div class="list-head">Participants by day of week</div><ul class="bars">${byDow.map(([d, v]) => `<li><span class="b-l">${d}</span><span class="b-v">${fmtN(v)}</span>${bar(pct(v, mx))}</li>`).join('')}</ul></div><div><div class="list-head">Busiest sign-up days</div><ul class="mini-list">${peaks.map(([d, v]) => `<li><span>${esc(d)}</span><b>${fmtN(v)}</b></li>`).join('')}</ul></div></div></div>`;
+function signupCard(daily, withPct) {
+  const {byDow, peaks} = signupStats(daily), mx = Math.max(...byDow.map(x => x[1])), tot = withPct ? daily.reduce((a, [, v]) => a + v, 0) : 0, pc = v => tot ? `<span class="pc">${pctTxt(v, tot)}</span>` : '';
+  return `<div class="card"><h3>When people sign up</h3><div class="two"><div><div class="list-head">Participants by day of week</div><ul class="bars">${byDow.map(([d, v]) => `<li><span class="b-l">${d}</span><span class="b-v">${fmtN(v)}${pc(v)}</span>${bar(pct(v, mx))}</li>`).join('')}</ul></div><div><div class="list-head">Busiest sign-up days</div><ul class="mini-list">${peaks.map(([d, v]) => `<li><span>${esc(d)}</span><b>${fmtN(v)}${pc(v)}</b></li>`).join('')}</ul></div></div></div>`;
 }
+const pctTxt = (c, den) => { if (!den) return ''; const v = c / den * 100; return (v < 10 ? Math.round(v * 10) / 10 : Math.round(v)) + '%'; };
 const PIE_COLS = ['#1f4e79', '#e07a1f', '#2f8f5b', '#c23b4a', '#7a4fb3', '#d4a017', '#1aa3a3', '#8c564b', '#e377c2', '#5a6b7b', '#9bbb3c', '#3d7fd9', '#b5651d', '#6d2f6f', '#4f9e8f', '#a63d1f'];
 const pieCol = i => i < PIE_COLS.length ? PIE_COLS[i] : `hsl(${(i * 137.5) % 360} 55% 50%)`;
 // Pie chart plus one line per item: colour, name, exact number and share of answers.
@@ -1566,14 +1568,14 @@ VIEWS.participants = () => {
 
   h += `<div class="section" id="profileReport"><div class="sec-head"><h2>Current profile</h2>${s ? `<p>From ${esc(s.fileName || 'upload')}${s.event ? ` · ${esc(s.event)} only` : ''} · ${fmtDate(s.uploadedAt)}</p>` : ''}</div>`;
   if (!s) return h + `<div class="card"><div class="empty">Upload a registration export to build the profile.</div></div></div>`;
-  const list = (title, arr) => arr && arr.length ? `<div class="list-head">${title}</div><ul class="mini-list">${arr.map(([n, c]) => `<li><span>${esc(n)}</span><b>${fmtN(c)}</b></li>`).join('')}</ul>` : '';
+  const list = (title, arr, den) => arr && arr.length ? `<div class="list-head">${title}</div><ul class="mini-list">${arr.map(([n, c]) => `<li><span>${esc(n)}</span><b>${fmtN(c)}${den ? `<span class="pc">${pctTxt(c, den)}</span>` : ''}</b></li>`).join('')}</ul>` : '';
   const gt3 = s.revenueGt3Pct != null ? s.revenueGt3Pct : s.revenueLe3Pct != null ? 100 - s.revenueLe3Pct : null;
-  h += `<div class="strip">${s.pax ? stat(fmtN(s.pax), 'participants') : ''}${stat(s.leadershipPct == null ? '–' : Math.round(s.leadershipPct) + '%', 'leadership-level')}${stat(s.revenueLe3Pct == null ? '–' : Math.round(s.revenueLe3Pct) + '%', 'revenue RM3m or below')}${stat(gt3 == null ? '–' : Math.round(gt3) + '%', 'revenue above RM3m')}${stat(s.founders == null ? '–' : fmtN(s.founders), 'founders / co-founders')}</div>
+  h += `<div class="strip">${s.pax ? stat(fmtN(s.pax), 'participants') : ''}${stat(s.leadershipPct == null ? '–' : Math.round(s.leadershipPct) + '%', 'leadership-level')}${stat(s.revenueLe3Pct == null ? '–' : Math.round(s.revenueLe3Pct) + '%', 'revenue RM3m or below')}${stat(gt3 == null ? '–' : Math.round(gt3) + '%', 'revenue above RM3m')}${stat(s.founders == null ? '–' : fmtN(s.founders) + (s.designationCount ? `<span class="pc">${pctTxt(s.founders, s.designationCount)}</span>` : ''), 'founders / co-founders')}</div>
     <div class="two"><div class="card"><h3>Industry</h3>${pieList(s.industries, true, s.industryResp, 8)}</div>
     <div class="card"><h3>Annual revenue</h3>${pieList(s.revenueBands)}</div></div>
-    <div class="two" style="margin-top:18px"><div class="card">${list('Location', s.locations)}</div>
-    <div class="card">${list('Top designations', s.designations)}${!(s.designations || []).length ? '<div class="empty">Designation breakdown appears after your next upload.</div>' : ''}</div></div>
-    ${s.daily && s.daily.length ? `<div style="margin-top:18px">${signupCard(s.daily)}</div>` : ''}
+    <div class="two" style="margin-top:18px"><div class="card">${list('Location', s.locations, s.locationResp)}</div>
+    <div class="card">${list('Top designations', s.designations, s.designationCount)}${!(s.designations || []).length ? '<div class="empty">Designation breakdown appears after your next upload.</div>' : ''}</div></div>
+    ${s.daily && s.daily.length ? `<div style="margin-top:18px">${signupCard(s.daily, true)}</div>` : ''}
     <div class="row-actions" data-noreport><button class="btn primary" data-act="reportPng">Generate report (PNG)</button><button class="btn primary" data-act="reportPdf">Generate report (PDF)</button><button class="btn del ${armed === 'clearSummary:x' ? 'armed' : ''}" data-act="clearSummary" data-id="x">${armed === 'clearSummary:x' ? 'Confirm clear' : 'Clear profile'}</button></div></div>`;
   return h;
 };
@@ -2028,6 +2030,7 @@ function summarize(allRows, map) {
   }
   if (map.company) out.companies = new Set(rows.map(r => clean(r[map.company]).toLowerCase()).filter(Boolean)).size;
   out.locations = tally(rows, map.location, normLoc, 6);
+  out.locationResp = map.location ? rows.filter(r => { const v = clean(r[map.location]); return v && !/^(-|n\/?a|nil|none)$/i.test(v); }).length : 0;
   if (map.date) {
     // Participants signed up per calendar day, keyed YYYY-MM-DD.
     const day = v => { const s = clean(v); let m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s); if (m) return `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}`; m = /^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/.exec(s); if (m) return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`; const d = new Date(s); return isNaN(d) ? '' : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
