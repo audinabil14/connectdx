@@ -924,7 +924,7 @@ try { const v = localStorage.getItem('cdx-stab'); if (STABS.some(([k]) => k === 
 const TEAM_FOOT = 'Internal working tracker. Participant profiling keeps only the summary; uploaded files never leave your browser.';
 let db = null, readOnly = false, offline = false;
 let armed = null; // two-click delete
-let upload = null, uploadError = '';
+let upload = null, uploadError = '', indAll = false;
 
 /* ---------- persistence ---------- */
 // Each edit is kept as an operation. Before writing, the operations are replayed on the latest saved copy,
@@ -1515,7 +1515,7 @@ function signupCard(daily) {
 const PIE_COLS = ['#1f4e79', '#e07a1f', '#2f8f5b', '#c23b4a', '#7a4fb3', '#d4a017', '#1aa3a3', '#8c564b', '#e377c2', '#5a6b7b', '#9bbb3c', '#3d7fd9', '#b5651d', '#6d2f6f', '#4f9e8f', '#a63d1f'];
 const pieCol = i => i < PIE_COLS.length ? PIE_COLS[i] : `hsl(${(i * 137.5) % 360} 55% 50%)`;
 // Pie chart plus one line per item: colour, name, exact number and share of answers.
-function pieList(arr, noPie, base) {
+function pieList(arr, noPie, base, limit) {
   if (!arr || !arr.length) return '<div class="empty">Not in this upload. Map the column and upload again.</div>';
   const total = arr.reduce((a, [, c]) => a + c, 0), den = base || total;
   let ang = -Math.PI / 2, paths = '';
@@ -1527,7 +1527,7 @@ function pieList(arr, noPie, base) {
     ang = a2;
   });
   const p = c => { const v = c / den * 100; return (v < 10 ? Math.round(v * 10) / 10 : Math.round(v)) + '%'; };
-  return `<div class="pie-wrap">${noPie ? '' : `<svg viewBox="0 0 100 100" role="img" aria-label="Pie chart">${paths}</svg>`}<ul class="mini-list">${arr.map(([n, c], i) => `<li><span>${noPie ? '' : `<i class="sw" style="background:${pieCol(i)}"></i>`}${esc(n)}</span><b>${fmtN(c)}<span class="pc">${p(c)}</span></b></li>`).join('')}</ul></div><p class="help" style="margin-top:10px">${base ? `% of ${fmtN(base)} people who answered. People could tick more than one industry, so the %s add up to more than 100%.` : `${fmtN(total)} answers in total.`}</p>`;
+  return `<div class="pie-wrap">${noPie ? '' : `<svg viewBox="0 0 100 100" role="img" aria-label="Pie chart">${paths}</svg>`}<ul class="mini-list">${(limit && !indAll ? arr.slice(0, limit) : arr).map(([n, c], i) => `<li><span>${noPie ? '' : `<i class="sw" style="background:${pieCol(i)}"></i>`}${esc(n)}</span><b>${fmtN(c)}<span class="pc">${p(c)}</span></b></li>`).join('')}</ul></div>${limit && arr.length > limit ? `<div data-noreport style="margin-top:8px"><button class="btn" data-act="toggleInd">${indAll ? 'See less' : `See more (${fmtN(arr.length - limit)} more)`}</button></div>` : ''}<p class="help" style="margin-top:10px">${base ? `% of ${fmtN(base)} people who answered. People could tick more than one industry, so the %s add up to more than 100%.` : `${fmtN(total)} answers in total.`}</p>`;
 }
 async function profileReport(kind) {
   const el = document.getElementById('profileReport');
@@ -1569,7 +1569,7 @@ VIEWS.participants = () => {
   const list = (title, arr) => arr && arr.length ? `<div class="list-head">${title}</div><ul class="mini-list">${arr.map(([n, c]) => `<li><span>${esc(n)}</span><b>${fmtN(c)}</b></li>`).join('')}</ul>` : '';
   const gt3 = s.revenueGt3Pct != null ? s.revenueGt3Pct : s.revenueLe3Pct != null ? 100 - s.revenueLe3Pct : null;
   h += `<div class="strip">${s.pax ? stat(fmtN(s.pax), 'participants') : ''}${stat(s.leadershipPct == null ? '–' : Math.round(s.leadershipPct) + '%', 'leadership-level')}${stat(s.revenueLe3Pct == null ? '–' : Math.round(s.revenueLe3Pct) + '%', 'revenue RM3m or below')}${stat(gt3 == null ? '–' : Math.round(gt3) + '%', 'revenue above RM3m')}${stat(s.founders == null ? '–' : fmtN(s.founders), 'founders / co-founders')}</div>
-    <div class="two"><div class="card"><h3>Industry</h3>${pieList(s.industries, true, s.industryResp)}</div>
+    <div class="two"><div class="card"><h3>Industry</h3>${pieList(s.industries, true, s.industryResp, 8)}</div>
     <div class="card"><h3>Annual revenue</h3>${pieList(s.revenueBands)}</div></div>
     <div class="two" style="margin-top:18px"><div class="card">${list('Location', s.locations)}</div>
     <div class="card">${list('Top designations', s.designations)}${!(s.designations || []).length ? '<div class="empty">Designation breakdown appears after your next upload.</div>' : ''}</div></div>
@@ -1830,6 +1830,7 @@ document.addEventListener('click', e => {
     addPartner: () => mut('commercial', d => { const t = d.tiers[0] || {}; d.partners.push({id: uid(), name: '', tier: t.id || '', island: (d.islands[0] || {}).id || '', booths: t.booths || 1, value: t.price || 0, collected: 0, status: 'Confirmed', sales1: '', sales2: '', notes: ''}); }),
     delPartner: () => rm('commercial', 'partners'),
     delLogo: () => { const old = (get('commercial').partners.find(x => x.id === id) || {}).logo; mut('commercial', d => { const it = d.partners.find(x => x.id === id); if (it) it.logo = ''; }); if (old && assetsNs) assetsNs.delete(old).catch(() => {}); },
+    toggleInd: () => { indAll = !indAll; render(); },
     reportPng: () => profileReport('png'),
     reportPdf: () => profileReport('pdf'),
     addTier: () => mut('commercial', d => d.tiers.push({id: uid(), name: 'New tier', price: 0, booths: 1})),
