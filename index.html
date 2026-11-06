@@ -59,6 +59,7 @@ nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:v
 .mini-list{list-style:none;padding:0;margin:0}.mini-list li{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}.mini-list li:last-child{border-bottom:0}
 .list-head{font-size:13px;font-weight:700;margin:14px 0 2px;color:var(--muted)}
 .list-head:first-child{margin-top:0}
+.pie-wrap{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-top:6px}.pie-wrap svg{flex:0 0 170px;width:170px;height:170px}.pie-wrap .mini-list{flex:1 1 220px}.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:-1px}.mini-list .pc{color:var(--muted);font-weight:500;margin-left:6px}
 .notes{margin:0;padding-left:20px}.notes li{margin:10px 0;line-height:1.55}
 .pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--soft);vertical-align:1px;margin-right:6px}
 .pill.Completed{color:var(--ok)}.pill.Blocked{color:var(--danger)}.pill.Waiting{color:var(--warn)}
@@ -280,6 +281,8 @@ body.gating .gate [role=alert]{color:#ff9d94!important}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.8.1/prop-types.min.js"></script>
 <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="text/plain" id="roi-css">
 /* Layout: navy header band, then a sticky assumptions rail on the left and a scrolling results column on the right; stacks on phones. */
 :host {
@@ -1509,6 +1512,38 @@ function signupCard(daily) {
   const {byDow, peaks} = signupStats(daily), mx = Math.max(...byDow.map(x => x[1]));
   return `<div class="card"><h3>When people sign up</h3><div class="two"><div><div class="list-head">Participants by day of week</div><ul class="bars">${byDow.map(([d, v]) => `<li><span class="b-l">${d}</span><span class="b-v">${fmtN(v)}</span>${bar(pct(v, mx))}</li>`).join('')}</ul></div><div><div class="list-head">Busiest sign-up days</div><ul class="mini-list">${peaks.map(([d, v]) => `<li><span>${esc(d)}</span><b>${fmtN(v)}</b></li>`).join('')}</ul></div></div></div>`;
 }
+const PIE_COLS = ['#1f4e79', '#e07a1f', '#2f8f5b', '#c23b4a', '#7a4fb3', '#d4a017', '#1aa3a3', '#8c564b', '#e377c2', '#5a6b7b', '#9bbb3c', '#3d7fd9', '#b5651d', '#6d2f6f', '#4f9e8f', '#a63d1f'];
+const pieCol = i => i < PIE_COLS.length ? PIE_COLS[i] : `hsl(${(i * 137.5) % 360} 55% 50%)`;
+// Pie chart plus one line per item: colour, name, exact number and share of answers.
+function pieList(arr) {
+  if (!arr || !arr.length) return '<div class="empty">Not in this upload. Map the column and upload again.</div>';
+  const total = arr.reduce((a, [, c]) => a + c, 0);
+  let ang = -Math.PI / 2, paths = '';
+  arr.forEach(([, c], i) => {
+    const f = c / total, col = pieCol(i);
+    if (f >= 0.9999) { paths += `<circle cx="50" cy="50" r="48" fill="${col}"/>`; return; }
+    const a2 = ang + f * 2 * Math.PI, x1 = 50 + 48 * Math.cos(ang), y1 = 50 + 48 * Math.sin(ang), x2 = 50 + 48 * Math.cos(a2), y2 = 50 + 48 * Math.sin(a2);
+    paths += `<path d="M50 50L${x1.toFixed(3)} ${y1.toFixed(3)}A48 48 0 ${f > 0.5 ? 1 : 0} 1 ${x2.toFixed(3)} ${y2.toFixed(3)}Z" fill="${col}" stroke="var(--card)" stroke-width="0.6"/>`;
+    ang = a2;
+  });
+  const p = c => { const v = c / total * 100; return (v < 10 ? Math.round(v * 10) / 10 : Math.round(v)) + '%'; };
+  return `<div class="pie-wrap"><svg viewBox="0 0 100 100" role="img" aria-label="Pie chart">${paths}</svg><ul class="mini-list">${arr.map(([n, c], i) => `<li><span><i class="sw" style="background:${pieCol(i)}"></i>${esc(n)}</span><b>${fmtN(c)}<span class="pc">${p(c)}</span></b></li>`).join('')}</ul></div><p class="help" style="margin-top:10px">${fmtN(total)} answers in total.</p>`;
+}
+async function profileReport(kind) {
+  const el = document.getElementById('profileReport');
+  if (!el || !window.html2canvas) { uploadError = 'The report tool did not load. Check your internet connection and reload the page.'; render(); return; }
+  const bgc = getComputedStyle(document.body).backgroundColor || '#ffffff';
+  const canvas = await html2canvas(el, {scale: 2, backgroundColor: bgc, ignoreElements: n => n.hasAttribute && n.hasAttribute('data-noreport')});
+  const name = 'CONNECTD-X-participant-profile-' + new Date().toISOString().slice(0, 10);
+  if (kind === 'png') { const a = document.createElement('a'); a.href = canvas.toDataURL('image/png'); a.download = name + '.png'; a.click(); return; }
+  const {jsPDF} = window.jspdf, pdf = new jsPDF({unit: 'mm', format: 'a4'}), W = 190, pageH = 277, slice = Math.floor(canvas.width * pageH / W);
+  for (let y = 0, i = 0; y < canvas.height; y += slice, i++) {
+    const c = document.createElement('canvas'); c.width = canvas.width; c.height = Math.min(slice, canvas.height - y);
+    const g = c.getContext('2d'); g.fillStyle = bgc; g.fillRect(0, 0, c.width, c.height); g.drawImage(canvas, 0, -y);
+    if (i) pdf.addPage(); pdf.addImage(c.toDataURL('image/png'), 'PNG', 10, 10, W, c.height * W / c.width);
+  }
+  pdf.save(name + '.pdf');
+}
 VIEWS.participants = () => {
   const part = get('participants'), s = part.summary;
   let h = `<div class="section"><div class="two"><div class="card"><h3>Upload registration export</h3>
@@ -1529,14 +1564,17 @@ VIEWS.participants = () => {
     ${num(part.target) ? `<div style="margin-top:16px">${bar(pct(num(part.confirmed), num(part.target)))}<div class="metric-label">${fmtP(Math.round(pct(num(part.confirmed), num(part.target)) * 10) / 10)} of target · ${fmtN(Math.max(0, num(part.target) - num(part.confirmed)))} to go</div></div>` : ''}
     <p class="help" style="margin-top:14px">Generating a summary fills confirmed participants by counting the people in each registration: "A1: name; A2: name" counts as 2. Without attendee names it uses a pax column, or one per row. You can edit it after.</p></div></div></div>`;
 
-  h += `<div class="section"><div class="sec-head"><h2>Current profile</h2>${s ? `<p>From ${esc(s.fileName || 'upload')}${s.event ? ` · ${esc(s.event)} only` : ''} · ${fmtDate(s.uploadedAt)}</p>` : ''}</div>`;
+  h += `<div class="section" id="profileReport"><div class="sec-head"><h2>Current profile</h2>${s ? `<p>From ${esc(s.fileName || 'upload')}${s.event ? ` · ${esc(s.event)} only` : ''} · ${fmtDate(s.uploadedAt)}</p>` : ''}</div>`;
   if (!s) return h + `<div class="card"><div class="empty">Upload a registration export to build the profile.</div></div></div>`;
   const list = (title, arr) => arr && arr.length ? `<div class="list-head">${title}</div><ul class="mini-list">${arr.map(([n, c]) => `<li><span>${esc(n)}</span><b>${fmtN(c)}</b></li>`).join('')}</ul>` : '';
-  h += `<div class="strip">${stat(fmtN(s.records), 'registrations')}${s.pax ? stat(fmtN(s.pax), 'participants in those registrations') : ''}${s.groupRegs ? stat(fmtN(s.groupRegs), `group registrations (up to ${fmtN(s.groupMax)} pax)`) : ''}${stat(s.leadershipPct == null ? '–' : Math.round(s.leadershipPct) + '%', 'leadership-level')}${stat(s.revenueLe3Pct == null ? '–' : Math.round(s.revenueLe3Pct) + '%', 'revenue RM3m or below')}${stat(s.founders == null ? '–' : fmtN(s.founders), 'founders / co-founders')}</div>
-    <div class="two"><div class="card">${list('Industry', s.industries)}${list('Location', s.locations)}</div>
-    <div class="card">${list('Registration size', s.regSizes)}${list('Annual revenue', s.revenueBands)}${list('Top designations', s.designations)}${!(s.revenueBands || []).length && !(s.designations || []).length ? '<div class="empty">Revenue and designation breakdowns appear after your next upload.</div>' : ''}</div></div>
+  const gt3 = s.revenueGt3Pct != null ? s.revenueGt3Pct : s.revenueLe3Pct != null ? 100 - s.revenueLe3Pct : null;
+  h += `<div class="strip">${s.pax ? stat(fmtN(s.pax), 'participants') : ''}${stat(s.leadershipPct == null ? '–' : Math.round(s.leadershipPct) + '%', 'leadership-level')}${stat(s.revenueLe3Pct == null ? '–' : Math.round(s.revenueLe3Pct) + '%', 'revenue RM3m or below')}${stat(gt3 == null ? '–' : Math.round(gt3) + '%', 'revenue above RM3m')}${stat(s.founders == null ? '–' : fmtN(s.founders), 'founders / co-founders')}</div>
+    <div class="two"><div class="card"><h3>Industry</h3>${pieList(s.industries)}</div>
+    <div class="card"><h3>Annual revenue</h3>${pieList(s.revenueBands)}</div></div>
+    <div class="two" style="margin-top:18px"><div class="card">${list('Location', s.locations)}</div>
+    <div class="card">${list('Top designations', s.designations)}${!(s.designations || []).length ? '<div class="empty">Designation breakdown appears after your next upload.</div>' : ''}</div></div>
     ${s.daily && s.daily.length ? `<div style="margin-top:18px">${signupCard(s.daily)}</div>` : ''}
-    <div class="row-actions"><button class="btn del ${armed === 'clearSummary:x' ? 'armed' : ''}" data-act="clearSummary" data-id="x">${armed === 'clearSummary:x' ? 'Confirm clear' : 'Clear profile'}</button></div></div>`;
+    <div class="row-actions" data-noreport><button class="btn primary" data-act="reportPng">Generate report (PNG)</button><button class="btn primary" data-act="reportPdf">Generate report (PDF)</button><button class="btn del ${armed === 'clearSummary:x' ? 'armed' : ''}" data-act="clearSummary" data-id="x">${armed === 'clearSummary:x' ? 'Confirm clear' : 'Clear profile'}</button></div></div>`;
   return h;
 };
 
@@ -1792,6 +1830,8 @@ document.addEventListener('click', e => {
     addPartner: () => mut('commercial', d => { const t = d.tiers[0] || {}; d.partners.push({id: uid(), name: '', tier: t.id || '', island: (d.islands[0] || {}).id || '', booths: t.booths || 1, value: t.price || 0, collected: 0, status: 'Confirmed', sales1: '', sales2: '', notes: ''}); }),
     delPartner: () => rm('commercial', 'partners'),
     delLogo: () => { const old = (get('commercial').partners.find(x => x.id === id) || {}).logo; mut('commercial', d => { const it = d.partners.find(x => x.id === id); if (it) it.logo = ''; }); if (old && assetsNs) assetsNs.delete(old).catch(() => {}); },
+    reportPng: () => profileReport('png'),
+    reportPdf: () => profileReport('pdf'),
     addTier: () => mut('commercial', d => d.tiers.push({id: uid(), name: 'New tier', price: 0, booths: 1})),
     delTier: () => rm('commercial', 'tiers'),
     addIsland: () => mut('commercial', d => d.islands.push({id: uid(), name: 'Island ' + String.fromCharCode(65 + d.islands.length), total: 0})),
@@ -1964,9 +2004,10 @@ function summarize(allRows, map) {
   if (map.revenue) {
     const ups = rows.map(r => revUpper(r[map.revenue])).filter(v => v != null);
     out.revenueLe3Pct = ups.length ? pct(ups.filter(v => v <= 3e6).length, ups.length) : null;
-    out.revenueBands = tally(rows, map.revenue, clean, 8);
+    out.revenueGt3Pct = ups.length ? pct(ups.filter(v => v > 3e6).length, ups.length) : null;
+    out.revenueBands = tally(rows, map.revenue, clean, Infinity);
   } else { out.revenueLe3Pct = null; out.revenueBands = []; }
-  out.industries = tally(rows, map.industry, clean, 8);
+  out.industries = tally(rows, map.industry, clean, Infinity);
   if (map.company) out.companies = new Set(rows.map(r => clean(r[map.company]).toLowerCase()).filter(Boolean)).size;
   out.locations = tally(rows, map.location, normLoc, 6);
   if (map.date) {
