@@ -1515,7 +1515,7 @@ function signupCard(daily) {
 const PIE_COLS = ['#1f4e79', '#e07a1f', '#2f8f5b', '#c23b4a', '#7a4fb3', '#d4a017', '#1aa3a3', '#8c564b', '#e377c2', '#5a6b7b', '#9bbb3c', '#3d7fd9', '#b5651d', '#6d2f6f', '#4f9e8f', '#a63d1f'];
 const pieCol = i => i < PIE_COLS.length ? PIE_COLS[i] : `hsl(${(i * 137.5) % 360} 55% 50%)`;
 // Pie chart plus one line per item: colour, name, exact number and share of answers.
-function pieList(arr) {
+function pieList(arr, noPie) {
   if (!arr || !arr.length) return '<div class="empty">Not in this upload. Map the column and upload again.</div>';
   const total = arr.reduce((a, [, c]) => a + c, 0);
   let ang = -Math.PI / 2, paths = '';
@@ -1527,7 +1527,7 @@ function pieList(arr) {
     ang = a2;
   });
   const p = c => { const v = c / total * 100; return (v < 10 ? Math.round(v * 10) / 10 : Math.round(v)) + '%'; };
-  return `<div class="pie-wrap"><svg viewBox="0 0 100 100" role="img" aria-label="Pie chart">${paths}</svg><ul class="mini-list">${arr.map(([n, c], i) => `<li><span><i class="sw" style="background:${pieCol(i)}"></i>${esc(n)}</span><b>${fmtN(c)}<span class="pc">${p(c)}</span></b></li>`).join('')}</ul></div><p class="help" style="margin-top:10px">${fmtN(total)} answers in total.</p>`;
+  return `<div class="pie-wrap">${noPie ? '' : `<svg viewBox="0 0 100 100" role="img" aria-label="Pie chart">${paths}</svg>`}<ul class="mini-list">${arr.map(([n, c], i) => `<li><span>${noPie ? '' : `<i class="sw" style="background:${pieCol(i)}"></i>`}${esc(n)}</span><b>${fmtN(c)}<span class="pc">${p(c)}</span></b></li>`).join('')}</ul></div><p class="help" style="margin-top:10px">${fmtN(total)} answers in total.</p>`;
 }
 async function profileReport(kind) {
   const el = document.getElementById('profileReport');
@@ -1569,7 +1569,7 @@ VIEWS.participants = () => {
   const list = (title, arr) => arr && arr.length ? `<div class="list-head">${title}</div><ul class="mini-list">${arr.map(([n, c]) => `<li><span>${esc(n)}</span><b>${fmtN(c)}</b></li>`).join('')}</ul>` : '';
   const gt3 = s.revenueGt3Pct != null ? s.revenueGt3Pct : s.revenueLe3Pct != null ? 100 - s.revenueLe3Pct : null;
   h += `<div class="strip">${s.pax ? stat(fmtN(s.pax), 'participants') : ''}${stat(s.leadershipPct == null ? '–' : Math.round(s.leadershipPct) + '%', 'leadership-level')}${stat(s.revenueLe3Pct == null ? '–' : Math.round(s.revenueLe3Pct) + '%', 'revenue RM3m or below')}${stat(gt3 == null ? '–' : Math.round(gt3) + '%', 'revenue above RM3m')}${stat(s.founders == null ? '–' : fmtN(s.founders), 'founders / co-founders')}</div>
-    <div class="two"><div class="card"><h3>Industry</h3>${pieList(s.industries)}</div>
+    <div class="two"><div class="card"><h3>Industry</h3>${pieList(s.industries, true)}</div>
     <div class="card"><h3>Annual revenue</h3>${pieList(s.revenueBands)}</div></div>
     <div class="two" style="margin-top:18px"><div class="card">${list('Location', s.locations)}</div>
     <div class="card">${list('Top designations', s.designations)}${!(s.designations || []).length ? '<div class="empty">Designation breakdown appears after your next upload.</div>' : ''}</div></div>
@@ -1918,7 +1918,7 @@ const paxOf = (r, map) => {
   if (map.pax) return num(r[map.pax]) || 1;
   return qtyOf(r, map) || 1;
 };
-const isVoid = (r, map) => !inEvent(r, map) || map.status && /cancel|refund|fail|void|abandon|pending payment|unpaid/i.test(String(r[map.status] || ''));
+const isVoid = (r, map) => !inEvent(r, map) || map.status && /cancel|refund|fail|void|abandon|pending payment|unpaid|expired/i.test(String(r[map.status] || ''));
 function loadSheet() {
   const rows = XLSX.utils.sheet_to_json(upload.wb.Sheets[upload.sheet], {defval: '', raw: false});
   upload.rows = rows; upload.cols = rows.length ? Object.keys(rows[0]).filter(c => !/^__EMPTY/.test(c)) : [];
