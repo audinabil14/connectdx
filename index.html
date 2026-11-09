@@ -596,7 +596,15 @@ body.x .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bot
 .asteps li b{color:var(--text);font-weight:600;font-size:13px}
 .acopy{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);font-size:12.5px;color:var(--muted);word-break:break-all}
 .acopy .btn{margin-left:auto;flex:none}
+.actf{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto;gap:10px;align-items:end}
+.actf .btns{display:flex;gap:8px}
+.actday{font:700 11px Montserrat,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);padding:14px 0 2px}
+.arow.act{align-items:flex-start}
+.arow.act .when{width:64px;flex:none;color:var(--faint);font-size:12px;padding-top:9px}
+.arow.act ul{margin:4px 0 0;padding-left:16px;font-size:13px;color:var(--muted)}
+.arow.act details summary{cursor:pointer;color:var(--faint);font-size:12px;margin-top:4px}
 @media (max-width:1100px){.okan{grid-template-columns:1fr 1fr}.asplit{grid-template-columns:1fr}}
+@media (max-width:760px){.actf{grid-template-columns:1fr 1fr}.actf .btns{grid-column:1/-1}}
 @media (max-width:760px){.okan{grid-template-columns:1fr}.mfn{grid-template-columns:90px 1fr 80px}}
 @media (max-width:1100px){.isles{grid-template-columns:repeat(5,1fr)}}
 @media (max-width:760px){
@@ -1256,7 +1264,7 @@ const STREAM_STATUS = ['Not started', 'In progress', 'Waiting', 'Blocked', 'Comp
 const PNL_STATUS = ['Paid', 'Part paid', 'Due', 'Quoted', 'Requested', 'Estimate', 'TBC', 'Free'];
 const PNL_GROUPS = {Income: ['Booth & Sponsorship Sales', 'Ticket Sales', 'Other Income'], Cost: ['Venue', 'Logistics & Production', 'Marketing & Promotion', 'Manpower & Commission', 'Programme & Speakers', 'F&B', 'Others']};
 
-const TABS = [['dashboard','Dashboard'],['commercial','Commercial & partnership'],['pnl','P&amp;L'],['programme','Programme & speakers'],['participants','Participant profiling'],['marketing','Marketing performance'],['ops','Operations & workstreams'],['admins','Admins']];
+const TABS = [['dashboard','Dashboard'],['commercial','Commercial & partnership'],['pnl','P&amp;L'],['programme','Programme & speakers'],['participants','Participant profiling'],['marketing','Marketing performance'],['ops','Operations & workstreams'],['admins','Admins'],['settings','Settings']];
 let tab = 'dashboard';
 let mode = 'team';
 try { if (localStorage.getItem('cdx-mode') === 'sales') mode = 'sales'; } catch (e) {}
@@ -2073,6 +2081,77 @@ VIEWS.admins = () => {
     <div class="card dcard"><div class="dch"><h3>Contractor link</h3><span class="more">no sign-in · booth layout only</span></div><div class="acopy"><span>${esc(link)}</span><button class="btn" data-copy="${esc(link)}">Copy</button></div></div></div></div>`;
 };
 
+/* ---------- settings: activity report ---------- */
+// The database writes the log on every save (supabase/activity-log.sql); this page only reads it.
+const actState = {rows: null, loading: false, msg: '', who: '', sec: '', from: '', to: ''};
+const ACT_SEC = {commercial: 'Commercial', pnl: 'P&L', programme: 'Programme', participants: 'Participants', marketing: 'Marketing', ops: 'Operations', admins: 'Admins'};
+const ACT_LIST = {partners: 'partner', tiers: 'package', islands: 'island', speakers: 'speaker', agenda: 'session', targets: 'segment', days: 'day', streams: 'workstream', entries: 'marketing entry', lines: 'P&L line'};
+const ACT_FIELD = {value: 'deal value', boothNo: 'booth no.', sales1: 'salesperson 1', sales2: 'salesperson 2', dayId: 'day', lpViews: 'LP views', regs: 'registrations', commissionPct: 'commission %', commPaid: 'commission paid', cdDate: 'countdown date', cdTime: 'countdown time', cdVenue: 'countdown venue', ov: 'P&L overrides', summary: 'participant summary'};
+const actField = f => ACT_FIELD[f] || String(f).replace(/([A-Z])/g, ' $1').toLowerCase();
+function actLine(c) {
+  const l = ACT_LIST[c.list] || c.list, n = c.name ? ` “${c.name}”` : '';
+  switch (c.op) {
+    case 'added': return `Added ${l}${n}`;
+    case 'removed': return `Removed ${l}${n}`;
+    case 'changed': return `Changed ${l}${n}: ${(c.fields || []).map(actField).join(', ')}${c.to ? ` (now ${c.to})` : ''}`;
+    case 'reordered': return `Changed the order of the ${l} list`;
+    case 'set': return `Changed ${actField(c.field)}`;
+    case 'admin_added': return `Approved admin ${c.name}`;
+    case 'admin_removed': return `Removed admin ${c.name}`;
+    case 'finance_on': return `Gave P&L access to ${c.name}`;
+    case 'finance_off': return `Removed P&L access from ${c.name}`;
+    case 'request_rejected': return `Rejected the admin request from ${c.name}`;
+    default: return 'Changed something';
+  }
+}
+async function loadActivity() {
+  if (!sb || !sb.rpc || actState.loading) return;
+  actState.loading = true;
+  const since = actState.from ? new Date(actState.from + 'T00:00').toISOString() : null;
+  const {data, error} = await sb.rpc('activity_report', {since, max_rows: 5000});
+  actState.loading = false;
+  if (error) { actState.rows = []; actState.msg = /activity_report/.test(error.message) ? 'The activity log is not switched on yet: run supabase/activity-log.sql in the Supabase SQL Editor.' : 'Could not load the activity report: ' + error.message; }
+  else { actState.rows = data || []; actState.msg = ''; }
+  remoteRender();
+}
+function actFiltered() {
+  const to = actState.to ? new Date(actState.to + 'T23:59:59.999') : null;
+  return (actState.rows || []).filter(r => (!actState.who || r.email === actState.who) && (!actState.sec || r.section === actState.sec) && (!to || new Date(r.at) <= to));
+}
+function downloadActivity() {
+  const q = v => '"' + String(v).replace(/"/g, '""') + '"';
+  const lines = [['Time', 'Person', 'Section', 'Change'].map(q).join(',')];
+  actFiltered().forEach(r => (r.changes || []).forEach(c => lines.push([fmtDate(r.at), r.email, ACT_SEC[r.section] || r.section, actLine(c)].map(q).join(','))));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\r\n')], {type: 'text/csv'}));
+  a.download = 'connectd-activity-' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+VIEWS.settings = () => {
+  if (actState.rows === null) loadActivity();
+  const rows = actFiltered(), all = actState.rows || [];
+  const people = [...new Set(all.map(r => r.email))].sort();
+  const secs = Object.keys(ACT_SEC).filter(k => all.some(r => r.section === k));
+  const day = d => new Date(d).toLocaleDateString('en-MY', {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'});
+  const time = d => new Date(d).toLocaleTimeString('en-MY', {hour: 'numeric', minute: '2-digit'});
+  const sel = (f, label, list, names = {}) => `<label class="field">${label}<select data-actf="${f}"><option value="">All</option>${list.map(v => `<option value="${esc(v)}"${actState[f] === v ? ' selected' : ''}>${esc(names[v] || v)}</option>`).join('')}</select></label>`;
+  let last = '', body = '';
+  rows.forEach(r => {
+    const d = day(r.at), ch = (r.changes || []).map(actLine), i = people.indexOf(r.email);
+    if (d !== last) { body += `<div class="actday">${esc(d)}</div>`; last = d; }
+    const list = ch.length > 4 ? `<ul>${ch.slice(0, 3).map(t => `<li>${esc(t)}</li>`).join('')}</ul><details><summary>${ch.length - 3} more changes</summary><ul>${ch.slice(3).map(t => `<li>${esc(t)}</li>`).join('')}</ul></details>` : `<ul>${ch.map(t => `<li>${esc(t)}</li>`).join('')}</ul>`;
+    body += `<div class="arow act"><span class="when">${esc(time(r.at))}</span><div class="av" style="background:${r.email === 'system' ? 'var(--faint)' : AV_COLS[Math.max(i, 0) % AV_COLS.length]}">${esc(initials(r.email))}</div><div class="who"><b>${esc(r.email)} <span class="cst">${esc(ACT_SEC[r.section] || r.section)}</span></b>${list}</div></div>`;
+  });
+  return `${actState.msg ? `<div class="banner err" style="margin-top:14px">${esc(actState.msg)}</div>` : ''}
+  <div class="card dcard" style="margin-top:14px"><div class="dch"><h3>Activity report</h3><span class="more">${actState.rows === null ? 'Loading…' : `${rows.length} ${rows.length === 1 ? 'save' : 'saves'}${all.length >= 5000 ? ' · latest 5,000 only, pick a From date to go further back' : ''}`}</span></div>
+    <p class="help" style="margin:0">Every save in the tracker and every admin change, newest first, with who made it. It shows which fields changed, not the amounts. P&amp;L entries are visible only to admins with P&amp;L access.</p>
+    <div class="actf">${sel('who', 'Person', people)}${sel('sec', 'Section', secs, ACT_SEC)}
+      <label class="field">From<input type="date" data-actf="from" value="${esc(actState.from)}"></label>
+      <label class="field">To<input type="date" data-actf="to" value="${esc(actState.to)}"></label>
+      <div class="btns"><button class="btn" data-act="refreshActivity">Refresh</button><button class="btn" data-act="csvActivity"${rows.length ? '' : ' disabled'}>Download CSV</button></div></div>
+    <div>${actState.rows === null ? '<div class="empty">Loading…</div>' : body || `<div class="empty">${all.length ? 'Nothing matches these filters.' : 'No changes recorded yet. Changes made from now on appear here.'}</div>`}</div></div>`;
+};
+
 /* ---------- sales view ---------- */
 function barList(arr, total) {
   if (!arr || !arr.length) return '';
@@ -2187,6 +2266,8 @@ document.addEventListener('click', e => {
   }
   const rm = (k, arr) => mut(k, d => { d[arr] = d[arr].filter(x => x.id !== id); });
   const A = {
+    refreshActivity: () => loadActivity(),
+    csvActivity: () => downloadActivity(),
     addPartner: () => mut('commercial', d => { const t = d.tiers[0] || {}; d.partners.push({id: uid(), name: '', tier: t.id || '', island: (d.islands[0] || {}).id || '', booths: t.booths || 1, value: t.price || 0, collected: 0, status: 'Confirmed', sales1: '', sales2: '', notes: ''}); }),
     delPartner: () => {
       const ps = get('commercial').partners, i = ps.findIndex(x => x.id === id);
@@ -2238,6 +2319,7 @@ document.addEventListener('change', e => {
   const el = e.target;
   if (el.id === 'file') { if (el.files[0]) handleFile(el.files[0]); return; }
   if (el.dataset.logo) { if (el.files[0]) uploadLogo(el.dataset.logo, el.files[0]); return; }
+  if (el.dataset.actf) { actState[el.dataset.actf] = el.value; if (el.dataset.actf === 'from') loadActivity(); render(); return; }
   if (el.id === 'sheet') { upload.sheet = el.value; loadSheet(); render(); return; }
   if (el.id === 'event') { upload.event = el.value; buildMap(); render(); return; }
   if (el.dataset.map) { upload.map[el.dataset.map] = el.value; render(); return; }
@@ -2661,6 +2743,7 @@ const ICON = {
   marketing: SVG('<path d="M3 10v4l13 5V5zM16 9a3 3 0 0 1 0 6M6 15l1 5h3l-1-4"/>'),
   ops: SVG('<path d="M9 6h12M9 12h12M9 18h12"/><path d="m3 6 1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/>'),
   admins: SVG('<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/>'),
+  settings: SVG('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'),
   sales: SVG('<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.4"/>'),
   out: SVG('<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 16l4-4-4-4M14 12H4"/>')
 };
