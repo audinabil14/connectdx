@@ -404,6 +404,81 @@ body.x .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bot
 .mem .av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:700 10.5px Montserrat,sans-serif;color:#fff;flex:none}
 .mem b{display:block;font-weight:600;font-size:12.5px}.mem small{color:var(--faint);font-size:11px}
 .mem .v{margin-left:auto;font:700 12px Montserrat,sans-serif}
+
+/* ---------- Commercial and P&L (team view) ---------- */
+.ck4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px}
+.ck{padding:16px 18px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.ck small{color:var(--muted);font-size:12px}
+.ck b{font:800 24px/1.15 Montserrat,sans-serif}.ck b.neg{color:var(--pink)}
+.ck b span{font-size:15px;color:var(--faint)}
+.ck p{font-size:12px;color:var(--faint);margin:0}.ck p em{font-style:normal;color:var(--text)}
+.ck .track{height:6px;margin:0}
+.ctiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:14px}
+.ctier{padding:16px 18px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.ctier::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--tc)}
+.ctier .t1{display:flex;justify-content:space-between;gap:8px;align-items:center}.ctier .t1 b{font:700 14px Montserrat,sans-serif}.ctier .t1 span{font-size:11.5px;color:var(--faint)}
+.ctier .t2{display:flex;align-items:baseline;gap:6px}.ctier .t2 b{font:800 28px/1 Montserrat,sans-serif}.ctier .t2 small{color:var(--muted);font-size:12px}
+.ctier .t3{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}.ctier .t3 b{color:var(--text);font-weight:600}
+.csplit{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px;align-items:start;margin-top:14px}
+.clist{padding:8px 0 6px!important;min-width:0}
+.ctop{display:flex;align-items:center;gap:10px;padding:8px 14px 10px;flex-wrap:wrap}
+.ctop .btn{margin-left:auto}
+.chead,.crow{display:grid;grid-template-columns:minmax(0,2.2fr) 1fr 1.2fr .9fr 108px;gap:12px;align-items:center;padding:0 18px}
+.clist.nov .chead,.clist.nov .crow{grid-template-columns:minmax(0,2.2fr) 1fr 1.2fr 108px}
+.chead{font:600 11px Inter,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);padding-top:6px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.crow{padding-top:11px;padding-bottom:11px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s}
+.crow:hover{background:rgba(255,255,255,.03)}
+.crow.sel{background:rgba(63,106,246,.12);box-shadow:inset 3px 0 0 var(--blue)}
+.cname{display:flex;align-items:center;gap:11px;min-width:0}
+.clogo{width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center;font:800 11px Montserrat,sans-serif;background:linear-gradient(135deg,#1E2640,#141A2C);border:1px solid var(--line2);color:#C9D6FF;overflow:hidden}
+.clogo img{width:100%;height:100%;object-fit:contain;background:#fff}
+.cname b{display:block;font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cname small{color:var(--faint);font-size:11.5px}
+.ctag{font:600 11px Inter,sans-serif;padding:3px 8px;border-radius:7px;border:1px solid;justify-self:start;white-space:nowrap}
+.cwho{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cval{font:700 13px Montserrat,sans-serif;text-align:right}
+.cst{font:600 11px Inter,sans-serif;padding:4px 9px;border-radius:99px;justify-self:start;white-space:nowrap;background:rgba(255,255,255,.07);color:var(--muted)}
+.cst.Confirmed,.cst.Paid{background:rgba(101,208,234,.14);color:var(--cyan)}
+.cst.Negotiating,.cst.Due{background:rgba(245,181,71,.14);color:var(--amber)}
+.cst.Part{background:rgba(63,106,246,.2);color:#A9BEFF}
+.cst.Dropped{background:rgba(255,111,145,.12);color:var(--pink)}
+.cedit{padding:18px!important;position:sticky;top:16px;display:flex;flex-direction:column;gap:12px}
+.cedit .eh{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.cedit .eh .clogo{width:44px;height:44px;font-size:13px}
+.cedit h3{margin:0;font:700 16px Montserrat,sans-serif}.cedit .eh small{color:var(--faint);font-size:12px}
+.cf2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cedit label.field{margin:0}
+.cedit .logo-cell{flex-wrap:wrap}
+.cacts{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:4px}
+.cset{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.pvs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:14px}
+.pvr{display:grid;grid-template-columns:70px 1fr auto;gap:12px;align-items:center;font-size:12.5px;color:var(--muted);margin-top:12px}
+.pvr b{color:var(--text);font:700 12.5px Montserrat,sans-serif;text-align:right}
+.pvt{height:14px;border-radius:8px;background:rgba(255,255,255,.06);position:relative;overflow:hidden}
+.pvt i{position:absolute;left:0;top:0;bottom:0;border-radius:8px}.pvt i.f{opacity:.35}
+.pcols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.plist{padding:6px 0!important;min-width:0}
+.plh{display:flex;align-items:center;gap:10px;padding:10px 18px 12px;border-bottom:1px solid var(--line)}
+.plh h3{font:700 15px Montserrat,sans-serif;flex:1;margin:0}.plh b{font:700 13px Montserrat,sans-serif}.plh small{color:var(--faint);font-size:12px}
+.pgrp{display:flex;justify-content:space-between;padding:14px 18px 6px;font:600 11px Inter,sans-serif;text-transform:uppercase;letter-spacing:.07em;color:var(--faint)}
+.pgrp b{font:700 12px Montserrat,sans-serif;color:var(--muted);letter-spacing:0}
+.pl{border-bottom:1px solid var(--line)}
+.pl>.pr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px 18px;cursor:pointer}
+.pl>.pr:hover{background:rgba(255,255,255,.03)}
+.pl.open>.pr{background:rgba(63,106,246,.1)}
+.pl .pa b{display:block;font-weight:600;font-size:12.5px}.pl .pa small{color:var(--faint);font-size:11.5px}
+.pl .pz{text-align:right}.pl .pz b{font:700 13px Montserrat,sans-serif;display:block}.pl .pz small{font-size:11px;color:var(--faint)}
+.pl .pb{grid-column:1/-1;display:flex;align-items:center;gap:10px}
+.pl .pb .track{flex:1;height:4px;margin:0}
+.pl.blank>.pr{background:repeating-linear-gradient(135deg,transparent 0 8px,rgba(245,181,71,.05) 8px 16px)}
+.pl.blank .pz b{color:var(--amber)}
+.pl.hidden-l{opacity:.55}
+.pedit{padding:4px 18px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;background:rgba(63,106,246,.05)}
+.pedit .full{grid-column:1/-1}
+.pedit label.field{margin:0}
+.pedit .pacts{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ptot{display:flex;justify-content:space-between;padding:12px 18px;font:700 13px Montserrat,sans-serif;border-top:1px solid var(--line)}
+@media (max-width:1100px){.ck4{grid-template-columns:1fr 1fr}.csplit,.pcols,.pvs{grid-template-columns:1fr}.cedit{position:static}}
+@media (max-width:760px){.chead{display:none}.crow,.clist.nov .crow{grid-template-columns:minmax(0,1fr) auto}.crow>:nth-child(2),.crow>:nth-child(3),.crow>.cval{display:none}.pedit,.cf2{grid-template-columns:1fr}}
 @media (max-width:1100px){.isles{grid-template-columns:repeat(5,1fr)}}
 @media (max-width:760px){
   body.x .rail{display:none}body.x .page{margin:0;padding:0 12px 28px}
@@ -1458,43 +1533,69 @@ function agendaCols() {
   return groups.map(g => `<div class="agenda-col"><div class="agenda-day">Day ${g.n}${g.date ? ' · ' + esc(fmtDay(g.date)) : ''}</div>${g.items.length ? `<ul class="mini-list agenda">${g.items.map(agendaLi).join('')}</ul>` : '<div class="empty">No sessions yet</div>'}</div>`).join('');
 }
 
+// Commercial: partner list with a side panel to edit the selected partner; tiers, islands and the target sit below.
+let comSel = null, comFilter = 'all', comCount = 0;
+const TIER_COLS = ['#3F6AF6', '#65D0EA', '#A77BFF', '#F5B547', '#FF6F91', '#3DDC97'];
+const logoBox = p => p && p.logo ? `<img src="${esc(logoSrc(p.logo))}" alt="" onerror="this.remove()">` : esc(initials(shortName(p && p.name).replace(/^messrs\s+/i, '')));
 VIEWS.commercial = () => {
-  const C = calcCommercial(), c = C.c;
-  return `<div class="section"><div class="strip">
-    ${stat(money(C.sales), 'confirmed sales')}${stat(money(C.collected), 'cash collected (from P&amp;L)')}${stat(money(C.outstanding), 'outstanding incl. SST')}${stat(money(C.pipeline), 'in negotiation')}${stat(`${C.secured}/${C.totalBooths}`, 'booths secured')}
-  </div>
-  ${isFinance ? `<div class="card"><h3>Sales target</h3><div class="fields" style="max-width:360px"><label class="field">Partnership sales target (RM)${ninp('commercial:target', c.target)}</label></div></div>` : ''}</div>
+  const C = calcCommercial(), c = C.c, B = calcBooths();
+  // A newly added partner opens in the side panel straight away.
+  if (c.partners.length > comCount && comCount) comSel = c.partners[c.partners.length - 1].id;
+  comCount = c.partners.length;
+  if (!c.partners.some(p => p.id === comSel)) comSel = (c.partners[0] || {}).id || null;
+  const neg = c.partners.filter(p => p.status === 'Negotiating'), sale = Object.values(B).filter(b => b.status !== 'org' && b.status !== 'na'), sec = sale.filter(b => b.status === 'sec').length;
+  const tcol = id => TIER_COLS[Math.max(0, c.tiers.findIndex(t => t.id === id)) % TIER_COLS.length];
+  const tname = id => ((c.tiers.find(t => t.id === id) || {}).name || 'No tier').replace(/ Partner$/, '');
+  let h = `<div class="ck4">
+    <div class="card ck"><small>Confirmed sales</small><b>${money(C.sales)}</b>${isFinance && C.target ? bar(pct(C.sales, C.target), true) + `<p><em>${fmtP(Math.round(pct(C.sales, C.target) * 10) / 10)}</em> of ${fmtRM(C.target)} target</p>` : `<p>${C.conf.length} confirmed partner${C.conf.length === 1 ? '' : 's'}</p>`}</div>
+    <div class="card ck"><small>In negotiation</small><b>${money(C.pipeline)}</b><p><em>${neg.length}</em> partner${neg.length === 1 ? '' : 's'}${isFinance ? ` · would take sales to ${fmtRM(C.sales + C.pipeline)}` : ''}</p></div>
+    <div class="card ck"><small>Partners confirmed</small><b>${C.conf.length} <span>/ ${c.partners.length}</span></b><p><em>${neg.length}</em> negotiating · ${c.partners.filter(p => p.status === 'Prospect').length} prospects</p></div>
+    <div class="card ck"><small>Booths secured</small><b>${sec} <span>/ ${sale.length}</span></b>${bar(pct(sec, sale.length), true)}<p><em>${fmtP(Math.round(pct(sec, sale.length) * 10) / 10)}</em> · ${sale.filter(b => b.status === 'hold').length} on hold</p></div></div>`;
+  h += C.tiers.length ? `<div class="ctiers">${C.tiers.map((t, i) => { const ng = neg.filter(p => p.tier === t.id).length;
+    return `<div class="card ctier" style="--tc:${TIER_COLS[i % TIER_COLS.length]}"><div class="t1"><b>${esc(t.name)}</b><span>${fmtN(t.booths)} booth${num(t.booths) === 1 ? '' : 's'}</span></div><div class="t2"><b>${t.sold}</b><small>sold${ng ? ` · ${ng} negotiating` : ''}${num(t.slots) ? ` · ${Math.max(0, num(t.slots) - t.sold)} left` : ''}</small></div><div class="t3"><span>${fmtRM(t.price)} / partner</span><b>${isFinance ? fmtRM(t.soldValue) : ''}</b></div></div>`; }).join('')}</div>` : '';
 
-  <div class="section"><div class="sec-head"><h2>Partners</h2><p>Only confirmed partners count towards sales, collection and booths. Booth no. places them on the layout. Record payments received in the P&amp;L tab.</p></div>
-  <datalist id="sp">${[...new Set(c.partners.flatMap(p => [p.sales1, p.sales2]).map(s => String(s || '').trim()).filter(Boolean))].map(n => `<option value="${esc(n)}">`).join('')}</datalist>
-  <div class="card"><div class="tbl-wrap"><table class="tbl" style="min-width:1620px"><thead><tr><th style="width:14%">Partner</th><th style="width:150px">Salesperson 1</th><th style="width:150px">Salesperson 2</th><th style="width:170px">Logo</th><th style="width:150px">Tier</th><th style="width:110px">Island</th><th style="width:80px">Booths</th><th style="width:110px">Booth no.</th>${isFinance ? '<th style="width:120px">Deal value (RM)</th>' : ''}<th>Status</th><th>Notes</th><th></th></tr></thead><tbody>
-  ${c.partners.map(p => `<tr>
-    <td>${inp(`commercial:partners:${p.id}:name`, p.name, 'placeholder="Company name"')}</td>
-    <td>${inp(`commercial:partners:${p.id}:sales1`, p.sales1 || '', 'list="sp" placeholder="Name"')}</td>
-    <td>${inp(`commercial:partners:${p.id}:sales2`, p.sales2 || '', 'list="sp" placeholder="Name"')}</td>
-    ${logoCell(p)}
-    <td><select data-b="commercial:partners:${p.id}:tier">${opts(c.tiers.map(t => [t.id, t.name]), p.tier, 'Choose tier')}</select></td>
-    <td><select data-b="commercial:partners:${p.id}:island">${opts(c.islands.map(i => [i.id, i.name]), p.island, 'Choose island')}</select></td>
-    <td>${ninp(`commercial:partners:${p.id}:booths`, p.booths)}</td>
-    <td>${inp(`commercial:partners:${p.id}:boothNo`, p.boothNo || '', 'placeholder="e.g. F1, F2"')}</td>
-    ${isFinance ? `<td>${ninp(`commercial:partners:${p.id}:value`, p.value)}</td>` : ''}
-    <td><select data-b="commercial:partners:${p.id}:status">${opts(PARTNER_STATUS, p.status)}</select></td>
-    <td>${inp(`commercial:partners:${p.id}:notes`, p.notes, 'placeholder="PIC, payment terms…"')}</td>
-    <td>${del('delPartner', p.id)}</td></tr>`).join('')}
-  </tbody></table></div>
-  ${c.partners.length ? '' : '<div class="empty">No partners yet.</div>'}
-  ${logoMsg ? `<p class="help" style="margin:10px 0 0;color:var(--danger)" role="alert">${esc(logoMsg)}</p>` : ''}
-  ${assetsChecked && !assetsNs && !readOnly && !offline ? '<p class="help" style="margin:10px 0 0">Logo upload isn\'t available right now. Reload the page and try again.</p>' : ''}
-  <div class="row-actions"><button class="btn primary" data-act="addPartner" ${c.tiers.length ? '' : 'disabled'}>Add partner</button>${c.tiers.length ? '' : '<span class="help" style="margin:8px 0 0">Add a tier below first.</span>'}</div></div></div>
+  // Partner list
+  const pills = [['all', 'All', c.partners.length], ...PARTNER_STATUS.map(st => [st, st, c.partners.filter(p => p.status === st).length]).filter(x => x[2])];
+  const shown = c.partners.filter(p => comFilter === 'all' || p.status === comFilter);
+  h += `<datalist id="sp">${[...new Set(c.partners.flatMap(p => [p.sales1, p.sales2]).map(x => String(x || '').trim()).filter(Boolean))].map(n => `<option value="${esc(n)}">`).join('')}</datalist>
+  <div class="csplit"><div class="card clist${isFinance ? '' : ' nov'}"><div class="ctop"><div class="hpills" role="group" aria-label="Show partners">${pills.map(([k, l, n]) => `<button type="button" class="hpill ${comFilter === k ? 'on' : ''}" data-cf="${esc(k)}">${l}<span class="n">${n}</span></button>`).join('')}</div>
+    <button class="btn primary" data-act="addPartner" ${c.tiers.length ? '' : 'disabled'}>＋ Add partner</button></div>
+    <div class="chead"><span>Partner</span><span>Package</span><span>Salesperson</span>${isFinance ? '<span style="text-align:right">Deal value</span>' : ''}<span>Status</span></div>
+    ${shown.map(p => { const col = tcol(p.tier), sp = [p.sales1, p.sales2].map(x => String(x || '').trim()).filter(Boolean);
+      return `<div class="crow ${p.id === comSel ? 'sel' : ''}" data-pid="${p.id}" tabindex="0" role="button" aria-label="Edit ${esc(p.name || 'unnamed partner')}"><div class="cname"><div class="clogo">${logoBox(p)}</div><div style="min-width:0"><b>${esc(p.name || 'Unnamed partner')}</b><small>${p.island ? 'Island ' + esc(p.island) : 'No island'}${p.boothNo ? ' · ' + esc(p.boothNo) : ''}</small></div></div>
+        <span class="ctag" style="color:${col};border-color:${col}55;background:${col}14">${esc(tname(p.tier))}</span><span class="cwho">${esc(sp.join(' + ') || '–')}</span>${isFinance ? `<span class="cval">${num(p.value) ? fmtRM(p.value) : '<span class="muted">–</span>'}</span>` : ''}<span class="cst ${esc(p.status)}">${esc(p.status)}</span></div>`; }).join('') || '<div class="empty" style="padding:14px 18px">No partners here.</div>'}
+    ${logoMsg ? `<p class="help" style="margin:10px 18px 0;color:var(--danger)" role="alert">${esc(logoMsg)}</p>` : ''}
+    ${c.tiers.length ? '' : '<p class="help" style="margin:10px 18px">Add a tier below before adding partners.</p>'}</div>`;
 
-  <div class="section"><div class="two">
-  <div class="card"><h3>Partnership tiers</h3><p class="help">Picking a tier fills in the partner's booths and deal value. Slots is how many partners each tier can take; the sales view uses it to show availability.</p><div class="tbl-wrap"><table class="tbl" style="min-width:420px"><thead><tr><th>Tier</th><th style="width:110px">Price (RM)</th><th style="width:72px">Booths</th><th style="width:72px">Slots</th><th style="width:50px">Sold</th><th></th></tr></thead><tbody>
+  // Side panel: every field of the selected partner
+  const p = c.partners.find(x => x.id === comSel);
+  h += p ? `<aside class="card cedit" aria-label="Edit partner"><div class="eh"><div class="clogo">${logoBox(p)}</div><div style="min-width:0"><h3>${esc(p.name || 'Unnamed partner')}</h3><small>Changes save to the tracker as you type</small></div></div>
+    <label class="field">Company name${inp(`commercial:partners:${p.id}:name`, p.name, 'placeholder="Company name"')}</label>
+    <div class="cf2"><label class="field">Status<select data-b="commercial:partners:${p.id}:status">${opts(PARTNER_STATUS, p.status)}</select></label>
+      <label class="field">Package<select data-b="commercial:partners:${p.id}:tier">${opts(c.tiers.map(t => [t.id, t.name]), p.tier, 'Choose tier')}</select></label></div>
+    ${isFinance ? `<label class="field">Deal value (RM)${ninp(`commercial:partners:${p.id}:value`, p.value)}</label>` : ''}
+    <div class="cf2"><label class="field">Island<select data-b="commercial:partners:${p.id}:island">${opts(c.islands.map(i => [i.id, i.name]), p.island, 'Choose island')}</select></label>
+      <label class="field">No. of booths${ninp(`commercial:partners:${p.id}:booths`, p.booths)}</label></div>
+    <label class="field">Booth no.${inp(`commercial:partners:${p.id}:boothNo`, p.boothNo || '', 'placeholder="e.g. F1, F2"')}</label>
+    <div class="cf2"><label class="field">Salesperson 1${inp(`commercial:partners:${p.id}:sales1`, p.sales1 || '', 'list="sp" placeholder="Name"')}</label>
+      <label class="field">Salesperson 2${inp(`commercial:partners:${p.id}:sales2`, p.sales2 || '', 'list="sp" placeholder="Name"')}</label></div>
+    <div class="field">Logo${logoCell(p).replace(/^<td>|<\/td>$/g, '')}</div>
+    ${assetsChecked && !assetsNs && !readOnly && !offline ? '<p class="help" style="margin:0">Logo upload isn\'t available right now. Reload the page and try again.</p>' : ''}
+    <label class="field">Notes${inp(`commercial:partners:${p.id}:notes`, p.notes, 'placeholder="PIC, payment terms…"')}</label>
+    <div class="cacts"><span class="help" style="margin:0">${p.status === 'Confirmed' ? 'Counts towards sales and booths' : 'Only confirmed partners count'}</span>${del('delPartner', p.id)}</div></aside>` : `<aside class="card cedit"><div class="empty">No partners yet. Add one to start.</div></aside>`;
+  h += `</div>`;
+
+  // Settings: target, tiers, islands
+  h += `<div class="section"><div class="sec-head"><h2>Setup</h2><p>Payments received are recorded in the P&amp;L tab.</p></div><div class="cset">
+  ${isFinance ? `<div class="card"><h3>Sales target</h3><label class="field">Partnership sales target (RM)${ninp('commercial:target', c.target)}</label></div>` : ''}
+  <div class="card"><h3>Partnership tiers</h3><p class="help">Picking a tier fills in the partner's booths and deal value. Slots is how many partners each tier can take; the sales view uses it to show availability.</p><div class="tbl-wrap"><table class="tbl" style="min-width:420px"><thead><tr><th>Tier</th><th style="width:110px">Price (RM)</th><th style="width:72px">Booths</th><th style="width:72px">Slots</th><th style="width:56px">Sold</th><th></th></tr></thead><tbody>
   ${C.tiers.map(t => `<tr><td>${inp(`commercial:tiers:${t.id}:name`, t.name)}</td><td>${ninp(`commercial:tiers:${t.id}:price`, t.price)}</td><td>${ninp(`commercial:tiers:${t.id}:booths`, t.booths)}</td><td>${ninp(`commercial:tiers:${t.id}:slots`, t.slots || '', 'placeholder="–"')}</td><td class="calc">${t.sold}</td><td>${del('delTier', t.id)}</td></tr>`).join('')}
   </tbody></table></div><div class="row-actions"><button class="btn" data-act="addTier">Add tier</button></div></div>
-  <div class="card"><h3>Booth islands</h3><p class="help">Set how many booths each island holds.</p><div class="tbl-wrap"><table class="tbl" style="min-width:520px"><thead><tr><th style="width:110px">Island</th><th>Category</th><th style="width:100px">Total booths</th><th style="width:80px">Secured</th><th></th></tr></thead><tbody>
+  <div class="card"><h3>Booth islands</h3><p class="help">Set how many booths each island holds.</p><div class="tbl-wrap"><table class="tbl" style="min-width:460px"><thead><tr><th style="width:100px">Island</th><th>Category</th><th style="width:90px">Total</th><th style="width:70px">Secured</th><th></th></tr></thead><tbody>
   ${C.islands.map(i => `<tr><td>${inp(`commercial:islands:${i.id}:name`, i.name)}</td><td>${inp(`commercial:islands:${i.id}:category`, i.category || (FLOOR.find(g => islandFor(g.L, [i])) || {}).cat || '', 'placeholder="Category"')}</td><td>${ninp(`commercial:islands:${i.id}:total`, i.total)}</td><td class="calc">${i.secured}</td><td>${del('delIsland', i.id)}</td></tr>`).join('')}
   </tbody></table></div><div class="row-actions"><button class="btn" data-act="addIsland">Add island</button></div></div>
   </div></div>`;
+  return h;
 };
 
 function agendaTable(items, pickDays) {
@@ -1674,52 +1775,67 @@ function calcPnl() {
   const inc = tot('Income'), cost = tot('Cost');
   return {p, auto, hiddenCount, comm, all, tot, groups, inc, cost, rate, net: inc.full - cost.full, cashNet: inc.paid - cost.paid, blanks: p.lines.filter(l => blankable(l.full)).length};
 }
-function linkedRow(l) {
-  const o = (get('pnl').ov || {})[l.pid] || {}, b = l.base, k = f => `pnl:ov:${l.pid}:${f}`;
-  const t = (f, ph) => `<input data-b="${k(f)}" value="${esc(blankable(o[f]) ? '' : o[f])}" placeholder="${esc(ph)}">`;
-  const n = (f, ph) => `<input type="number" step="any" inputmode="decimal" data-b="${k(f)}" data-num data-blank value="${blankable(o[f]) ? '' : esc(o[f])}" placeholder="${esc(ph)}">`;
-  return `<tr><td>${del('delAuto', l.pid)}</td><td>${t('item', b.item)}</td><td>${t('party', b.party)}</td><td>${n('full', b.full)}</td><td>${n('paid', b.paid)}</td>
-    <td class="calc" style="text-align:right">${fmtRM(l.full - l.paid)}</td><td><select data-b="${k('status')}">${opts(PNL_STATUS, l.status)}</select></td><td>${t('date', 'Date / due')}</td>
-    <td class="calc">Linked to Commercial</td><td>${t('notes', 'Notes')}</td></tr>`;
+// P&L: two grouped lists; click a line to open its fields underneath it.
+let pnlOpen = null;
+function pnlEdit(P, l) {
+  if (l.linked) {
+    const o = (P.p.ov || {})[l.pid] || {}, b = l.base, k = f => `pnl:ov:${l.pid}:${f}`;
+    const t = (f, ph) => `<input data-b="${k(f)}" value="${esc(blankable(o[f]) ? '' : o[f])}" placeholder="${esc(ph)}">`;
+    const n = (f, ph) => `<input type="number" step="any" inputmode="decimal" data-b="${k(f)}" data-num data-blank value="${blankable(o[f]) ? '' : esc(o[f])}" placeholder="${esc(ph)}">`;
+    return `<div class="pedit"><p class="help full" style="margin:6px 0 0">Linked to Commercial. Leave a box blank to use the value in grey, or type to override it here only.</p>
+      <label class="field">Item${t('item', b.item)}</label><label class="field">Client${t('party', b.party)}</label>
+      <label class="field">Full amount (RM, incl. SST)${n('full', b.full)}</label><label class="field">Amount paid (RM)${n('paid', b.paid)}</label>
+      <label class="field">Status<select data-b="${k('status')}">${opts(PNL_STATUS, l.status)}</select></label><label class="field">Date / due${t('date', 'Date / due')}</label>
+      <label class="field full">Notes${t('notes', 'Notes')}</label>
+      <div class="pacts"><span class="help" style="margin:0">Hiding removes it from the P&amp;L only.</span>${del('delAuto', l.pid).replace('>Remove<', '>Hide<').replace('>Confirm<', '>Confirm hide<')}</div></div>`;
+  }
+  if (l.id === 'auto-comm') return `<div class="pedit"><p class="help full" style="margin:6px 0 0">Worked out from confirmed sponsorship before SST, at the commission rate above.</p><label class="field">Amount paid (RM)${ninp('pnl:commPaid', P.p.commPaid ?? '', 'placeholder="0" data-blank')}</label></div>`;
+  if (l.auto) return `<div class="pedit"><p class="help full" style="margin:6px 0 0">Calculated automatically from Commercial. Edit it there.</p></div>`;
+  const kind = l.kind;
+  return `<div class="pedit">
+    <label class="field">Item${inp(`pnl:lines:${l.id}:item`, l.item, 'placeholder="Item"')}</label><label class="field">${kind === 'Income' ? 'Client' : 'Vendor'}${inp(`pnl:lines:${l.id}:party`, l.party, 'placeholder="Vendor / client"')}</label>
+    <label class="field">Full amount (RM)${ninp(`pnl:lines:${l.id}:full`, l.full, `placeholder="Fill in" data-blank ${blankable(l.full) ? 'style="background:var(--hold)"' : ''}`)}</label><label class="field">Amount paid (RM)${ninp(`pnl:lines:${l.id}:paid`, l.paid, 'placeholder="0" data-blank')}</label>
+    <label class="field">Status<select data-b="pnl:lines:${l.id}:status">${opts(PNL_STATUS, l.status)}</select></label><label class="field">Date / due${inp(`pnl:lines:${l.id}:date`, l.date || '', 'placeholder="Date / due"')}</label>
+    <label class="field">Group<select data-b="pnl:lines:${l.id}:group">${opts(PNL_GROUPS[kind], l.group)}</select></label><label class="field">Notes${inp(`pnl:lines:${l.id}:notes`, l.notes || '', 'placeholder="Notes"')}</label>
+    <div class="pacts"><span></span>${del('delPnl', l.id)}</div></div>`;
 }
-const amt = v => blankable(v) ? '<span class="muted">–</span>' : fmtRM(v);
-function pnlRows(P, kind) {
-  return P.groups(kind).map(g => {
+function pnlList(P, kind) {
+  const r2 = v => fmtRM(Math.round(num(v) * 100) / 100), T = kind === 'Income' ? P.inc : P.cost;
+  const lines = P.groups(kind).map(g => {
     const ls = P.all.filter(l => l.kind === kind && l.group === g), t = P.tot(kind, g);
-    const rows = ls.map(l => l.linked ? linkedRow(l) : l.auto
-      ? `<tr><td></td><td>${esc(l.item)}</td><td>${esc(l.party)}</td><td class="calc" style="text-align:right">${fmtRM(l.full)}</td><td class="calc" style="text-align:right">${l.id === 'auto-comm' ? ninp('pnl:commPaid', P.p.commPaid ?? '', 'placeholder="0" data-blank') : fmtRM(l.paid)}</td><td class="calc" style="text-align:right">${fmtRM(num(l.full) - num(l.paid))}</td><td class="calc"><span class="pill">${esc(l.status)}</span></td><td class="calc" colspan="3">${l.id === 'auto-comm' ? 'Auto · rate set above' : 'Auto · from Commercial (edit there)'}</td></tr>`
-      : `<tr><td>${del('delPnl', l.id)}</td><td>${inp(`pnl:lines:${l.id}:item`, l.item, 'placeholder="Item"')}</td><td>${inp(`pnl:lines:${l.id}:party`, l.party, 'placeholder="Vendor / client"')}</td>
-        <td>${ninp(`pnl:lines:${l.id}:full`, l.full, `placeholder="Fill in" data-blank ${blankable(l.full) ? 'style="background:var(--hold)"' : ''}`)}</td><td>${ninp(`pnl:lines:${l.id}:paid`, l.paid, 'placeholder="0" data-blank')}</td>
-        <td class="calc" style="text-align:right">${blankable(l.full) ? '–' : fmtRM(num(l.full) - num(l.paid))}</td>
-        <td><select data-b="pnl:lines:${l.id}:status">${opts(PNL_STATUS, l.status)}</select></td><td>${inp(`pnl:lines:${l.id}:date`, l.date || '', 'placeholder="Date / due"')}</td>
-        <td><select data-b="pnl:lines:${l.id}:group">${opts(PNL_GROUPS[kind], l.group)}</select></td><td>${inp(`pnl:lines:${l.id}:notes`, l.notes || '', 'placeholder="Notes"')}</td></tr>`).join('');
-    return `<tr><td colspan="10" style="padding-top:14px"><b>${esc(g)}</b></td></tr>${rows}<tr><td></td><td colspan="2" class="calc"><b>Subtotal · ${esc(g)}</b></td><td class="calc" style="text-align:right"><b>${fmtRM(t.full)}</b></td><td class="calc" style="text-align:right"><b>${fmtRM(t.paid)}</b></td><td class="calc" style="text-align:right"><b>${fmtRM(t.bal)}</b></td><td colspan="4"></td></tr>`;
+    return `<div class="pgrp">${esc(g)} <b>${r2(t.full)}</b></div>` + ls.map(l => {
+      const id = l.linked ? 'auto-' + l.pid : l.id, blank = blankable(l.full), full = num(l.full), paid = num(l.paid);
+      const st = l.status || '', open = pnlOpen === id;
+      return `<div class="pl ${blank ? 'blank' : ''} ${open ? 'open' : ''}"><div class="pr" data-pl="${esc(id)}" tabindex="0" role="button" aria-expanded="${open}"><div class="pa"><b>${esc(l.item || 'Untitled line')}</b><small>${esc(l.party || '—')}${l.date ? ' · ' + esc(l.date) : ''}</small></div>
+        <div class="pz"><b>${blank ? 'Amount TBC' : r2(full)}</b><small>${paid ? r2(paid) + ' paid' : 'nothing paid'}</small></div>
+        <div class="pb">${full ? `<div class="track"><div class="fill" style="width:${Math.min(100, pct(paid, full))}%"></div></div>` : '<span style="flex:1"></span>'}<span class="cst ${esc(st.split(' ')[0])}">${esc(st || '–')}</span></div></div>
+        ${open ? pnlEdit(P, l) : ''}</div>`;
+    }).join('');
   }).join('');
+  return `<div class="card plist"><div class="plh"><h3>${kind === 'Income' ? 'Income' : 'Costs'}</h3><small>${P.all.filter(l => l.kind === kind).length} lines</small><b>${r2(T.full)}</b></div>${lines || '<div class="empty" style="padding:14px 18px">No lines yet.</div>'}
+    <div class="ptot"><span>Paid so far</span><span>${r2(T.paid)}</span></div>
+    <div class="row-actions" style="padding:0 18px 12px;margin-top:0"><button class="btn ${kind === 'Cost' ? 'primary' : ''}" data-act="addPnl" data-id="${kind}">Add ${kind === 'Income' ? 'income' : 'cost'} line</button>${kind === 'Income' && P.hiddenCount ? `<button class="btn" data-act="showHidden">Show ${P.hiddenCount} hidden sponsor line${P.hiddenCount === 1 ? '' : 's'}</button>` : ''}</div></div>`;
 }
 VIEWS.pnl = () => {
-  const P = calcPnl();
+  const P = calcPnl(), r = v => (v < 0 ? '−' : '') + fmtRM(Math.abs(Math.round(v * 100) / 100));
+  const mx = Math.max(P.inc.full, P.cost.full) || 1;
   const sumRow = (label, t, b) => `<tr${b ? ' style="font-weight:800"' : ''}><td>${label}</td><td style="text-align:right">${fmtRM(t.full)}</td><td style="text-align:right">${fmtRM(t.paid)}</td><td style="text-align:right">${t.bal === '' ? '' : fmtRM(t.bal)}</td></tr>`;
   const groupRows = kind => P.groups(kind).map(g => sumRow(esc(g), P.tot(kind, g))).join('');
-  const head = `<thead><tr><th style="width:90px"></th><th>Item</th><th>Vendor / client</th><th style="width:140px">Full amount (RM)</th><th style="width:140px">Amount paid (RM)</th><th style="width:120px">Balance (RM)</th><th style="width:120px">Status</th><th style="width:120px">Date / due</th><th style="width:160px">Group</th><th>Notes</th></tr></thead>`;
-  return `<div class="section"><div class="strip">
-    ${(() => { const r = v => 'RM' + fmtN(Math.round(v)); return stat(r(P.inc.full), 'total income') + stat(r(P.cost.full), 'total costs') + stat((P.net < 0 ? '(' : '') + r(Math.abs(P.net)) + (P.net < 0 ? ')' : ''), P.net < 0 ? 'net loss' : 'net profit') + stat(r(Math.max(0, P.cost.full - P.inc.full)), 'still to raise to break even') + stat(r(P.inc.paid), 'cash received') + stat(r(P.cost.paid), 'cash paid out'); })()}
-  </div>
-  <div class="card"><h3>Profit &amp; loss summary</h3><div class="tbl-wrap"><table class="tbl" style="min-width:560px"><thead><tr><th></th><th style="text-align:right">Full amount</th><th style="text-align:right">Amount paid</th><th style="text-align:right">Balance</th></tr></thead><tbody>
-    <tr><td colspan="4" class="list-head">Income</td></tr>${groupRows('Income')}${sumRow('Total income', P.inc, true)}
-    <tr><td colspan="4" class="list-head">Costs</td></tr>${groupRows('Cost')}${sumRow('Total costs', P.cost, true)}
-    <tr style="font-weight:800;font-size:16px"><td>Net profit / (loss)</td><td style="text-align:right;color:${P.net < 0 ? 'var(--danger)' : 'var(--ok)'}">${P.net < 0 ? '(' + fmtRM(-P.net) + ')' : fmtRM(P.net)}</td><td style="text-align:right">${P.cashNet < 0 ? '(' + fmtRM(-P.cashNet) + ')' : fmtRM(P.cashNet)}</td><td></td></tr>
-  </tbody></table></div>
-  <p class="help" style="margin:12px 0 0">${P.blanks ? `<b style="color:var(--warn)">${P.blanks} line${P.blanks === 1 ? '' : 's'} still blank</b> and not counted yet. ` : ''}Booth &amp; sponsorship amounts include 8% SST; all other amounts exclude SST. Amount paid under Net is cash in minus cash out so far. The KLCC refundable security deposit (RM30,000) is not a cost.</p></div></div>
-
-  <div class="section"><div class="sec-head"><h2>Income</h2><p>Confirmed partners are pulled from Commercial automatically.</p></div>
-  <div class="card"><div class="tbl-wrap"><table class="tbl" style="min-width:1300px">${head}<tbody>${pnlRows(P, 'Income')}</tbody></table></div>
-  <p class="help" style="margin:10px 0 0">Booth &amp; sponsorship amounts include 8% SST (Commercial value + 8%). Sponsor lines stay linked to Commercial: leave a box blank to use that value (shown in grey), or type the full invoiced amount (incl. SST) to override it in the P&amp;L only.</p>
-  <div class="row-actions"><button class="btn" data-act="addPnl" data-id="Income">Add income line</button>${P.hiddenCount ? `<button class="btn" data-act="showHidden">Show ${P.hiddenCount} hidden sponsor line${P.hiddenCount === 1 ? '' : 's'}</button>` : ''}</div></div></div>
-
-  <div class="section"><div class="sec-head"><h2>Costs</h2><p>Leave the full amount blank until it's known; blank lines are highlighted and not counted.</p></div>
-  <div class="card"><div class="fields" style="max-width:260px;margin-bottom:12px"><label class="field">Sponsor commission rate (%)${ninp('pnl:commissionPct', P.p.commissionPct ?? 10)}</label></div>
-  <div class="tbl-wrap"><table class="tbl" style="min-width:1300px">${head}<tbody>${pnlRows(P, 'Cost')}</tbody></table></div>
-  <div class="row-actions"><button class="btn primary" data-act="addPnl" data-id="Cost">Add cost line</button></div></div></div>`;
+  return `<div class="ck4">
+    <div class="card ck"><small>Income (full)</small><b>${r(P.inc.full)}</b>${bar(pct(P.inc.paid, P.inc.full), true)}<p><em>${r(P.inc.paid)}</em> collected · ${r(P.inc.full - P.inc.paid)} to collect</p></div>
+    <div class="card ck"><small>Costs (full)</small><b>${r(P.cost.full)}</b>${bar(pct(P.cost.paid, P.cost.full), true)}<p><em>${r(P.cost.paid)}</em> paid${P.blanks ? ` · ${P.blanks} line${P.blanks === 1 ? '' : 's'} without amount` : ''}</p></div>
+    <div class="card ck"><small>Net position</small><b class="${P.net < 0 ? 'neg' : ''}">${r(P.net)}</b><p>${P.net < 0 ? `${r(-P.net)} still to raise to break even` : 'Full income minus full costs'}</p></div>
+    <div class="card ck"><small>Cash position</small><b class="${P.cashNet < 0 ? 'neg' : ''}">${r(P.cashNet)}</b><p>Collected minus paid, today</p></div></div>
+  <div class="pvs"><div class="card"><div class="dch"><h3>Income vs costs</h3><span class="more">solid = paid · faded = full amount</span></div>
+      <div class="pvr"><span>Income</span><div class="pvt"><i class="f" style="width:${P.inc.full / mx * 100}%;background:var(--cyan)"></i><i style="width:${P.inc.paid / mx * 100}%;background:var(--cyan)"></i></div><b>${r(P.inc.paid)} / ${r(P.inc.full)}</b></div>
+      <div class="pvr"><span>Costs</span><div class="pvt"><i class="f" style="width:${P.cost.full / mx * 100}%;background:var(--pink)"></i><i style="width:${P.cost.paid / mx * 100}%;background:var(--pink)"></i></div><b>${r(P.cost.paid)} / ${r(P.cost.full)}</b></div>
+      <label class="field" style="max-width:240px;margin-top:18px">Sponsor commission rate (%)${ninp('pnl:commissionPct', P.p.commissionPct ?? 10)}</label></div>
+    <div class="card"><h3>Summary by group</h3><div class="tbl-wrap"><table class="tbl" style="min-width:460px"><thead><tr><th></th><th style="text-align:right">Full</th><th style="text-align:right">Paid</th><th style="text-align:right">Balance</th></tr></thead><tbody>
+      <tr><td colspan="4" class="list-head">Income</td></tr>${groupRows('Income')}${sumRow('Total income', P.inc, true)}
+      <tr><td colspan="4" class="list-head">Costs</td></tr>${groupRows('Cost')}${sumRow('Total costs', P.cost, true)}
+    </tbody></table></div></div></div>
+  <div class="section pcols">${pnlList(P, 'Income')}${pnlList(P, 'Cost')}</div>
+  <p class="help">Booth &amp; sponsorship amounts include 8% SST (Commercial value + 8%); all other amounts exclude SST. Lines left blank are striped and not counted. The KLCC refundable security deposit (RM30,000) is not a cost.</p>`;
 };
 
 VIEWS.ops = () => {
@@ -2542,6 +2658,16 @@ function endDrag() {
 }
 document.addEventListener('pointerup', endDrag);
 document.addEventListener('pointercancel', endDrag);
+
+// Commercial and P&L list interactions
+function listClick(t) {
+  const cf = t.closest('[data-cf]'); if (cf) { comFilter = cf.dataset.cf; render(); return true; }
+  const row = t.closest('.crow[data-pid]'); if (row) { comSel = row.dataset.pid; render(); return true; }
+  const pl = t.closest('.pr[data-pl]'); if (pl) { pnlOpen = pnlOpen === pl.dataset.pl ? null : pl.dataset.pl; render(); return true; }
+  return false;
+}
+document.addEventListener('click', e => { if (e.target.closest) listClick(e.target); });
+document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.crow,.pr') && listClick(e.target)) e.preventDefault(); });
 
 /* ---------- boot ---------- */
 setInterval(() => { if (gate === 'ready' && (tab === 'dashboard' || mode !== 'team') && !editingNow()) render(); }, 60000);
