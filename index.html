@@ -565,6 +565,10 @@ body.x .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bot
 .okc h4 span{margin-left:auto;font:600 11px Inter,sans-serif;color:var(--muted);border:1px solid var(--line2);border-radius:7px;padding:1px 7px}
 .ows{border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
 .ows.open{border-color:var(--blue)}
+.ows[draggable]{cursor:grab}
+.ows.dragging{opacity:.35}
+.okc.dropover{outline:1px dashed rgba(101,208,234,.55);outline-offset:-1px}
+.wsdrop{height:3px;border-radius:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);margin:-6px 0}
 .ows>.oh{padding:13px;display:flex;flex-direction:column;gap:9px;cursor:pointer}
 .ows b.n{font-weight:600;font-size:13.5px}
 .ows p{font-size:12px;color:var(--muted);margin:0}
@@ -1325,7 +1329,7 @@ function showBanner(msg, err) { $('#banner').innerHTML = msg ? `<div class="bann
 /* ---------- render plumbing ---------- */
 let rq = false, remotePending = false;
 function requestRender() { if (rq) return; rq = true; setTimeout(() => { rq = false; render(); }, 0); }
-function editingNow() { if (hall.drag) return true; const a = document.activeElement; return a && (a.id === 'roi-host' || $('#main').contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)); }
+function editingNow() { if (hall.drag || wsDrag) return true; const a = document.activeElement; return a && (a.id === 'roi-host' || $('#main').contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)); }
 function remoteRender() { if (editingNow()) { remotePending = true; return; } requestRender(); }
 document.addEventListener('focusout', () => setTimeout(() => { if (remotePending && !editingNow()) { remotePending = false; render(); } }, 50));
 
@@ -2022,7 +2026,7 @@ const WS_COL = {'Not started': '#7A8094', 'In progress': '#3F6AF6', 'Waiting': '
 VIEWS.ops = () => {
   const o = get('ops');
   const card = w => { const open = wsOpen === w.id;
-    return `<div class="ows ${open ? 'open' : ''}"><div class="oh" data-ws="${w.id}" tabindex="0" role="button" aria-expanded="${open}"><b class="n">${esc(w.name || 'Untitled workstream')}</b>${w.note ? `<p>${esc(w.note)}</p>` : ''}${w.next ? `<div class="nx"><small>Next action</small>${esc(w.next)}</div>` : ''}
+    return `<div class="ows ${open ? 'open' : ''}" data-wsid="${w.id}"${open || readOnly ? '' : ' draggable="true"'}><div class="oh" data-ws="${w.id}" tabindex="0" role="button" aria-expanded="${open}"><b class="n">${esc(w.name || 'Untitled workstream')}</b>${w.note ? `<p>${esc(w.note)}</p>` : ''}${w.next ? `<div class="nx"><small>Next action</small>${esc(w.next)}</div>` : ''}
       <div class="mt">${w.owner ? `<span class="av">${esc(initials(w.owner))}</span>${esc(w.owner)}` : '<span>No owner</span>'}<span class="due">${w.due ? 'Due ' + esc(fmtDay(w.due)) : w.updatedAt ? 'Updated ' + esc(fmtDate(w.updatedAt)) : ''}</span></div></div>
       ${open ? `<div class="oe"><label class="field">Workstream${inp(`ops:streams:${w.id}:name`, w.name, 'placeholder="Workstream name"')}</label>
         <div class="cf2"><label class="field">Status<select data-b="ops:streams:${w.id}:status">${opts(STREAM_STATUS, w.status)}</select></label><label class="field">Owner${inp(`ops:streams:${w.id}:owner`, w.owner, 'placeholder="PIC"')}</label></div>
@@ -2030,9 +2034,9 @@ VIEWS.ops = () => {
         <label class="field">Status notes<textarea data-b="ops:streams:${w.id}:note" rows="3">${esc(w.note)}</textarea></label>
         <label class="field">Next action${inp(`ops:streams:${w.id}:next`, w.next, 'placeholder="What happens next"')}</label>
         <div class="cacts"><span class="help" style="margin:0">${w.updatedAt ? 'Updated ' + esc(fmtDate(w.updatedAt)) : ''}</span>${del('delStream', w.id)}</div></div>` : ''}</div>`; };
-  let h = `<p class="help" style="margin:14px 0 0">Unfinished workstreams with a next action appear on the dashboard's Needs attention list. Click a card to edit it.</p><div class="okan">`;
+  let h = `<p class="help" style="margin:14px 0 0">Unfinished workstreams with a next action appear on the dashboard's Needs attention list. Click a card to edit it, or drag it to another column or position.</p><div class="okan">`;
   h += STREAM_STATUS.map(st => { const ws = o.streams.filter(w => (STREAM_STATUS.includes(w.status) ? w.status : 'Not started') === st), col = WS_COL[st] || '#7A8094';
-    return `<div class="card okc"><h4><i style="background:${col};box-shadow:0 0 8px ${col}"></i>${esc(st)}<span>${ws.length}</span></h4>${ws.map(card).join('')}<button type="button" class="add" data-act="addStream" data-id="${esc(st)}">＋ Add</button></div>`; }).join('');
+    return `<div class="card okc" data-wst="${esc(st)}"><h4><i style="background:${col};box-shadow:0 0 8px ${col}"></i>${esc(st)}<span>${ws.length}</span></h4>${ws.map(card).join('')}<button type="button" class="add" data-act="addStream" data-id="${esc(st)}">＋ Add</button></div>`; }).join('');
   h += `</div><div class="card gpanel"><div class="dch"><h3>Team notepad</h3><span class="more">meeting notes, decisions, anything that doesn't belong to one workstream</span></div>
     <textarea data-b="ops:notepad" rows="7" placeholder="Write notes here…">${esc(o.notepad)}</textarea>${o.notepadAt ? `<div class="stamp">Edited ${fmtDate(o.notepadAt)}</div>` : ''}</div>`;
   return h;
@@ -2852,6 +2856,29 @@ function endDrag() {
 }
 document.addEventListener('pointerup', endDrag);
 document.addEventListener('pointercancel', endDrag);
+
+// Operations board: drag a workstream card to another column (status) or position (order).
+let wsDrag = null;
+function wsDropLine() { let l = $('.wsdrop'); if (!l) { l = document.createElement('div'); l.className = 'wsdrop'; } return l; }
+function wsClear() { document.querySelectorAll('.wsdrop').forEach(x => x.remove()); document.querySelectorAll('.okc.dropover').forEach(x => x.classList.remove('dropover')); }
+document.addEventListener('dragstart', e => { const c = e.target.closest && e.target.closest('.ows[draggable]'); if (!c) return;
+  wsDrag = c.dataset.wsid; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', wsDrag); setTimeout(() => c.classList.add('dragging'), 0); });
+document.addEventListener('dragover', e => { if (!wsDrag) return; const col = e.target.closest && e.target.closest('.okc[data-wst]'); if (!col) return;
+  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.okc.dropover').forEach(x => x !== col && x.classList.remove('dropover')); col.classList.add('dropover');
+  const after = [...col.querySelectorAll('.ows:not(.dragging)')].find(c => { const b = c.getBoundingClientRect(); return e.clientY < b.top + b.height / 2; });
+  const line = wsDropLine(); after ? col.insertBefore(line, after) : col.insertBefore(line, col.querySelector('.add')); });
+document.addEventListener('drop', e => { if (!wsDrag) return; const col = e.target.closest && e.target.closest('.okc[data-wst]'), line = $('.wsdrop'); if (!col || !line) return;
+  e.preventDefault(); let nx = line.nextElementSibling; while (nx && !nx.dataset.wsid) nx = nx.nextElementSibling;
+  const id = wsDrag, st = col.dataset.wst, before = nx ? nx.dataset.wsid : null;
+  wsDrag = null; wsClear();
+  mut('ops', d => { const i = d.streams.findIndex(w => w.id === id); if (i < 0) return; const [w] = d.streams.splice(i, 1);
+    if (w.status !== st) { w.status = st; w.updatedAt = new Date().toISOString(); }
+    let j = before ? d.streams.findIndex(x => x.id === before) : -1;
+    if (j < 0) { const last = d.streams.reduce((k, x, n) => (STREAM_STATUS.includes(x.status) ? x.status : 'Not started') === st ? n : k, -1); j = last + 1; }
+    d.streams.splice(j, 0, w); }); });
+document.addEventListener('dragend', () => { if (!wsDrag && !$('.ows.dragging')) return; wsDrag = null; wsClear(); document.querySelectorAll('.ows.dragging').forEach(x => x.classList.remove('dragging'));
+  if (remotePending && !editingNow()) { remotePending = false; render(); } });
 
 // Commercial and P&L list interactions
 function listClick(t) {
