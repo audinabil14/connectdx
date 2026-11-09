@@ -993,7 +993,8 @@ function render() {
   if (gate !== 'ready') { renderGate(); return; }
   if ($('#gate-bg')) { $('#gate-bg').remove(); document.body.classList.remove('gating'); }
   const a = document.activeElement; const f = a && a.dataset && a.dataset.b ? a.dataset.b : null;
-  $('#tabs').innerHTML = TABS.map(([id, label]) => `<button class="tab" data-tab="${id}" aria-current="${tab === id}">${label}${id === 'admins' && adminState.requests.length ? ` <span class="pill" style="margin:0 0 0 4px;background:var(--danger);color:#fff">${adminState.requests.length}</span>` : ''}</button>`).join('');
+  if (!isFinance && tab === 'pnl') tab = 'dashboard';
+  $('#tabs').innerHTML = TABS.filter(([id]) => isFinance || id !== 'pnl').map(([id, label]) => `<button class="tab" data-tab="${id}" aria-current="${tab === id}">${label}${id === 'admins' && adminState.requests.length ? ` <span class="pill" style="margin:0 0 0 4px;background:var(--danger);color:#fff">${adminState.requests.length}</span>` : ''}</button>`).join('');
   const times = KEYS.map(k => state[k] && state[k].updatedAt).filter(Boolean).sort();
   const allLoaded = KEYS.every(k => loaded[k]) || offline;
   $('#asof').textContent = !allLoaded ? 'Loading…' : times.length ? 'Last updated ' + fmtDate(times[times.length - 1]) : 'No updates yet';
@@ -1045,6 +1046,9 @@ const ninp = (b, v, extra = '') => `<input type="number" step="any" inputmode="d
 const del = (act, id) => `<button class="btn del ${armed === act + ':' + id ? 'armed' : ''}" data-act="${act}" data-id="${id}">${armed === act + ':' + id ? 'Confirm' : 'Remove'}</button>`;
 const stat = (v, l) => `<div class="profile-stat"><strong>${v}</strong><span>${l}</span></div>`;
 const orDash = (v, f) => v == null ? '–' : f(v);
+// Admins without finance access see this instead of deal values, collections, the sales target and the P&L.
+const money = v => isFinance ? fmtRM(v) : '<span class="muted">Restricted</span>';
+const FIN_ONLY = '<div class="empty">Sales and collection figures are visible to finance admins only.</div>';
 
 /* ---------- floor plan ---------- */
 // Geometry traced from the Hall 6 floor plan (units = plan pixels). Each island: grid of cols x rows, booth order row by row.
@@ -1290,23 +1294,23 @@ VIEWS.dashboard = () => {
   const part = get('participants'), s = part.summary, ops = get('ops');
   const main = P.targets[0];
   let h = countdownBox() + `<div class="section"><div class="grid4">
-    ${kpi('Partnership sales', fmtRM(C.sales), `confirmed sales value · ${C.conf.length} partner${C.conf.length === 1 ? '' : 's'}${C.pipeline ? ' · ' + fmtRM(C.pipeline) + ' in negotiation' : ''}`)}
-    ${kpi('Cash collected', fmtRM(C.collected), `received to date · ${fmtRM(C.outstanding)} outstanding (incl. SST, from P&amp;L)`)}
+    ${kpi('Partnership sales', money(C.sales), `confirmed sales value · ${C.conf.length} partner${C.conf.length === 1 ? '' : 's'}${C.pipeline && isFinance ? ' · ' + fmtRM(C.pipeline) + ' in negotiation' : ''}`)}
+    ${kpi('Cash collected', money(C.collected), isFinance ? `received to date · ${fmtRM(C.outstanding)} outstanding (incl. SST, from P&amp;L)` : 'visible to finance admins only')}
     ${main ? kpi(esc(main.name) + 's', `${main.secured} / ${main.slots}`, `${Math.round(pct(main.secured, main.slots))}% secured · ${Math.max(0, main.slots - main.secured)} pending`) : kpi('Speakers', '0', 'add speaker slots in Programme')}
     ${kpi('Participants', fmtN(part.confirmed || (s && s.records) || 0), s ? `confirmed participants · ${fmtN(s.records)} registration records${num(part.target) ? ' · ' + Math.round(pct(num(part.confirmed), num(part.target))) + '% of target' : ''}` : 'upload a registration export to profile')}
   </div></div>`;
 
   // Partnership
   h += `<div class="section"><h2>Partnership sales</h2><div class="two"><div class="card">
-    <div class="progress-row"><div class="progress-title">Sales progress against target</div><div class="progress-num">${fmtRM(C.sales)} / ${fmtRM(C.target)}</div></div>
+    ${!isFinance ? FIN_ONLY : `<div class="progress-row"><div class="progress-title">Sales progress against target</div><div class="progress-num">${fmtRM(C.sales)} / ${fmtRM(C.target)}</div></div>
     ${bar(pct(C.sales, C.target), true)}
     <div class="metric-label"><b>${fmtP(pct(C.sales, C.target))} achieved</b> · ${fmtRM(Math.max(0, C.target - C.sales))} remaining to target</div>
     <div style="height:18px"></div>
     <div class="progress-row"><div class="progress-title">Collection against confirmed sales (incl. SST)</div><div class="progress-num">${fmtRM(C.collected)} / ${fmtRM(C.billed)}</div></div>
     ${bar(pct(C.collected, C.billed))}
-    <div class="metric-label">${fmtP(pct(C.collected, C.billed))} collected · ${fmtRM(C.outstanding)} outstanding</div>
+    <div class="metric-label">${fmtP(pct(C.collected, C.billed))} collected · ${fmtRM(C.outstanding)} outstanding</div>`}
   </div><div class="card">
-    ${C.tiers.length ? C.tiers.map(t => `<div class="tier"><div><div class="tier-name">${esc(t.name)}</div><div class="tier-price">${fmtRM(t.price)} / partner · ${fmtN(t.booths)} booth${num(t.booths) === 1 ? '' : 's'}</div></div><div class="tier-sold">${t.sold} sold<span>${fmtRM(t.soldValue)} value</span></div></div>`).join('') : `<div class="empty">No partnership tiers yet. ${goto('commercial', 'Set up tiers')}</div>`}
+    ${C.tiers.length ? C.tiers.map(t => `<div class="tier"><div><div class="tier-name">${esc(t.name)}</div><div class="tier-price">${fmtRM(t.price)} / partner · ${fmtN(t.booths)} booth${num(t.booths) === 1 ? '' : 's'}</div></div><div class="tier-sold">${t.sold} sold${isFinance ? `<span>${fmtRM(t.soldValue)} value</span>` : ''}</div></div>`).join('') : `<div class="empty">No partnership tiers yet. ${goto('commercial', 'Set up tiers')}</div>`}
   </div></div></div>`;
 
   // Booths
@@ -1379,8 +1383,8 @@ VIEWS.dashboard = () => {
   // Pending
   const acts = [];
   P.targets.forEach(x => { const r = x.slots - x.secured; if (r > 0) acts.push(`Secure remaining ${r} ${x.name} slot${r === 1 ? '' : 's'}.`); });
-  if (C.target && C.sales < C.target) acts.push(`Accelerate partnership sales: ${fmtRM(C.target - C.sales)} remaining to target.`);
-  if (C.outstanding > 0) acts.push(`Collect ${fmtRM(C.outstanding)} outstanding from confirmed partnership sales.`);
+  if (isFinance && C.target && C.sales < C.target) acts.push(`Accelerate partnership sales: ${fmtRM(C.target - C.sales)} remaining to target.`);
+  if (isFinance && C.outstanding > 0) acts.push(`Collect ${fmtRM(C.outstanding)} outstanding from confirmed partnership sales.`);
   ops.streams.filter(w => w.status !== 'Completed' && (w.next || '').trim()).forEach(w => acts.push(`${w.name}: ${w.next}`));
   if (acts.length) h += `<div class="section pending"><h2>Pending / next actions</h2><ol>${acts.map(a => `<li>${esc(a)}</li>`).join('')}</ol></div>`;
   return h;
@@ -1422,13 +1426,13 @@ function agendaCols() {
 VIEWS.commercial = () => {
   const C = calcCommercial(), c = C.c;
   return `<div class="section"><div class="strip">
-    ${stat(fmtRM(C.sales), 'confirmed sales')}${stat(fmtRM(C.collected), 'cash collected (from P&amp;L)')}${stat(fmtRM(C.outstanding), 'outstanding incl. SST')}${stat(fmtRM(C.pipeline), 'in negotiation')}${stat(`${C.secured}/${C.totalBooths}`, 'booths secured')}
+    ${stat(money(C.sales), 'confirmed sales')}${stat(money(C.collected), 'cash collected (from P&amp;L)')}${stat(money(C.outstanding), 'outstanding incl. SST')}${stat(money(C.pipeline), 'in negotiation')}${stat(`${C.secured}/${C.totalBooths}`, 'booths secured')}
   </div>
-  <div class="card"><h3>Sales target</h3><div class="fields" style="max-width:360px"><label class="field">Partnership sales target (RM)${ninp('commercial:target', c.target)}</label></div></div></div>
+  ${isFinance ? `<div class="card"><h3>Sales target</h3><div class="fields" style="max-width:360px"><label class="field">Partnership sales target (RM)${ninp('commercial:target', c.target)}</label></div></div>` : ''}</div>
 
   <div class="section"><div class="sec-head"><h2>Partners</h2><p>Only confirmed partners count towards sales, collection and booths. Booth no. places them on the layout. Record payments received in the P&amp;L tab.</p></div>
   <datalist id="sp">${[...new Set(c.partners.flatMap(p => [p.sales1, p.sales2]).map(s => String(s || '').trim()).filter(Boolean))].map(n => `<option value="${esc(n)}">`).join('')}</datalist>
-  <div class="card"><div class="tbl-wrap"><table class="tbl" style="min-width:1620px"><thead><tr><th style="width:14%">Partner</th><th style="width:150px">Salesperson 1</th><th style="width:150px">Salesperson 2</th><th style="width:170px">Logo</th><th style="width:150px">Tier</th><th style="width:110px">Island</th><th style="width:80px">Booths</th><th style="width:110px">Booth no.</th><th style="width:120px">Deal value (RM)</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody>
+  <div class="card"><div class="tbl-wrap"><table class="tbl" style="min-width:1620px"><thead><tr><th style="width:14%">Partner</th><th style="width:150px">Salesperson 1</th><th style="width:150px">Salesperson 2</th><th style="width:170px">Logo</th><th style="width:150px">Tier</th><th style="width:110px">Island</th><th style="width:80px">Booths</th><th style="width:110px">Booth no.</th>${isFinance ? '<th style="width:120px">Deal value (RM)</th>' : ''}<th>Status</th><th>Notes</th><th></th></tr></thead><tbody>
   ${c.partners.map(p => `<tr>
     <td>${inp(`commercial:partners:${p.id}:name`, p.name, 'placeholder="Company name"')}</td>
     <td>${inp(`commercial:partners:${p.id}:sales1`, p.sales1 || '', 'list="sp" placeholder="Name"')}</td>
@@ -1438,7 +1442,7 @@ VIEWS.commercial = () => {
     <td><select data-b="commercial:partners:${p.id}:island">${opts(c.islands.map(i => [i.id, i.name]), p.island, 'Choose island')}</select></td>
     <td>${ninp(`commercial:partners:${p.id}:booths`, p.booths)}</td>
     <td>${inp(`commercial:partners:${p.id}:boothNo`, p.boothNo || '', 'placeholder="e.g. F1, F2"')}</td>
-    <td>${ninp(`commercial:partners:${p.id}:value`, p.value)}</td>
+    ${isFinance ? `<td>${ninp(`commercial:partners:${p.id}:value`, p.value)}</td>` : ''}
     <td><select data-b="commercial:partners:${p.id}:status">${opts(PARTNER_STATUS, p.status)}</select></td>
     <td>${inp(`commercial:partners:${p.id}:notes`, p.notes, 'placeholder="PIC, payment terms…"')}</td>
     <td>${del('delPartner', p.id)}</td></tr>`).join('')}
@@ -1701,16 +1705,24 @@ VIEWS.ops = () => {
   <div class="row-actions"><button class="btn primary" data-act="addStream">Add workstream</button></div></div>`;
 };
 
+// P&L access column: a pill for who has it, and a switch that only finance admins see (never on their own row).
+function finCell(e, me) {
+  if (!adminState.finance) return '';
+  const has = adminState.finance.includes(e.toLowerCase()), self = e.toLowerCase() === me.toLowerCase();
+  const pill = has ? '<span class="pill">P&amp;L access</span>' : '<span class="muted">No P&amp;L access</span>';
+  const btn = isFinance && !self ? ` <button class="btn" data-act="${has ? 'finOff' : 'finOn'}" data-id="${esc(e)}" style="margin-left:8px">${has ? 'Remove access' : 'Give access'}</button>` : '';
+  return `<td style="width:330px;text-align:right;white-space:nowrap">${pill}${btn}</td>`;
+}
 VIEWS.admins = () => {
   const me = (sb && sb.auth && adminState.me) || '';
   const fmt = d => d ? new Date(d).toLocaleDateString('en-MY', {day: 'numeric', month: 'short', year: 'numeric'}) : '';
   return `${adminState.msg ? `<div class="banner err">${esc(adminState.msg)}</div>` : ''}
-  <div class="section"><div class="sec-head"><h2>Requests waiting for approval</h2><p>People who registered on the sign-in page. Approving gives full access: all tabs, P&amp;L and editing.</p></div>
+  <div class="section"><div class="sec-head"><h2>Requests waiting for approval</h2><p>People who registered on the sign-in page. Approving gives access to all tabs and editing. P&amp;L and money figures also need P&amp;L access, which a finance admin switches on below.</p></div>
   <div class="card">${!adminState.loaded ? '<div class="empty">Loading…</div>' : adminState.requests.length ? `<div class="tbl-wrap"><table class="tbl c-tbl"><thead><tr><th>Email</th><th style="width:140px">Registered</th><th style="width:150px">Email confirmed</th><th style="width:200px"></th></tr></thead><tbody>
     ${adminState.requests.map(r => `<tr><td><b>${esc(r.email)}</b></td><td>${esc(fmt(r.created_at))}</td><td>${r.confirmed ? 'Yes' : '<span class="muted">Not yet</span>'}</td><td><div style="display:flex;gap:6px;justify-content:flex-end"><button class="btn primary" data-act="approveAdmin" data-id="${esc(r.email)}">Approve</button>${del('delRequest', esc(r.email)).replace('>Remove<', '>Reject<')}</div></td></tr>`).join('')}
   </tbody></table></div>` : '<div class="empty">No requests waiting.</div>'}</div></div>
-  <div class="section"><div class="sec-head"><h2>Admins</h2><p>Admins can see and edit everything. You can't remove yourself.</p></div>
-  <div class="card">${adminState.admins.length ? `<div class="tbl-wrap"><table class="tbl c-tbl"><tbody>${adminState.admins.map(e => `<tr><td><b>${esc(e)}</b>${e.toLowerCase() === me.toLowerCase() ? ' <span class="pill">You</span>' : ''}</td><td style="width:120px;text-align:right">${e.toLowerCase() === me.toLowerCase() ? '' : del('delAdmin', esc(e))}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Loading…</div>'}</div></div>
+  <div class="section"><div class="sec-head"><h2>Admins</h2><p>Admins can see and edit everything except P&amp;L and money figures, which need P&amp;L access. You can't remove yourself or change your own P&amp;L access.</p></div>
+  <div class="card">${adminState.admins.length ? `<div class="tbl-wrap"><table class="tbl c-tbl"><tbody>${adminState.admins.map(e => `<tr><td><b>${esc(e)}</b>${e.toLowerCase() === me.toLowerCase() ? ' <span class="pill">You</span>' : ''}</td>${finCell(e, me)}<td style="width:120px;text-align:right">${e.toLowerCase() === me.toLowerCase() ? '' : del('delAdmin', esc(e))}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Loading…</div>'}</div></div>
   <div class="section"><div class="card guide"><dl><dt>How someone becomes an admin</dt><dd>They open the tracker link, choose <b>Register as admin</b>, enter their email and a password, and confirm the email Supabase sends. Their request then shows up here for you to approve.</dd>
   <dt>Contractor link</dt><dd>Share <b>${esc(location.origin + location.pathname)}#contractor</b>. It opens the booth layout without signing in.</dd></dl></div></div>`;
 };
@@ -1858,6 +1870,8 @@ document.addEventListener('click', e => {
     approveAdmin: () => adminAction('approve_admin', id),
     delRequest: () => adminAction('reject_admin', id),
     delAdmin: () => adminAction('remove_admin', id),
+    finOn: () => financeAction(id, true),
+    finOff: () => financeAction(id, false),
     cancelUpload: () => { upload = null; uploadError = ''; render(); },
     genSummary: () => { const sm = summarize(upload.rows, upload.map); sm.fileName = upload.fileName; mut('participants', d => { d.summary = sm; d.confirmed = sm.pax; }); upload = null; }
   };
@@ -2074,8 +2088,8 @@ function placeRoi() {
 // Editors (listed in the database) read and write every section live; anyone else who signs in by email
 // gets the sales and contractor views only, from a trimmed copy of the data (no deal values, salespeople or P&L).
 const SUPABASE_URL = 'https://bujigmhlcfplldktmsko.supabase.co', SUPABASE_ANON_KEY = 'sb_publishable_RG4Rsqrg4pjT_vQePJCxWQ_tqG4f-yK';
-let sb = null, isEditor = false, gate = 'loading', gateMsg = '', gateEmail = '', gateTab = 'signin', starting = false;
-const adminState = {requests: [], admins: [], msg: '', loaded: false};
+let sb = null, isEditor = false, isFinance = true, gate = 'loading', gateMsg = '', gateEmail = '', gateTab = 'signin', starting = false;
+const adminState = {requests: [], admins: [], finance: [], msg: '', loaded: false};
 const VIEW_KEY = 'cdx-after-login';
 
 function renderGate() {
@@ -2172,9 +2186,23 @@ function makeDb() {
   const fail = e => { const m = (e && e.message) || 'unknown error', err = new Error(m); err.code = e.code === '42501' || /row-level security|permission/i.test(m) ? 'not_granted' : /fetch|network/i.test(m) ? 'unavailable' : 'failed'; return err; };
   sb.channel('tracker').on('postgres_changes', {event: '*', schema: 'public', table: 'tracker'}, p => { const r = p.new; if (r && r.key && subs[r.key]) subs[r.key].forEach(f => f(snap(r.data))); }).subscribe();
   return {doc: path => { const key = path.split('/')[1]; return {
-    async get() { const {data, error} = await sb.from('tracker').select('data').eq('key', key).maybeSingle(); if (error) throw fail(error); return snap(data ? data.data : null); },
-    async set(v) { const {error} = await sb.from('tracker').upsert({key, data: v, updated_at: new Date().toISOString()}); if (error) throw fail(error); },
-    onSnapshot(cb, onErr) { (subs[key] = subs[key] || []).push(cb); this.get().then(cb, e => onErr && onErr(e)); }
+    async get() {
+      // Without finance access: no P&L, and Commercial comes without deal values, collections and target.
+      if (!isFinance && key === 'pnl') return snap(null);
+      if (!isFinance && key === 'commercial') { const {data, error} = await sb.rpc('commercial_safe'); if (error) throw fail(error); return snap(data); }
+      const {data, error} = await sb.from('tracker').select('data').eq('key', key).maybeSingle(); if (error) throw fail(error); return snap(data ? data.data : null);
+    },
+    async set(v) {
+      if (!isFinance && key === 'pnl') throw fail({code: '42501', message: 'permission'});
+      // The database puts the stored money figures back in before saving.
+      if (!isFinance && key === 'commercial') { const {error} = await sb.rpc('commercial_save_safe', {new_data: v}); if (error) throw fail(error); return; }
+      const {error} = await sb.from('tracker').upsert({key, data: v, updated_at: new Date().toISOString()}); if (error) throw fail(error);
+    },
+    onSnapshot(cb, onErr) {
+      (subs[key] = subs[key] || []).push(cb); this.get().then(cb, e => onErr && onErr(e));
+      // Live updates can't pass through the filter, so Commercial is re-read every 20 seconds instead.
+      if (!isFinance && key === 'commercial') setInterval(() => this.get().then(cb, () => {}), 20000);
+    }
   }; }};
 }
 function makeAssets() {
@@ -2237,20 +2265,30 @@ async function start(recheck) {
   }
   gate = 'ready';
   { const {data: u} = await sb.auth.getUser(); adminState.me = (u && u.user && u.user.email) || ''; }
+  // Before finance-access.sql has been run the function doesn't exist yet, and everyone keeps full access.
+  { const {data: f, error} = await sb.rpc('is_finance'); isFinance = error ? true : f === true; }
   db = makeDb(); assetsNs = makeAssets(); assetsChecked = true;
   render(); subscribeAll(); loadAdmins(); setInterval(loadAdmins, 60000);
 }
 
 /* ---------- admins ---------- */
 async function loadAdmins() {
-  const [r, l] = await Promise.all([sb.rpc('admin_requests'), sb.rpc('admin_list')]);
+  const [r, l, f] = await Promise.all([sb.rpc('admin_requests'), sb.rpc('admin_list'), sb.rpc('finance_list')]);
   adminState.requests = r.data || []; adminState.admins = (l.data || []).map(x => x.email); adminState.loaded = true;
+  adminState.finance = f.error ? null : (f.data || []).map(x => x.email.toLowerCase());
   if (r.error || l.error) adminState.msg = 'Could not load admins: ' + ((r.error || l.error).message);
   remoteRender();
 }
 async function adminAction(fn, email) {
   adminState.msg = '';
   const {error} = await sb.rpc(fn, {target: email});
+  if (error) adminState.msg = error.message;
+  await loadAdmins();
+}
+
+async function financeAction(email, allow) {
+  adminState.msg = '';
+  const {error} = await sb.rpc('set_finance', {target: email, allow});
   if (error) adminState.msg = error.message;
   await loadAdmins();
 }
