@@ -537,6 +537,57 @@ body.x .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bot
 .u3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
 .u2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:14px;margin-top:14px}
 @media (max-width:1100px){.gsplit,.u2,.u3,.ubars.two{grid-template-columns:1fr}.ses .pedit{margin-left:0}}
+
+/* ---------- Marketing, Operations and Admins (team view) ---------- */
+.mfun{display:flex;flex-direction:column;gap:10px}
+.mfn{display:grid;grid-template-columns:120px 1fr 110px;gap:12px;align-items:center;font-size:12.5px;color:var(--muted)}
+.mfn .fb{height:34px;border-radius:10px;background:linear-gradient(90deg,var(--blue),var(--cyan));opacity:var(--o,1);display:flex;align-items:center;padding-left:12px;font:700 13px Montserrat,sans-serif;color:#fff;min-width:56px;white-space:nowrap}
+.mfn b{text-align:right;color:var(--text);font:700 12.5px Montserrat,sans-serif}.mfn b small{display:block;font:500 11px Inter,sans-serif;color:var(--faint)}
+.mfn.miss .fb{background:none;border:1.5px dashed var(--line2);color:var(--faint);font-weight:600}
+.mgauge{display:flex;align-items:center;gap:18px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.mgauge .gw{position:relative;width:110px;height:110px;flex:none}
+.mgauge .ring{width:110px;height:110px;border-radius:50%;background:conic-gradient(var(--cyan) calc(var(--p)*1%),rgba(255,255,255,.07) 0);-webkit-mask:radial-gradient(circle,transparent 58%,#000 59%);mask:radial-gradient(circle,transparent 58%,#000 59%)}
+.mgauge .gw b{position:absolute;inset:0;display:grid;place-items:center;font:800 19px Montserrat,sans-serif}
+.mgauge p{font-size:12.5px;color:var(--muted);margin:0}.mgauge p b{display:block;color:var(--text);font:800 18px Montserrat,sans-serif;margin-bottom:2px}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mgrid>div{padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.mgrid small{display:block;color:var(--faint);font-size:11px}.mgrid b{font:800 17px Montserrat,sans-serif}
+.mtip{padding:11px 13px;border-radius:12px;background:rgba(245,181,71,.1);border:1px solid rgba(245,181,71,.25);font-size:12px;color:#FFD98A}
+.tbl tr.tot td{font-weight:700;color:var(--cyan);padding-top:12px}
+.okan{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:14px}
+.okc{padding:14px!important;display:flex;flex-direction:column;gap:10px;min-height:260px}
+.okc h4{display:flex;align-items:center;gap:8px;font:700 13.5px Montserrat,sans-serif;margin:0}
+.okc h4 i{width:8px;height:8px;border-radius:50%}
+.okc h4 span{margin-left:auto;font:600 11px Inter,sans-serif;color:var(--muted);border:1px solid var(--line2);border-radius:7px;padding:1px 7px}
+.ows{border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.ows.open{border-color:var(--blue)}
+.ows>.oh{padding:13px;display:flex;flex-direction:column;gap:9px;cursor:pointer}
+.ows b.n{font-weight:600;font-size:13.5px}
+.ows p{font-size:12px;color:var(--muted);margin:0}
+.ows .nx{padding:8px 10px;border-radius:10px;background:rgba(63,106,246,.12);border:1px solid rgba(63,106,246,.25);font-size:12px;color:#C7D5FF}
+.ows .nx small{display:block;font:600 10px Inter,sans-serif;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);margin-bottom:2px}
+.ows .mt{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--faint);border-top:1px solid var(--line);padding-top:9px;flex-wrap:wrap}
+.ows .mt .av{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:700 9px Montserrat,sans-serif;color:#fff;background:#2FA6C4}
+.ows .mt .due{margin-left:auto}
+.ows .oe{padding:0 13px 13px;display:flex;flex-direction:column;gap:10px}
+.ows .oe label.field{margin:0}
+.okc .add{border:1.5px dashed var(--line2);border-radius:12px;padding:10px;text-align:center;color:var(--faint);font:500 12px Inter,sans-serif;background:none;cursor:pointer}
+.okc .add:hover{color:var(--text);border-color:var(--muted)}
+.asplit{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:14px;align-items:start;margin-top:14px}
+.acol{display:flex;flex-direction:column;gap:14px}
+.arow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.arow:last-child{border:0}
+.arow .av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font:700 12px Montserrat,sans-serif;color:#fff;flex:none}
+.arow .who{flex:1;min-width:160px}.arow .who b{display:block;font-weight:600;font-size:13px;word-break:break-all}.arow .who small{color:var(--faint);font-size:11.5px}
+.arow .fin{display:flex;align-items:center;gap:8px}
+.asteps{list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:10px;margin:0;padding:0}
+.asteps li{counter-increment:s;display:grid;grid-template-columns:28px 1fr;gap:2px 10px;font-size:12px;color:var(--muted)}
+.asteps li::before{content:counter(s);grid-row:span 2;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:700 12px Montserrat,sans-serif;background:rgba(63,106,246,.2);color:#A9BEFF}
+.asteps li b{color:var(--text);font-weight:600;font-size:13px}
+.acopy{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);font-size:12.5px;color:var(--muted);word-break:break-all}
+.acopy .btn{margin-left:auto;flex:none}
+@media (max-width:1100px){.okan{grid-template-columns:1fr 1fr}.asplit{grid-template-columns:1fr}}
+@media (max-width:760px){.okan{grid-template-columns:1fr}.mfn{grid-template-columns:90px 1fr 80px}}
 @media (max-width:1100px){.isles{grid-template-columns:repeat(5,1fr)}}
 @media (max-width:760px){
   body.x .rail{display:none}body.x .page{margin:0;padding:0 12px 28px}
@@ -1822,21 +1873,38 @@ VIEWS.participants = () => {
   return h + (upload ? '' : partSetup(part));
 };
 
+// Marketing: headline numbers, funnel, budget and cost, then the editable results log.
 VIEWS.marketing = () => {
-  const M = calcMarketing(), m = M.m, t = M.t;
-  return `<div class="section"><div class="strip">
-    ${stat(fmtRM(t.spend), 'total spend')}${stat(fmtN(t.reach), 'reach')}${stat(fmtN(t.impressions), 'impressions')}${stat(fmtN(t.lpViews), 'LP views')}${stat(t.regs ? fmtN(t.regs) : '–', 'registrations')}
-    ${stat(orDash(t.cpm, fmtRM), 'CPM')}${stat(orDash(t.ctr, v => fmtP(Math.round(v * 100) / 100)), 'CTR')}${stat(orDash(t.cplv, fmtRM), 'cost per LP view')}${stat(orDash(t.conv, v => fmtP(Math.round(v * 10) / 10)), 'LP view → registration')}${stat(orDash(t.cpr, fmtRM), 'cost per registration')}
-  </div>
-  <div class="card"><h3>Campaign setup</h3><div class="fields"><label class="field">Ads objective${inp('marketing:objective', m.objective, 'placeholder="e.g. Engagement & Traffic"')}</label><label class="field">Total ads budget (RM)${ninp('marketing:budget', m.budget || '', 'placeholder="Optional"')}</label></div></div></div>
-
-  <div class="section"><div class="sec-head"><h2>Results log</h2><p>One row per channel per period. Numbers add up across rows.</p></div>
-  <div class="card"><div class="tbl-wrap"><table class="tbl" style="min-width:1100px"><thead><tr><th style="width:130px">Period</th><th style="width:150px">Channel</th><th>Contents</th><th>Spend (RM)</th><th>Reach</th><th>Impressions</th><th>Link clicks</th><th>LP views</th><th>Registrations</th><th></th></tr></thead><tbody>
+  const M = calcMarketing(), m = M.m, t = M.t, bud = num(m.budget);
+  const f2 = v => 'RM' + Number(v).toLocaleString('en-MY', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  let h = `<div class="ck4">
+    <div class="card ck"><small>Ads spent</small><b>${f2(t.spend)}</b>${bud ? bar(t.budgetUsed, true) + `<p><em>${fmtP(Math.round(t.budgetUsed * 10) / 10)}</em> of ${fmtRM(bud)} budget</p>` : '<p>Set a budget below</p>'}</div>
+    <div class="card ck"><small>Reach</small><b>${fmtN(t.reach)}</b><p>people reached</p></div>
+    <div class="card ck"><small>Impressions</small><b>${fmtN(t.impressions)}</b><p><em>${fmtN(t.contents)}</em> ad contents deployed</p></div>
+    <div class="card ck"><small>Landing page views</small><b>${fmtN(t.lpViews)}</b><p>${t.cplv != null ? `<em>${f2(t.cplv)}</em> per view` : 'cost per view appears once spend is logged'}</p></div></div>`;
+  // Funnel: each step as a share of the one before
+  const steps = [['Impressions', t.impressions], ['Reach', t.reach], ['Link clicks', t.clicks], ['LP views', t.lpViews], ['Registrations', t.regs]];
+  const top = Math.max(1, t.impressions || t.reach || t.lpViews);
+  let prev = 0;
+  const fun = steps.map(([l, n], i) => { const row = n ? `<div class="mfn" style="--o:${1 - i * .14}"><span>${l}</span><div><div class="fb" style="width:${Math.max(8, n / top * 100)}%">${fmtN(n)}</div></div><b>${prev ? pctTxt(n, prev) : '100%'}<small>${prev ? 'of previous step' : 'starting point'}</small></b></div>`
+      : `<div class="mfn miss"><span>${l}</span><div><div class="fb" style="width:40%">Not logged yet</div></div><b>–<small>add in results log</small></b></div>`; if (n) prev = n; return row; }).join('');
+  const miss = [!t.clicks && 'link clicks', !t.regs && 'registrations'].filter(Boolean);
+  h += `<div class="u2"><div class="card dcard"><div class="dch"><h3>Funnel</h3><span class="more">all periods combined</span></div><div class="mfun">${fun}</div></div>
+    <div class="card dcard"><div class="dch"><h3>Budget &amp; cost</h3></div>
+      ${bud ? `<div class="mgauge"><div class="gw"><div class="ring" style="--p:${Math.min(100, t.budgetUsed || 0)}"></div><b>${fmtP(Math.round((t.budgetUsed || 0) * 10) / 10)}</b></div><p><b>${f2(t.spend)}</b>spent of ${fmtRM(bud)} · ${f2(Math.max(0, bud - t.spend))} left</p></div>` : ''}
+      <div class="mgrid"><div><small>CPM</small><b>${orDash(t.cpm, f2)}</b></div><div><small>Cost per LP view</small><b>${orDash(t.cplv, f2)}</b></div><div><small>Click-through rate</small><b>${orDash(t.ctr, v => fmtP(Math.round(v * 100) / 100))}</b></div><div><small>Cost per registration</small><b>${orDash(t.cpr, f2)}</b></div></div>
+      ${miss.length ? `<div class="mtip">Log ${miss.join(' and ')} for each period to unlock ${!t.regs ? 'cost per registration' : ''}${!t.regs && !t.clicks ? ' and ' : ''}${!t.clicks ? 'CTR' : ''}.</div>` : ''}
+      <div class="cf2"><label class="field">Ads objective${inp('marketing:objective', m.objective, 'placeholder="e.g. Engagement & Traffic"')}</label><label class="field">Total ads budget (RM)${ninp('marketing:budget', m.budget || '', 'placeholder="Optional"')}</label></div></div></div>`;
+  // Results log
+  const F = ['contents', 'spend', 'reach', 'impressions', 'clicks', 'lpViews', 'regs'];
+  h += `<div class="card gpanel"><div class="dch"><h3>Results log</h3><span class="more">one row per channel per period · numbers add up across rows</span></div>
+  <div class="tbl-wrap"><table class="tbl" style="min-width:1100px"><thead><tr><th style="width:130px">Period</th><th style="width:150px">Channel</th><th>Contents</th><th>Spend (RM)</th><th>Reach</th><th>Impressions</th><th>Link clicks</th><th>LP views</th><th>Registrations</th><th></th></tr></thead><tbody>
   ${m.entries.map(e => `<tr><td>${inp(`marketing:entries:${e.id}:period`, e.period, 'placeholder="Week 1 / Sep"')}</td><td>${inp(`marketing:entries:${e.id}:channel`, e.channel, 'list="ch" placeholder="Meta Ads"')}</td>
-    ${['contents', 'spend', 'reach', 'impressions', 'clicks', 'lpViews', 'regs'].map(f => `<td>${ninp(`marketing:entries:${e.id}:${f}`, e[f])}</td>`).join('')}<td>${del('delEntry', e.id)}</td></tr>`).join('')}
+    ${F.map(f => `<td>${ninp(`marketing:entries:${e.id}:${f}`, e[f])}</td>`).join('')}<td>${del('delEntry', e.id)}</td></tr>`).join('')}
+  ${m.entries.length ? `<tr class="tot"><td colspan="2">Total</td>${F.map(f => `<td style="text-align:right;padding-right:16px">${f === 'spend' ? f2(t[f]) : fmtN(t[f])}</td>`).join('')}<td></td></tr>` : ''}
   </tbody></table></div><datalist id="ch"><option value="Meta Ads"><option value="TikTok Ads"><option value="Google Ads"><option value="LinkedIn Ads"><option value="Organic social"><option value="Email / WhatsApp blast"><option value="Marketing partner"></datalist>
   ${m.entries.length ? '' : '<div class="empty">No results logged yet.</div>'}
-  <div class="row-actions"><button class="btn primary" data-act="addEntry">Add row</button></div></div></div>
+  <div class="row-actions"><button class="btn primary" data-act="addEntry">＋ Add row</button></div></div>
 
   <div class="section"><h2>What to track</h2><div class="card guide"><dl>
     <dt>Registrations and cost per registration</dt><dd>The number that matters most. Tag your registration link with UTMs per channel so each row can carry its own registrations.</dd>
@@ -1846,6 +1914,7 @@ VIEWS.marketing = () => {
     <dt>Reach and impressions</dt><dd>Frequency (impressions ÷ reach) above about 3–4 usually means it's time for fresh creative.</dd>
     <dt>Contents deployed</dt><dd>Log creatives per period so you can see which bursts of content moved registrations.</dd>
   </dl></div></div>`;
+  return h;
 };
 
 /* ---------- PnL ---------- */
@@ -1940,44 +2009,51 @@ VIEWS.pnl = () => {
   <p class="help">Booth &amp; sponsorship amounts include 8% SST (Commercial value + 8%); all other amounts exclude SST. Lines left blank are striped and not counted. The KLCC refundable security deposit (RM30,000) is not a cost.</p>`;
 };
 
+// Operations: workstreams as a board by status; click a card to edit it. Notepad below.
+let wsOpen = null;
+const WS_COL = {'Not started': '#7A8094', 'In progress': '#3F6AF6', 'Waiting': '#F5B547', 'Blocked': '#FF6F91', 'Completed': '#3DDC97'};
 VIEWS.ops = () => {
   const o = get('ops');
-  return `<div class="section"><div class="card"><h3>Team notepad</h3><p class="help">Meeting notes, decisions, anything that doesn't belong to one workstream.</p>
-    <textarea data-b="ops:notepad" rows="7" placeholder="Write notes here…">${esc(o.notepad)}</textarea>${o.notepadAt ? `<div class="stamp">Edited ${fmtDate(o.notepadAt)}</div>` : ''}</div></div>
-  <div class="section"><div class="sec-head"><h2>Workstreams</h2><p>Unfinished items with a next action appear on the dashboard's pending list.</p></div>
-  <div class="streams">${o.streams.map(w => `<div class="card stream">
-    <div class="top">${inp(`ops:streams:${w.id}:name`, w.name, 'placeholder="Workstream name" aria-label="Workstream name"')}${del('delStream', w.id)}</div>
-    <div class="fields"><label class="field">Status<select data-b="ops:streams:${w.id}:status">${opts(STREAM_STATUS, w.status)}</select></label>
-    <label class="field">Owner${inp(`ops:streams:${w.id}:owner`, w.owner, 'placeholder="PIC"')}</label>
-    <label class="field">Due date<input type="date" data-b="ops:streams:${w.id}:due" value="${esc(w.due)}"></label></div>
-    <label class="field" style="margin-top:12px">Status notes<textarea data-b="ops:streams:${w.id}:note" rows="3">${esc(w.note)}</textarea></label>
-    <label class="field" style="margin-top:12px">Next action${inp(`ops:streams:${w.id}:next`, w.next, 'placeholder="What happens next"')}</label>
-    ${w.updatedAt ? `<div class="stamp">Updated ${fmtDate(w.updatedAt)}</div>` : ''}
-  </div>`).join('')}</div>
-  ${o.streams.length ? '' : '<div class="card"><div class="empty">No workstreams yet.</div></div>'}
-  <div class="row-actions"><button class="btn primary" data-act="addStream">Add workstream</button></div></div>`;
+  const card = w => { const open = wsOpen === w.id;
+    return `<div class="ows ${open ? 'open' : ''}"><div class="oh" data-ws="${w.id}" tabindex="0" role="button" aria-expanded="${open}"><b class="n">${esc(w.name || 'Untitled workstream')}</b>${w.note ? `<p>${esc(w.note)}</p>` : ''}${w.next ? `<div class="nx"><small>Next action</small>${esc(w.next)}</div>` : ''}
+      <div class="mt">${w.owner ? `<span class="av">${esc(initials(w.owner))}</span>${esc(w.owner)}` : '<span>No owner</span>'}<span class="due">${w.due ? 'Due ' + esc(fmtDay(w.due)) : w.updatedAt ? 'Updated ' + esc(fmtDate(w.updatedAt)) : ''}</span></div></div>
+      ${open ? `<div class="oe"><label class="field">Workstream${inp(`ops:streams:${w.id}:name`, w.name, 'placeholder="Workstream name"')}</label>
+        <div class="cf2"><label class="field">Status<select data-b="ops:streams:${w.id}:status">${opts(STREAM_STATUS, w.status)}</select></label><label class="field">Owner${inp(`ops:streams:${w.id}:owner`, w.owner, 'placeholder="PIC"')}</label></div>
+        <label class="field">Due date<input type="date" data-b="ops:streams:${w.id}:due" value="${esc(w.due)}"></label>
+        <label class="field">Status notes<textarea data-b="ops:streams:${w.id}:note" rows="3">${esc(w.note)}</textarea></label>
+        <label class="field">Next action${inp(`ops:streams:${w.id}:next`, w.next, 'placeholder="What happens next"')}</label>
+        <div class="cacts"><span class="help" style="margin:0">${w.updatedAt ? 'Updated ' + esc(fmtDate(w.updatedAt)) : ''}</span>${del('delStream', w.id)}</div></div>` : ''}</div>`; };
+  let h = `<p class="help" style="margin:14px 0 0">Unfinished workstreams with a next action appear on the dashboard's Needs attention list. Click a card to edit it.</p><div class="okan">`;
+  h += STREAM_STATUS.map(st => { const ws = o.streams.filter(w => (STREAM_STATUS.includes(w.status) ? w.status : 'Not started') === st), col = WS_COL[st] || '#7A8094';
+    return `<div class="card okc"><h4><i style="background:${col};box-shadow:0 0 8px ${col}"></i>${esc(st)}<span>${ws.length}</span></h4>${ws.map(card).join('')}<button type="button" class="add" data-act="addStream" data-id="${esc(st)}">＋ Add</button></div>`; }).join('');
+  h += `</div><div class="card gpanel"><div class="dch"><h3>Team notepad</h3><span class="more">meeting notes, decisions, anything that doesn't belong to one workstream</span></div>
+    <textarea data-b="ops:notepad" rows="7" placeholder="Write notes here…">${esc(o.notepad)}</textarea>${o.notepadAt ? `<div class="stamp">Edited ${fmtDate(o.notepadAt)}</div>` : ''}</div>`;
+  return h;
 };
 
-// P&L access column: a pill for who has it, and a switch that only finance admins see (never on their own row).
+// Admins: list with P&L access, requests, how to join and the contractor link.
+const AV_COLS = ['#3F6AF6', '#2FA6C4', '#2FB5A8', '#E0567A', '#8B7BFF', '#C98A1E', '#5B8DF7'];
 function finCell(e, me) {
   if (!adminState.finance) return '';
   const has = adminState.finance.includes(e.toLowerCase()), self = e.toLowerCase() === me.toLowerCase();
-  const pill = has ? '<span class="pill">P&amp;L access</span>' : '<span class="muted">No P&amp;L access</span>';
-  const btn = isFinance && !self ? ` <button class="btn" data-act="${has ? 'finOff' : 'finOn'}" data-id="${esc(e)}" style="margin-left:8px">${has ? 'Remove access' : 'Give access'}</button>` : '';
-  return `<td style="width:330px;text-align:right;white-space:nowrap">${pill}${btn}</td>`;
+  const pill = has ? '<span class="cst Confirmed">P&amp;L access</span>' : '<span class="muted" style="font-size:12px">No P&amp;L access</span>';
+  const btn = isFinance && !self ? `<button class="btn" data-act="${has ? 'finOff' : 'finOn'}" data-id="${esc(e)}">${has ? 'Remove access' : 'Give access'}</button>` : '';
+  return `<div class="fin">${pill}${btn}</div>`;
 }
 VIEWS.admins = () => {
   const me = (sb && sb.auth && adminState.me) || '';
   const fmt = d => d ? new Date(d).toLocaleDateString('en-MY', {day: 'numeric', month: 'short', year: 'numeric'}) : '';
-  return `${adminState.msg ? `<div class="banner err">${esc(adminState.msg)}</div>` : ''}
-  <div class="section"><div class="sec-head"><h2>Requests waiting for approval</h2><p>People who registered on the sign-in page. Approving gives access to all tabs and editing. P&amp;L and money figures also need P&amp;L access, which a finance admin switches on below.</p></div>
-  <div class="card">${!adminState.loaded ? '<div class="empty">Loading…</div>' : adminState.requests.length ? `<div class="tbl-wrap"><table class="tbl c-tbl"><thead><tr><th>Email</th><th style="width:140px">Registered</th><th style="width:150px">Email confirmed</th><th style="width:200px"></th></tr></thead><tbody>
-    ${adminState.requests.map(r => `<tr><td><b>${esc(r.email)}</b></td><td>${esc(fmt(r.created_at))}</td><td>${r.confirmed ? 'Yes' : '<span class="muted">Not yet</span>'}</td><td><div style="display:flex;gap:6px;justify-content:flex-end"><button class="btn primary" data-act="approveAdmin" data-id="${esc(r.email)}">Approve</button>${del('delRequest', esc(r.email)).replace('>Remove<', '>Reject<')}</div></td></tr>`).join('')}
-  </tbody></table></div>` : '<div class="empty">No requests waiting.</div>'}</div></div>
-  <div class="section"><div class="sec-head"><h2>Admins</h2><p>Admins can see and edit everything except P&amp;L and money figures, which need P&amp;L access. You can't remove yourself or change your own P&amp;L access.</p></div>
-  <div class="card">${adminState.admins.length ? `<div class="tbl-wrap"><table class="tbl c-tbl"><tbody>${adminState.admins.map(e => `<tr><td><b>${esc(e)}</b>${e.toLowerCase() === me.toLowerCase() ? ' <span class="pill">You</span>' : ''}</td>${finCell(e, me)}<td style="width:120px;text-align:right">${e.toLowerCase() === me.toLowerCase() ? '' : del('delAdmin', esc(e))}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Loading…</div>'}</div></div>
-  <div class="section"><div class="card guide"><dl><dt>How someone becomes an admin</dt><dd>They open the tracker link, choose <b>Register as admin</b>, enter their email and a password, and confirm the email Supabase sends. Their request then shows up here for you to approve.</dd>
-  <dt>Contractor link</dt><dd>Share <b>${esc(location.origin + location.pathname)}#contractor</b>. It opens the booth layout without signing in.</dd></dl></div></div>`;
+  const link = location.origin + location.pathname + '#contractor';
+  return `${adminState.msg ? `<div class="banner err" style="margin-top:14px">${esc(adminState.msg)}</div>` : ''}
+  <div class="asplit"><div class="card dcard"><div class="dch"><h3>Admins</h3><span class="more">${adminState.admins.length} · ${adminState.finance ? adminState.finance.length + ' with P&amp;L access' : ''}</span></div>
+    <p class="help" style="margin:0">Admins see and edit everything except P&amp;L and money figures, which need P&amp;L access. Only admins with P&amp;L access can give it, and nobody can change their own.</p>
+    <div>${adminState.admins.length ? adminState.admins.map((e, i) => { const self = e.toLowerCase() === me.toLowerCase();
+      return `<div class="arow"><div class="av" style="background:${AV_COLS[i % AV_COLS.length]}">${esc(initials(e))}</div><div class="who"><b>${esc(e)}${self ? ' <span class="cst Part">You</span>' : ''}</b><small>Admin</small></div>${finCell(e, me)}${self ? '' : del('delAdmin', esc(e))}</div>`; }).join('') : '<div class="empty">Loading…</div>'}</div></div>
+  <div class="acol"><div class="card dcard"><div class="dch"><h3>Requests waiting</h3><span class="more">${adminState.requests.length}</span></div>
+      ${!adminState.loaded ? '<div class="empty">Loading…</div>' : adminState.requests.length ? adminState.requests.map(r => `<div class="arow"><div class="who"><b>${esc(r.email)}</b><small>Registered ${esc(fmt(r.created_at))} · email ${r.confirmed ? 'confirmed' : 'not confirmed yet'}</small></div><button class="btn primary" data-act="approveAdmin" data-id="${esc(r.email)}">Approve</button>${del('delRequest', esc(r.email)).replace('>Remove<', '>Reject<')}</div>`).join('') : '<div class="empty">No requests waiting. New sign-ups appear here for approval.</div>'}
+      <p class="help" style="margin:0">Approving gives access to all tabs and editing. P&amp;L and money figures also need P&amp;L access.</p></div>
+    <div class="card dcard"><div class="dch"><h3>How someone becomes an admin</h3></div><ol class="asteps"><li><b>Open the tracker link</b><span>and choose Register as admin</span></li><li><b>Enter email and password</b><span>then confirm the email Supabase sends</span></li><li><b>Approve them here</b><span>their request shows up under Requests waiting</span></li></ol></div>
+    <div class="card dcard"><div class="dch"><h3>Contractor link</h3><span class="more">no sign-in · booth layout only</span></div><div class="acopy"><span>${esc(link)}</span><button class="btn" data-copy="${esc(link)}">Copy</button></div></div></div></div>`;
 };
 
 /* ---------- sales view ---------- */
@@ -2113,7 +2189,7 @@ document.addEventListener('click', e => {
     delAgenda: () => rm('programme', 'agenda'),
     addEntry: () => mut('marketing', d => d.entries.push({id: uid(), period: '', channel: '', contents: 0, spend: 0, reach: 0, impressions: 0, clicks: 0, lpViews: 0, regs: 0})),
     delEntry: () => rm('marketing', 'entries'),
-    addStream: () => mut('ops', d => d.streams.push({id: uid(), name: '', status: 'Not started', owner: '', due: '', note: '', next: '', updatedAt: new Date().toISOString()})),
+    addStream: () => mut('ops', d => { const w = {id: uid(), name: '', status: STREAM_STATUS.includes(id) ? id : 'Not started', owner: '', due: '', note: '', next: '', updatedAt: new Date().toISOString()}; d.streams.push(w); wsOpen = w.id; }),
     delStream: () => rm('ops', 'streams'),
     addPnl: () => mut('pnl', d => d.lines.push({id: uid(), kind: id, group: PNL_GROUPS[id][id === 'Income' ? 2 : 6], item: '', party: '', full: '', paid: '', status: 'TBC', date: '', notes: ''})),
     delPnl: () => rm('pnl', 'lines'),
@@ -2763,6 +2839,8 @@ document.addEventListener('pointercancel', endDrag);
 
 // Commercial and P&L list interactions
 function listClick(t) {
+  const cp = t.closest('[data-copy]'); if (cp) { navigator.clipboard && navigator.clipboard.writeText(cp.dataset.copy).then(() => { cp.textContent = 'Copied'; setTimeout(() => { cp.textContent = 'Copy'; }, 1500); }, () => {}); return true; }
+  const ws = t.closest('.oh[data-ws]'); if (ws) { wsOpen = wsOpen === ws.dataset.ws ? null : ws.dataset.ws; render(); return true; }
   const sf = t.closest('[data-sf]'); if (sf) { spkFilter = sf.dataset.sf; render(); return true; }
   const sp = t.closest('.spk[data-spk]'); if (sp) { spkSel = sp.dataset.spk; render(); return true; }
   const ag = t.closest('.sr[data-ag]'); if (ag) { agOpen = agOpen === ag.dataset.ag ? null : ag.dataset.ag; render(); return true; }
@@ -2772,7 +2850,7 @@ function listClick(t) {
   return false;
 }
 document.addEventListener('click', e => { if (e.target.closest) listClick(e.target); });
-document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.crow,.pr,.sr') && listClick(e.target)) e.preventDefault(); });
+document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.crow,.pr,.sr,.oh') && listClick(e.target)) e.preventDefault(); });
 
 /* ---------- boot ---------- */
 setInterval(() => { if (gate === 'ready' && (tab === 'dashboard' || mode !== 'team') && !editingNow()) render(); }, 60000);
