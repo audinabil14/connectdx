@@ -1536,7 +1536,8 @@ function agendaCols() {
 // Commercial: partner list with a side panel to edit the selected partner; tiers, islands and the target sit below.
 let comSel = null, comFilter = 'all', comCount = 0;
 const TIER_COLS = ['#3F6AF6', '#65D0EA', '#A77BFF', '#F5B547', '#FF6F91', '#3DDC97'];
-const logoBox = p => p && p.logo ? `<img src="${esc(logoSrc(p.logo))}" alt="" onerror="this.remove()">` : esc(initials(shortName(p && p.name).replace(/^messrs\s+/i, '')));
+// Company initials, or the logo when one loads (a broken logo falls back to the initials).
+const logoBox = p => { const ini = esc(initials(shortName(p && p.name).replace(/^messrs\s+/i, ''))); return p && p.logo ? `<img src="${esc(logoSrc(p.logo))}" alt="" data-ini="${ini}" onerror="this.parentNode.textContent=this.dataset.ini">` : ini; };
 VIEWS.commercial = () => {
   const C = calcCommercial(), c = C.c, B = calcBooths();
   // A newly added partner opens in the side panel straight away.
