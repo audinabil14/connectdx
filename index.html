@@ -479,6 +479,64 @@ body.x .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bot
 .ptot{display:flex;justify-content:space-between;padding:12px 18px;font:700 13px Montserrat,sans-serif;border-top:1px solid var(--line)}
 @media (max-width:1100px){.ck4{grid-template-columns:1fr 1fr}.csplit,.pcols,.pvs{grid-template-columns:1fr}.cedit{position:static}}
 @media (max-width:760px){.chead{display:none}.crow,.clist.nov .crow{grid-template-columns:minmax(0,1fr) auto}.crow>:nth-child(2),.crow>:nth-child(3),.crow>.cval{display:none}.pedit,.cf2{grid-template-columns:1fr}}
+
+/* ---------- Programme and Participant profiling (team view) ---------- */
+.ckx{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.gpanel{padding:18px 20px!important;margin-top:14px;display:flex;flex-direction:column;gap:14px}
+.gpanel>.dch{flex-wrap:wrap}
+.gpanel>.dch .hpills{margin-left:auto}
+.gsplit{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;align-items:start}
+.spk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.spk{padding:34px 14px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;position:relative;cursor:pointer;font:inherit;color:inherit;transition:background .15s}
+.spk:hover{background:rgba(255,255,255,.07)}
+.spk.sel{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue) inset;background:rgba(63,106,246,.12)}
+.spk .ph{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font:800 17px Montserrat,sans-serif;color:#fff;background:linear-gradient(135deg,var(--blue),var(--cyan));box-shadow:0 0 0 3px rgba(255,255,255,.06),0 0 22px rgba(63,106,246,.4)}
+.spk.pend .ph{background:linear-gradient(135deg,#3A3F52,#262A38);box-shadow:0 0 0 3px rgba(245,181,71,.25)}
+.spk.no .ph{background:#262A38;box-shadow:none;opacity:.6}
+.spk b{font:700 13.5px Montserrat,sans-serif}
+.spk small{color:var(--muted);font-size:12px;min-height:16px}
+.spk .tg2{position:absolute;top:10px;left:10px;right:10px;font:600 10.5px Inter,sans-serif;color:var(--faint);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spk.open{border-style:dashed;border-color:var(--line2);background:none;justify-content:center;min-height:170px;color:var(--faint)}
+.spk.open .ph{background:none;border:1.5px dashed var(--line2);box-shadow:none;color:var(--faint);font-size:24px}
+.fkey{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-left:auto}
+.fkey span{display:flex;align-items:center;gap:5px}.fkey i{width:8px;height:8px;border-radius:3px}
+.gdays{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+.gday h4{font:800 15px Montserrat,sans-serif;padding-bottom:10px;margin:0 0 6px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.gday h4 small{font:500 12px Inter,sans-serif;color:var(--faint);margin-left:auto}
+.ses{padding:5px 0}
+.ses>.sr{display:grid;grid-template-columns:84px 1fr;gap:12px;cursor:pointer}
+.ses .tm{font:700 12px Montserrat,sans-serif;color:var(--muted);padding-top:9px}.ses .tm small{display:block;font:500 11px Inter,sans-serif;color:var(--faint)}
+.ses .bd{padding:9px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-left:3px solid var(--fc)}
+.ses .bd b{display:block;font-weight:600;font-size:13px}.ses .bd small{color:var(--muted);font-size:11.5px}
+.ses .ft2{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}.ses .ft2 span{font:600 10.5px Inter,sans-serif;padding:2px 7px;border-radius:6px;background:rgba(255,255,255,.06);color:var(--muted)}
+.ses.hl .bd{background:linear-gradient(120deg,rgba(255,111,145,.16),rgba(167,123,255,.12));border-color:rgba(255,111,145,.35)}
+.ses.open .bd{border-color:var(--blue);background:rgba(63,106,246,.12)}
+.ses .pedit{margin:6px 0 4px 96px;border-radius:12px;padding-top:12px}
+.gsetup{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.uwk{display:flex;align-items:flex-end;gap:8px;height:200px;padding-top:20px}
+.uwk>div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;min-width:0}
+.uwk .c{width:100%;max-width:44px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,var(--cyan),var(--blue));position:relative;min-height:3px}
+.uwk .c b{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font:700 11px Montserrat,sans-serif;color:var(--text);white-space:nowrap}
+.uwk small{font-size:10.5px;color:var(--faint);white-space:nowrap}
+.ubars{display:flex;flex-direction:column;gap:11px}
+.ubars.two{display:grid;grid-template-columns:1fr 1fr;gap:11px 22px}
+.ub .l{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--muted);margin-bottom:5px}
+.ub .l span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ub .l b{color:var(--text);font:700 12.5px Montserrat,sans-serif;white-space:nowrap}.ub .l b small{color:var(--faint);font:500 11px Inter,sans-serif;margin-left:4px}
+.ub .track{height:7px;margin:0}
+.ustack{display:flex;height:22px;border-radius:8px;overflow:hidden;gap:2px;margin:6px 0 16px}
+.ulegend{display:flex;flex-direction:column;gap:10px}
+.ulegend div{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted)}
+.ulegend s{width:10px;height:10px;border-radius:3px;flex:none}
+.ulegend b{margin-left:auto;color:var(--text);font:700 13px Montserrat,sans-serif}.ulegend b small{color:var(--faint);font:500 11px Inter,sans-serif;margin-left:6px}
+.unote{margin-top:14px;padding:12px 14px;border-radius:12px;background:rgba(63,106,246,.12);border:1px solid rgba(63,106,246,.3);font-size:12.5px;color:#C7D5FF}
+.ugrp{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.ugrp>div{padding:16px 10px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line);text-align:center}
+.ugrp b{display:block;font:800 24px Montserrat,sans-serif}.ugrp small{color:var(--muted);font-size:12px}.ugrp em{display:block;font-style:normal;color:var(--faint);font-size:11px;margin-top:2px}
+.upeaks{display:flex;flex-wrap:wrap;gap:6px;font-size:11.5px;color:var(--muted)}.upeaks span{padding:3px 8px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.u3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
+.u2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:14px;margin-top:14px}
+@media (max-width:1100px){.gsplit,.u2,.u3,.ubars.two{grid-template-columns:1fr}.ses .pedit{margin-left:0}}
 @media (max-width:1100px){.isles{grid-template-columns:repeat(5,1fr)}}
 @media (max-width:760px){
   body.x .rail{display:none}body.x .page{margin:0;padding:0 12px 28px}
@@ -1599,48 +1657,80 @@ VIEWS.commercial = () => {
   return h;
 };
 
-function agendaTable(items, pickDays) {
-  return `<div class="tbl-wrap"><table class="tbl" style="min-width:${pickDays ? 1000 : 860}px"><thead><tr>${pickDays ? '<th style="width:130px">Day</th>' : ''}<th style="width:110px">Start</th><th style="width:110px">End</th><th style="width:28%">Session</th><th>Format</th><th>Speaker</th><th>Stage</th><th></th></tr></thead><tbody>
-  ${items.map(a => `<tr>${pickDays ? `<td><select data-b="programme:agenda:${a.id}:dayId">${opts(pickDays.map(g => [g.id, 'Day ' + g.n]), '', 'Choose day')}</select></td>` : ''}<td><input type="time" data-b="programme:agenda:${a.id}:start" value="${esc(a.start)}"></td><td><input type="time" data-b="programme:agenda:${a.id}:end" value="${esc(a.end)}"></td>
-    <td>${inp(`programme:agenda:${a.id}:title`, a.title, 'placeholder="Session title"')}</td><td>${inp(`programme:agenda:${a.id}:format`, a.format, 'placeholder="Keynote, panel…"')}</td>
-    <td>${inp(`programme:agenda:${a.id}:speaker`, a.speaker, 'list="spk" placeholder="Speaker"')}</td><td>${inp(`programme:agenda:${a.id}:stage`, a.stage, 'placeholder="Main stage"')}</td><td>${del('delAgenda', a.id)}</td></tr>`).join('')}
-  </tbody></table></div>`;
+// Programme: speaker cards with open slots and a side panel, the days as a timeline, setup at the bottom.
+let spkSel = null, spkFilter = 'all', spkCount = 0, agOpen = null;
+// Session colour by kind of format; the legend lists each kind once.
+const FMT_KINDS = [['Networking', /network|break/, '#3DDC97'], ['Industry sharing', /sharing|pocket/, '#A77BFF'], ['Keynote', /keynote/, '#3F6AF6'], ['Opening', /ceremon|opening|perasmian/, '#FF6F91'], ['Panel', /panel/, '#F5B547'], ['Speaker session', /speaker|session/, '#65D0EA']];
+const fmtKind = f => FMT_KINDS.find(k => k[1].test(String(f || '').toLowerCase())) || ['Other', null, '#5A6070'];
+const FMT_COL = f => fmtKind(f)[2];
+function sessionEdit(a, days) {
+  return `<div class="pedit"><label class="field">Start<input type="time" data-b="programme:agenda:${a.id}:start" value="${esc(a.start)}"></label><label class="field">End<input type="time" data-b="programme:agenda:${a.id}:end" value="${esc(a.end)}"></label>
+    <label class="field full">Session${inp(`programme:agenda:${a.id}:title`, a.title, 'placeholder="Session title"')}</label>
+    <label class="field">Format${inp(`programme:agenda:${a.id}:format`, a.format, 'placeholder="Keynote, panel…"')}</label><label class="field">Speaker${inp(`programme:agenda:${a.id}:speaker`, a.speaker, 'list="spk" placeholder="Speaker"')}</label>
+    <label class="field">Stage${inp(`programme:agenda:${a.id}:stage`, a.stage, 'placeholder="Main stage"')}</label>${days.length > 1 ? `<label class="field">Day<select data-b="programme:agenda:${a.id}:dayId">${opts(days.map(g => [g.id, 'Day ' + g.n]), dayOf(a, days) || '', 'Choose day')}</select></label>` : ''}
+    <div class="pacts"><span></span>${del('delAgenda', a.id)}</div></div>`;
+}
+function sessionRow(a, days) {
+  const col = FMT_COL(a.format), open = agOpen === a.id, hl = /ceremon|perasmian/i.test((a.format || '') + ' ' + (a.title || ''));
+  return `<div class="ses ${hl ? 'hl' : ''} ${open ? 'open' : ''}" style="--fc:${col}"><div class="sr" data-ag="${a.id}" tabindex="0" role="button" aria-expanded="${open}"><div class="tm">${esc(a.start || '–')}${a.end ? `<small>to ${esc(a.end)}</small>` : ''}</div>
+    <div class="bd"><b>${esc(a.title || 'Untitled session')}</b>${a.speaker ? `<small>${esc(a.speaker)}</small>` : ''}${a.format || a.stage ? `<div class="ft2">${a.format ? `<span>${esc(a.format)}</span>` : ''}${a.stage ? `<span>${esc(a.stage)}</span>` : ''}</div>` : ''}</div></div>${open ? sessionEdit(a, days) : ''}</div>`;
 }
 VIEWS.programme = () => {
-  const P = calcProgramme(), p = P.p, AG = agendaByDay(p);
-  const names = p.speakers.map(s => s.name).filter(Boolean);
-  const day1 = AG.groups.map(g => g.date).filter(Boolean).sort()[0] || '';
-  const cd = calcCountdown();
-  return `<div class="section"><div class="card"><h3>Event countdown</h3><p class="help">Shown at the top of the dashboard. ${cd ? (cd.phase === 'before' ? `Currently ${fmtN(cd.days)} day${cd.days === 1 ? '' : 's'} to go.` : cd.phase === 'during' ? 'The event is live.' : 'The event has ended.') : 'Add a date to start the countdown.'}</p>
-    <div class="fields"><label class="field">Event name${inp('programme:cdLabel', p.cdLabel || '', 'placeholder="CONNECTD X 2026"')}</label>
-    <label class="field">Count down to<input type="date" data-b="programme:cdDate" value="${esc(p.cdDate || '')}"></label>
-    <label class="field">Start time<input type="time" data-b="programme:cdTime" value="${esc(p.cdTime || '')}"></label>
-    <label class="field">Venue${inp('programme:cdVenue', p.cdVenue || '', 'placeholder="e.g. KLCC, Kuala Lumpur"')}</label></div>
-    <p class="help" style="margin:10px 0 0">${p.cdDate ? 'Clear the date to follow Day 1 of the tentative programme again.' : day1 ? `Leave the date blank to follow Day 1 of the tentative programme (${esc(fmtDay(day1))}).` : 'Leave the date blank to follow Day 1 of the tentative programme once it has a date.'}</p></div></div>
-  <div class="section"><div class="strip">${P.targets.map(t => stat(`${t.secured}/${t.slots}`, t.name + ' secured')).join('')}${stat(p.agenda.length, 'sessions drafted')}</div>
-  <div class="card"><h3>Speaker slots</h3><p class="help">How many speakers you need for each segment.</p><div class="tbl-wrap"><table class="tbl" style="min-width:380px"><thead><tr><th>Segment</th><th style="width:100px">Slots</th><th style="width:90px">Secured</th><th></th></tr></thead><tbody>
-  ${P.targets.map(t => `<tr><td>${inp(`programme:targets:${t.id}:name`, t.name)}</td><td>${ninp(`programme:targets:${t.id}:slots`, t.slots)}</td><td class="calc">${t.secured}</td><td>${del('delTarget', t.id)}</td></tr>`).join('')}
-  </tbody></table></div><div class="row-actions"><button class="btn" data-act="addTarget">Add segment</button></div></div></div>
+  const P = calcProgramme(), p = P.p, AG = agendaByDay(p), cd = calcCountdown();
+  if (p.speakers.length > spkCount && spkCount) spkSel = p.speakers[p.speakers.length - 1].id;
+  spkCount = p.speakers.length;
+  if (!p.speakers.some(x => x.id === spkSel)) spkSel = (p.speakers[0] || {}).id || null;
+  const names = p.speakers.map(x => x.name).filter(Boolean), day1 = AG.groups.map(g => g.date).filter(Boolean).sort()[0] || '';
+  const tname = id => (p.targets.find(t => t.id === id) || {}).name || 'No segment';
+  // Summary cards
+  let h = `<div class="ck4 ckx">${P.targets.map(t => { const sl = p.speakers.filter(x => x.type === t.id && x.status !== 'Confirmed' && x.status !== 'Declined').length;
+    return `<div class="card ck"><small>${esc(t.name)}s</small><b>${t.secured} <span>/ ${t.slots}</span></b>${bar(pct(t.secured, t.slots), true)}<p><em>${sl}</em> in progress · ${Math.max(0, t.slots - t.secured)} slot${t.slots - t.secured === 1 ? '' : 's'} open</p></div>`; }).join('')}
+    <div class="card ck"><small>Sessions</small><b>${p.agenda.length}</b><p><em>${AG.groups.length}</em> day${AG.groups.length === 1 ? '' : 's'}${day1 ? ' · from ' + esc(fmtDay(day1)) : ''}</p></div>
+    <div class="card ck"><small>Countdown</small><b>${cd ? (cd.phase === 'before' ? fmtN(cd.days) + ' <span>days</span>' : cd.phase === 'during' ? 'Live' : 'Ended') : '–'}</b><p>${esc([p.cdLabel, p.cdVenue].filter(Boolean).join(' · ') || 'Set the event date in Setup below')}</p></div></div>`;
 
-  <div class="section"><div class="sec-head"><h2>Speakers</h2><p>Confirmed speakers count towards their segment's slots.</p></div>
-  <div class="card"><div class="tbl-wrap"><table class="tbl" style="min-width:860px"><thead><tr><th style="width:20%">Speaker</th><th style="width:22%">Role / brand / topic</th><th>Segment</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody>
-  ${p.speakers.map(s => `<tr><td>${inp(`programme:speakers:${s.id}:name`, s.name, 'placeholder="Name"')}</td><td>${inp(`programme:speakers:${s.id}:role`, s.role, 'placeholder="e.g. Marketing Guru"')}</td>
-    <td><select data-b="programme:speakers:${s.id}:type">${opts(p.targets.map(t => [t.id, t.name]), s.type, 'Choose segment')}</select></td>
-    <td><select data-b="programme:speakers:${s.id}:status">${opts(SPEAKER_STATUS, s.status)}</select></td>
-    <td>${inp(`programme:speakers:${s.id}:notes`, s.notes, 'placeholder="Fee, PIC, follow-up…"')}</td><td>${del('delSpeaker', s.id)}</td></tr>`).join('')}
-  </tbody></table></div>${p.speakers.length ? '' : '<div class="empty">No speakers yet.</div>'}
-  <div class="row-actions"><button class="btn primary" data-act="addSpeaker">Add speaker</button></div></div></div>
+  // Speakers: cards plus open slots, side panel for the selected speaker
+  const pills = [['all', 'All', p.speakers.length], ...p.targets.map(t => [t.id, t.name + 's', p.speakers.filter(x => x.type === t.id).length])];
+  const segs = p.targets.filter(t => spkFilter === 'all' || t.id === spkFilter);
+  const card = x => `<button type="button" class="spk ${x.status === 'Confirmed' ? '' : x.status === 'Declined' ? 'no' : 'pend'} ${x.id === spkSel ? 'sel' : ''}" data-spk="${x.id}"><span class="tg2">${esc(tname(x.type))}</span><span class="ph">${esc(initials(x.name || '?'))}</span><b>${esc(x.name || 'Unnamed')}</b><small>${esc(x.role || '')}</small><span class="cst ${x.status === 'Confirmed' ? 'Confirmed' : x.status === 'Declined' ? 'Dropped' : 'Negotiating'}">${esc(x.status)}</span></button>`;
+  let grid = segs.map(t => { const list = p.speakers.filter(x => x.type === t.id), open = Math.max(0, t.slots - list.filter(x => x.status !== 'Declined').length);
+    return list.map(card).join('') + Array.from({length: open}, () => `<button type="button" class="spk open" data-act="addSpeaker" data-id="${t.id}"><span class="tg2">${esc(t.name)}</span><span class="ph">＋</span><small>Open slot · add speaker</small></button>`).join(''); }).join('');
+  if (spkFilter === 'all') grid += p.speakers.filter(x => !p.targets.some(t => t.id === x.type)).map(card).join('');
+  const x = p.speakers.find(y => y.id === spkSel);
+  h += `<div class="card gpanel"><div class="dch"><h3>Speakers</h3><div class="hpills" role="group" aria-label="Show speakers">${pills.map(([k, l, n]) => `<button type="button" class="hpill ${spkFilter === k ? 'on' : ''}" data-sf="${esc(k)}">${esc(l)}<span class="n">${n}</span></button>`).join('')}</div><button class="btn primary" data-act="addSpeaker">＋ Add speaker</button></div>
+    <div class="gsplit"><div class="spk-grid">${grid || '<div class="empty">No speakers yet.</div>'}</div>
+    ${x ? `<aside class="cedit" style="padding:16px!important;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.03)" aria-label="Edit speaker"><div class="eh"><div class="clogo">${esc(initials(x.name || '?'))}</div><div style="min-width:0"><h3>${esc(x.name || 'Unnamed speaker')}</h3><small>Confirmed speakers fill their segment's slots</small></div></div>
+      <label class="field">Speaker${inp(`programme:speakers:${x.id}:name`, x.name, 'placeholder="Name"')}</label>
+      <label class="field">Role / brand / topic${inp(`programme:speakers:${x.id}:role`, x.role, 'placeholder="e.g. Marketing Guru"')}</label>
+      <div class="cf2"><label class="field">Segment<select data-b="programme:speakers:${x.id}:type">${opts(p.targets.map(t => [t.id, t.name]), x.type, 'Choose segment')}</select></label>
+      <label class="field">Status<select data-b="programme:speakers:${x.id}:status">${opts(SPEAKER_STATUS, x.status)}</select></label></div>
+      <label class="field">Notes${inp(`programme:speakers:${x.id}:notes`, x.notes, 'placeholder="Fee, PIC, follow-up…"')}</label>
+      <div class="cacts"><span></span>${del('delSpeaker', x.id)}</div></aside>` : '<aside class="cedit"><div class="empty">Add a speaker to start.</div></aside>'}</div></div>`;
 
-  <div class="section"><div class="sec-head"><h2>Tentative programme</h2><p>Each day has its own schedule. Sessions sort by start time.</p></div>
-  <datalist id="spk">${names.map(n => `<option value="${esc(n)}">`).join('')}</datalist>
-  <div class="card days-bar"><label class="field">Number of days<select id="dayCount">${opts(Array.from({length: Math.max(7, AG.groups.length)}, (_, i) => [i + 1, `${i + 1} day${i ? 's' : ''}`]), AG.groups.length)}</select></label>
-    ${AG.groups.map(g => `<label class="field">Day ${g.n} date<input type="date" data-b="programme:days:${g.id}:date" value="${esc(g.date)}"></label>`).join('')}
-    ${dayMsg ? `<p class="help" style="color:var(--danger);grid-column:1/-1;margin:0">${esc(dayMsg)}</p>` : ''}</div>
-  ${AG.groups.map(g => `<div class="card day-card"><div class="day-head"><div><div class="day-title">Day ${g.n}</div><div class="muted" style="font-size:13px">${g.date ? esc(new Date(g.date + 'T00:00:00').toLocaleDateString('en-MY', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'})) : 'Date not set'} · ${g.items.length} session${g.items.length === 1 ? '' : 's'}</div></div>${AG.groups.length > 1 ? del('delDay', g.id).replace(/>Remove</, '>Remove day<') : ''}</div>
-    ${g.items.length ? agendaTable(g.items) : '<div class="empty">No sessions for this day yet.</div>'}
-    <div class="row-actions"><button class="btn primary" data-act="addAgenda" data-id="${g.id}">Add session to Day ${g.n}</button></div></div>`).join('')}
-  ${AG.loose.length ? `<div class="card day-card"><div class="day-head"><div><div class="day-title">Not assigned to a day</div><div class="muted" style="font-size:13px">Pick a day for each session below.</div></div></div>${agendaTable(AG.loose, AG.groups)}</div>` : ''}
-  </div>`;
+  // Tentative programme as a timeline
+  const fmts = [...new Map(p.agenda.filter(a => String(a.format || '').trim()).map(a => { const k = fmtKind(a.format); return [k[0], k[2]]; })).entries()];
+  h += `<datalist id="spk">${names.map(n => `<option value="${esc(n)}">`).join('')}</datalist>
+  <div class="card gpanel"><div class="dch"><h3>Tentative programme</h3><span class="more">${AG.groups.length} day${AG.groups.length === 1 ? '' : 's'} · ${p.agenda.length} sessions · click a session to edit</span><div class="fkey">${fmts.map(([k, c]) => `<span><i style="background:${c}"></i>${esc(k)}</span>`).join('')}</div></div>
+    <div class="gdays">${AG.groups.map(g => `<div class="gday"><h4>Day ${g.n}<small>${g.date ? esc(new Date(g.date + 'T00:00:00').toLocaleDateString('en-MY', {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'})) : 'Date not set'} · ${g.items.length} session${g.items.length === 1 ? '' : 's'}</small>${AG.groups.length > 1 ? del('delDay', g.id).replace(/>Remove</, '>Remove day<') : ''}</h4>
+      ${g.items.map(a => sessionRow(a, AG.groups)).join('') || '<div class="empty">No sessions for this day yet.</div>'}
+      <div class="row-actions"><button class="btn" data-act="addAgenda" data-id="${g.id}">＋ Add session to Day ${g.n}</button></div></div>`).join('')}
+    ${AG.loose.length ? `<div class="gday"><h4>Not assigned to a day<small>Open each session and pick a day</small></h4>${AG.loose.map(a => sessionRow(a, AG.groups)).join('')}</div>` : ''}</div></div>`;
+
+  // Setup
+  h += `<div class="section"><div class="sec-head"><h2>Setup</h2><p>Countdown, speaker slots and event days.</p></div><div class="gsetup">
+    <div class="card"><h3>Event countdown</h3><p class="help">${cd ? (cd.phase === 'before' ? `Currently ${fmtN(cd.days)} day${cd.days === 1 ? '' : 's'} to go.` : cd.phase === 'during' ? 'The event is live.' : 'The event has ended.') : 'Add a date to start the countdown.'}</p>
+      <div class="fields"><label class="field">Event name${inp('programme:cdLabel', p.cdLabel || '', 'placeholder="CONNECTD X 2026"')}</label>
+      <label class="field">Count down to<input type="date" data-b="programme:cdDate" value="${esc(p.cdDate || '')}"></label>
+      <label class="field">Start time<input type="time" data-b="programme:cdTime" value="${esc(p.cdTime || '')}"></label>
+      <label class="field">Venue${inp('programme:cdVenue', p.cdVenue || '', 'placeholder="e.g. KLCC, Kuala Lumpur"')}</label></div>
+      <p class="help" style="margin:10px 0 0">${p.cdDate ? 'Clear the date to follow Day 1 of the tentative programme again.' : day1 ? `Leave the date blank to follow Day 1 of the tentative programme (${esc(fmtDay(day1))}).` : 'Leave the date blank to follow Day 1 of the tentative programme once it has a date.'}</p></div>
+    <div class="card"><h3>Speaker slots</h3><p class="help">How many speakers you need for each segment.</p><div class="tbl-wrap"><table class="tbl" style="min-width:340px"><thead><tr><th>Segment</th><th style="width:90px">Slots</th><th style="width:80px">Secured</th><th></th></tr></thead><tbody>
+      ${P.targets.map(t => `<tr><td>${inp(`programme:targets:${t.id}:name`, t.name)}</td><td>${ninp(`programme:targets:${t.id}:slots`, t.slots)}</td><td class="calc">${t.secured}</td><td>${del('delTarget', t.id)}</td></tr>`).join('')}
+      </tbody></table></div><div class="row-actions"><button class="btn" data-act="addTarget">Add segment</button></div></div>
+    <div class="card"><h3>Event days</h3><div class="fields"><label class="field">Number of days<select id="dayCount">${opts(Array.from({length: Math.max(7, AG.groups.length)}, (_, i) => [i + 1, `${i + 1} day${i ? 's' : ''}`]), AG.groups.length)}</select></label>
+      ${AG.groups.map(g => `<label class="field">Day ${g.n} date<input type="date" data-b="programme:days:${g.id}:date" value="${esc(g.date)}"></label>`).join('')}</div>
+      ${dayMsg ? `<p class="help" style="color:var(--danger);margin:10px 0 0">${esc(dayMsg)}</p>` : ''}</div>
+  </div></div>`;
+  return h;
 };
 
 const DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -1650,28 +1740,7 @@ function signupStats(daily) {
   const order = [1, 2, 3, 4, 5, 6, 0].map(i => DOW[i]);
   return {byDow: order.map(d => [d, dow[d]]), peaks: [...daily].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([k, v]) => [new Date(k + 'T00:00:00').toLocaleDateString('en-MY', {weekday: 'short', day: 'numeric', month: 'short'}), v])};
 }
-function signupCard(daily, withPct) {
-  const {byDow, peaks} = signupStats(daily), mx = Math.max(...byDow.map(x => x[1])), tot = withPct ? daily.reduce((a, [, v]) => a + v, 0) : 0, pc = v => tot ? `<span class="pc">${pctTxt(v, tot)}</span>` : '';
-  return `<div class="card"><h3>When people sign up</h3><div class="two"><div><div class="list-head">Participants by day of week</div><ul class="bars">${byDow.map(([d, v]) => `<li><span class="b-l">${d}</span><span class="b-v">${fmtN(v)}${pc(v)}</span>${bar(pct(v, mx))}</li>`).join('')}</ul></div><div><div class="list-head">Busiest sign-up days</div><ul class="mini-list">${peaks.map(([d, v]) => `<li><span>${esc(d)}</span><b>${fmtN(v)}${pc(v)}</b></li>`).join('')}</ul></div></div></div>`;
-}
 const pctTxt = (c, den) => { if (!den) return ''; const v = c / den * 100; return (v < 10 ? Math.round(v * 10) / 10 : Math.round(v)) + '%'; };
-const PIE_COLS = ['#1f4e79', '#e07a1f', '#2f8f5b', '#c23b4a', '#7a4fb3', '#d4a017', '#1aa3a3', '#8c564b', '#e377c2', '#5a6b7b', '#9bbb3c', '#3d7fd9', '#b5651d', '#6d2f6f', '#4f9e8f', '#a63d1f'];
-const pieCol = i => i < PIE_COLS.length ? PIE_COLS[i] : `hsl(${(i * 137.5) % 360} 55% 50%)`;
-// Pie chart plus one line per item: colour, name, exact number and share of answers.
-function pieList(arr, noPie, base, limit) {
-  if (!arr || !arr.length) return '<div class="empty">Not in this upload. Map the column and upload again.</div>';
-  const total = arr.reduce((a, [, c]) => a + c, 0), den = base || total;
-  let ang = -Math.PI / 2, paths = '';
-  arr.forEach(([, c], i) => {
-    const f = c / total, col = pieCol(i);
-    if (f >= 0.9999) { paths += `<circle cx="50" cy="50" r="48" fill="${col}"/>`; return; }
-    const a2 = ang + f * 2 * Math.PI, x1 = 50 + 48 * Math.cos(ang), y1 = 50 + 48 * Math.sin(ang), x2 = 50 + 48 * Math.cos(a2), y2 = 50 + 48 * Math.sin(a2);
-    paths += `<path d="M50 50L${x1.toFixed(3)} ${y1.toFixed(3)}A48 48 0 ${f > 0.5 ? 1 : 0} 1 ${x2.toFixed(3)} ${y2.toFixed(3)}Z" fill="${col}" stroke="var(--card)" stroke-width="0.6"/>`;
-    ang = a2;
-  });
-  const p = c => { const v = c / den * 100; return (v < 10 ? Math.round(v * 10) / 10 : Math.round(v)) + '%'; };
-  return `<div class="pie-wrap">${noPie ? '' : `<svg viewBox="0 0 100 100" role="img" aria-label="Pie chart">${paths}</svg>`}<ul class="mini-list">${(limit && !indAll ? arr.slice(0, limit) : arr).map(([n, c], i) => `<li><span>${noPie ? '' : `<i class="sw" style="background:${pieCol(i)}"></i>`}${esc(n)}</span><b>${fmtN(c)}<span class="pc">${p(c)}</span></b></li>`).join('')}</ul></div>${limit && arr.length > limit ? `<div data-noreport style="margin-top:8px"><button class="btn" data-act="toggleInd">${indAll ? 'See less' : `See more (${fmtN(arr.length - limit)} more)`}</button></div>` : ''}<p class="help" style="margin-top:10px">${base ? `% of ${fmtN(base)} people who answered. People could tick more than one industry, so the %s add up to more than 100%.` : `${fmtN(total)} answers in total.`}</p>`;
-}
 async function profileReport(kind) {
   const el = document.getElementById('profileReport');
   if (!el || !window.html2canvas) { uploadError = 'The report tool did not load. Check your internet connection and reload the page.'; render(); return; }
@@ -1687,8 +1756,7 @@ async function profileReport(kind) {
   }
   pdf.save(name + '.pdf');
 }
-VIEWS.participants = () => {
-  const part = get('participants'), s = part.summary;
+function partSetup(part) {
   let h = `<div class="section"><div class="two"><div class="card"><h3>Upload registration export</h3>
     <p class="help">CSV or Excel. The file is read in your browser; only the summary numbers are saved.</p>
     <label class="drop" id="drop"><input type="file" id="file" accept=".csv,.xlsx,.xls"><b>Choose a file</b> <span class="muted">or drop it here</span></label>
@@ -1707,18 +1775,51 @@ VIEWS.participants = () => {
     ${num(part.target) ? `<div style="margin-top:16px">${bar(pct(num(part.confirmed), num(part.target)))}<div class="metric-label">${fmtP(Math.round(pct(num(part.confirmed), num(part.target)) * 10) / 10)} of target · ${fmtN(Math.max(0, num(part.target) - num(part.confirmed)))} to go</div></div>` : ''}
     <p class="help" style="margin-top:14px">Generating a summary fills confirmed participants by counting the people in each registration: "A1: name; A2: name" counts as 2. Without attendee names it uses a pax column, or one per row. You can edit it after.</p></div></div></div>`;
 
-  h += `<div class="section" id="profileReport"><div class="sec-head"><h2>Current profile</h2>${s ? `<p>From ${esc(s.fileName || 'upload')}${s.event ? ` · ${esc(s.event)} only` : ''} · ${fmtDate(s.uploadedAt)}</p>` : ''}</div>`;
-  if (!s) return h + `<div class="card"><div class="empty">Upload a registration export to build the profile.</div></div></div>`;
-  const list = (title, arr, den) => arr && arr.length ? `<div class="list-head">${title}</div><ul class="mini-list">${arr.map(([n, c]) => `<li><span>${esc(n)}</span><b>${fmtN(c)}${den ? `<span class="pc">${pctTxt(c, den)}</span>` : ''}</b></li>`).join('')}</ul>` : '';
-  const gt3 = s.revenueGt3Pct != null ? s.revenueGt3Pct : s.revenueLe3Pct != null ? 100 - s.revenueLe3Pct : null;
-  h += `<div class="strip">${s.pax ? stat(fmtN(s.pax), 'participants') : ''}${stat(s.leadershipPct == null ? '–' : Math.round(s.leadershipPct) + '%', 'leadership-level')}${stat(s.revenueLe3Pct == null ? '–' : Math.round(s.revenueLe3Pct) + '%', 'revenue RM3m or below')}${stat(gt3 == null ? '–' : Math.round(gt3) + '%', 'revenue above RM3m')}${stat(s.founders == null ? '–' : fmtN(s.founders) + (s.designationCount ? `<span class="pc">${pctTxt(s.founders, s.designationCount)}</span>` : ''), 'founders / co-founders')}</div>
-    <div class="two"><div class="card"><h3>Industry</h3>${pieList(s.industries, true, s.industryResp, 8)}</div>
-    <div class="card"><h3>Annual revenue</h3>${pieList(s.revenueBands)}</div></div>
-    <div class="two" style="margin-top:18px"><div class="card">${list('Location', s.locations, s.locationResp)}</div>
-    <div class="card">${list('Top designations', s.designations, s.designationCount)}${!(s.designations || []).length ? '<div class="empty">Designation breakdown appears after your next upload.</div>' : ''}</div></div>
-    ${s.daily && s.daily.length ? `<div style="margin-top:18px">${signupCard(s.daily, true)}</div>` : ''}
-    <div class="row-actions" data-noreport><button class="btn primary" data-act="reportPng">Generate report (PNG)</button><button class="btn primary" data-act="reportPdf">Generate report (PDF)</button><button class="btn del ${armed === 'clearSummary:x' ? 'armed' : ''}" data-act="clearSummary" data-id="x">${armed === 'clearSummary:x' ? 'Confirm clear' : 'Clear profile'}</button></div></div>`;
   return h;
+}
+// Participant profiling: headline numbers, charts, report buttons; upload and headcount below (on top while mapping a file).
+const REV_COLS = ['#65D0EA', '#3F6AF6', '#A77BFF', '#F5B547', '#FF6F91', '#3DDC97'];
+function ubars(arr, den, max) {
+  return arr.map(([l, n]) => `<div class="ub"><div class="l"><span title="${esc(l)}">${esc(l)}</span><b>${fmtN(n)}${den ? `<small>${pctTxt(n, den)}</small>` : ''}</b></div><div class="track"><div class="fill" style="width:${pct(n, max)}%"></div></div></div>`).join('');
+}
+function weekly(daily) {
+  const wk = {};
+  daily.forEach(([d, n]) => { const t = new Date(d + 'T00:00:00'); if (isNaN(t)) return; t.setDate(t.getDate() - (t.getDay() + 6) % 7); const k = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; wk[k] = (wk[k] || 0) + n; });
+  return Object.entries(wk).sort(([a], [b]) => a.localeCompare(b)).map(([k, n]) => [new Date(k + 'T00:00:00').toLocaleDateString('en-MY', {day: 'numeric', month: 'short'}), n]);
+}
+VIEWS.participants = () => {
+  const part = get('participants'), s = part.summary, conf = num(part.confirmed), tgt = num(part.target);
+  let h = upload ? partSetup(part) : '';
+  if (!s) return h + `<div class="card gpanel"><div class="empty">Upload a registration export to build the profile.</div></div>` + (upload ? '' : partSetup(part));
+  const gt3 = s.revenueGt3Pct != null ? s.revenueGt3Pct : s.revenueLe3Pct != null ? 100 - s.revenueLe3Pct : null;
+  const groups = (s.regSizes || []).filter(([l]) => !/^1\b/.test(l)).reduce((a, [, n]) => a + n, 0);
+  h += `<div class="ck4">
+    <div class="card ck"><small>Participants</small><b>${fmtN(conf || s.pax || 0)}</b>${tgt ? bar(pct(conf, tgt), true) + `<p><em>${fmtP(Math.round(pct(conf, tgt) * 10) / 10)}</em> of ${fmtN(tgt)} target</p>` : '<p>Set a target below</p>'}</div>
+    <div class="card ck"><small>Registrations</small><b>${fmtN(s.records || 0)}</b><p>${groups ? `<em>${fmtN(groups)}</em> cover more than one person` : 'one person each'}</p></div>
+    <div class="card ck"><small>Leadership level</small><b>${s.leadershipPct == null ? '–' : Math.round(s.leadershipPct) + '%'}</b><p>${s.founders == null ? 'founders, CEOs/MDs, directors, C-suite, investors' : `<em>${fmtN(s.founders)}</em> founders / co-founders`}</p></div>
+    <div class="card ck"><small>Revenue RM3m or below</small><b>${s.revenueLe3Pct == null ? '–' : Math.round(s.revenueLe3Pct) + '%'}</b><p>${gt3 == null ? '' : `<em>${Math.round(gt3)}%</em> report above RM3m`}</p></div></div>`;
+  h += `<div id="profileReport"><p class="help" style="margin:14px 0 0">From ${esc(s.fileName || 'upload')}${s.event ? ` · ${esc(s.event)} only` : ''} · ${fmtDate(s.uploadedAt)}</p>`;
+  // Sign-ups per week and seniority
+  const wk = s.daily && s.daily.length ? weekly(s.daily) : [], mw = Math.max(1, ...wk.map(w => w[1]));
+  const peaks = s.daily && s.daily.length ? signupStats(s.daily).peaks : [];
+  const sen = s.seniority || [], senDen = sen.reduce((a, [, n]) => a + n, 0), senMax = Math.max(1, ...sen.map(x => x[1]));
+  h += `<div class="u2"><div class="card dcard"><div class="dch"><h3>When people sign up</h3><span class="more">registrations per week</span></div>${wk.length ? `<div class="uwk">${wk.map(([d, n]) => `<div title="Week of ${esc(d)}: ${fmtN(n)}"><div class="c" style="height:${n / mw * 82}%"><b>${fmtN(n)}</b></div><small>${esc(d)}</small></div>`).join('')}</div>${peaks.length ? `<div class="upeaks">Busiest days: ${peaks.map(([d, v]) => `<span>${esc(d)} · ${fmtN(v)}</span>`).join('')}</div>` : ''}` : '<div class="empty">Sign-up dates appear after your next upload.</div>'}</div>
+    <div class="card dcard"><div class="dch"><h3>Seniority</h3><span class="more">${fmtN(senDen)} people</span></div>${sen.length ? `<div class="ubars">${ubars([...sen].sort((a, b) => b[1] - a[1]), senDen, senMax)}</div>` : '<div class="empty">Not in this upload.</div>'}</div></div>`;
+  // Industry and revenue
+  const ind = s.industries || [], indMax = Math.max(1, ...ind.map(x => x[1])), shown = indAll ? ind : ind.slice(0, 12);
+  const rev = s.revenueBands || [], revDen = rev.reduce((a, [, n]) => a + n, 0);
+  const big = rev.filter(([l]) => /RM\s?(3m|10m)|RM3m\s*–|RM10m|and above/i.test(l) && !/below|less|RM301k/i.test(l)).reduce((a, [, n]) => a + n, 0);
+  h += `<div class="u2"><div class="card dcard"><div class="dch"><h3>Industry</h3><span class="more">% of ${fmtN(s.industryResp || 0)} respondents · more than one allowed</span></div>${ind.length ? `<div class="ubars two">${ubars(shown, s.industryResp, indMax)}</div>${ind.length > 12 ? `<div data-noreport><button class="btn" data-act="toggleInd">${indAll ? 'Show top 12' : `See all ${ind.length}`}</button></div>` : ''}` : '<div class="empty">Not in this upload.</div>'}</div>
+    <div class="card dcard"><div class="dch"><h3>Annual revenue</h3><span class="more">${fmtN(revDen)} businesses</span></div>${rev.length ? `<div class="ustack">${rev.map(([l, n], i) => `<i style="flex:${n};background:${REV_COLS[i % REV_COLS.length]}" title="${esc(l)}: ${fmtN(n)}"></i>`).join('')}</div>
+      <div class="ulegend">${rev.map(([l, n], i) => `<div><s style="background:${REV_COLS[i % REV_COLS.length]}"></s>${esc(l)}<b>${fmtN(n)}<small>${pctTxt(n, revDen)}</small></b></div>`).join('')}</div>${big ? `<div class="unote"><b>${fmtN(big)} businesses</b> report RM3m or more, a good match for sponsors selling to bigger companies.</div>` : ''}` : '<div class="empty">Not in this upload.</div>'}</div></div>`;
+  // Locations, group size, designations
+  const loc = (s.locations || []).slice(0, 8), locMax = Math.max(1, ...loc.map(x => x[1]));
+  const des = (s.designations || []).slice(0, 8), desMax = Math.max(1, ...des.map(x => x[1]));
+  h += `<div class="u3"><div class="card dcard"><div class="dch"><h3>Top locations</h3><span class="more">${fmtN(s.locationResp || 0)} respondents</span></div>${loc.length ? `<div class="ubars">${ubars(loc, s.locationResp, locMax)}</div>` : '<div class="empty">Not in this upload.</div>'}</div>
+    <div class="card dcard"><div class="dch"><h3>Top designations</h3><span class="more">${fmtN(s.designationCount || 0)} people</span></div>${des.length ? `<div class="ubars">${ubars(des, s.designationCount, desMax)}</div>` : '<div class="empty">Designation breakdown appears after your next upload.</div>'}</div>
+    <div class="card dcard"><div class="dch"><h3>Group size</h3><span class="more">per registration</span></div>${(s.regSizes || []).length ? `<div class="ugrp">${s.regSizes.map(([l, n]) => `<div><b>${fmtN(n)}</b><small>${esc(l)}</small><em>${pctTxt(n, s.records)} of registrations</em></div>`).join('')}</div>` : '<div class="empty">Not in this upload.</div>'}</div></div>
+  <div class="row-actions" data-noreport><button class="btn primary" data-act="reportPng">Generate report (PNG)</button><button class="btn primary" data-act="reportPdf">Generate report (PDF)</button><button class="btn del ${armed === 'clearSummary:x' ? 'armed' : ''}" data-act="clearSummary" data-id="x">${armed === 'clearSummary:x' ? 'Confirm clear' : 'Clear profile'}</button></div></div>`;
+  return h + (upload ? '' : partSetup(part));
 };
 
 VIEWS.marketing = () => {
@@ -2005,7 +2106,7 @@ document.addEventListener('click', e => {
     delIsland: () => rm('commercial', 'islands'),
     addTarget: () => mut('programme', d => d.targets.push({id: uid(), name: 'New segment', slots: 1})),
     delTarget: () => rm('programme', 'targets'),
-    addSpeaker: () => mut('programme', d => d.speakers.push({id: uid(), name: '', role: '', type: (d.targets[0] || {}).id || '', status: 'Shortlisted', notes: ''})),
+    addSpeaker: () => mut('programme', d => d.speakers.push({id: uid(), name: '', role: '', type: ((id && d.targets.find(t => t.id === id)) || d.targets[0] || {}).id || '', status: 'Shortlisted', notes: ''})),
     delSpeaker: () => rm('programme', 'speakers'),
     addAgenda: () => mut('programme', d => { const day = d.days.find(x => x.id === id) || d.days[0]; const last = d.agenda.filter(a => a.dayId === day.id).sort(byStart).slice(-1)[0]; d.agenda.push({id: uid(), dayId: day.id, day: day.date, start: last ? last.end || '' : '', end: '', title: '', format: '', speaker: '', stage: last ? last.stage || '' : ''}); }),
     delDay: () => mut('programme', d => { d.days = d.days.filter(x => x.id !== id); d.agenda = d.agenda.filter(a => a.dayId !== id); }),
@@ -2662,13 +2763,16 @@ document.addEventListener('pointercancel', endDrag);
 
 // Commercial and P&L list interactions
 function listClick(t) {
+  const sf = t.closest('[data-sf]'); if (sf) { spkFilter = sf.dataset.sf; render(); return true; }
+  const sp = t.closest('.spk[data-spk]'); if (sp) { spkSel = sp.dataset.spk; render(); return true; }
+  const ag = t.closest('.sr[data-ag]'); if (ag) { agOpen = agOpen === ag.dataset.ag ? null : ag.dataset.ag; render(); return true; }
   const cf = t.closest('[data-cf]'); if (cf) { comFilter = cf.dataset.cf; render(); return true; }
   const row = t.closest('.crow[data-pid]'); if (row) { comSel = row.dataset.pid; render(); return true; }
   const pl = t.closest('.pr[data-pl]'); if (pl) { pnlOpen = pnlOpen === pl.dataset.pl ? null : pl.dataset.pl; render(); return true; }
   return false;
 }
 document.addEventListener('click', e => { if (e.target.closest) listClick(e.target); });
-document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.crow,.pr') && listClick(e.target)) e.preventDefault(); });
+document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.crow,.pr,.sr') && listClick(e.target)) e.preventDefault(); });
 
 /* ---------- boot ---------- */
 setInterval(() => { if (gate === 'ready' && (tab === 'dashboard' || mode !== 'team') && !editingNow()) render(); }, 60000);
