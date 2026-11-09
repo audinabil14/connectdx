@@ -444,6 +444,8 @@ body.x .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bot
 .cedit{padding:18px!important;position:sticky;top:16px;display:flex;flex-direction:column;gap:12px}
 .cedit .eh{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .cedit .eh .clogo{width:44px;height:44px;font-size:13px}
+.clogo.round{border-radius:50%}
+.spk .ph img,.clogo.round img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;background:none}
 .cedit h3{margin:0;font:700 16px Montserrat,sans-serif}.cedit .eh small{color:var(--faint);font-size:12px}
 .cf2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .cedit label.field{margin:0}
@@ -494,7 +496,7 @@ body.x .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bot
 .spk{padding:34px 14px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;position:relative;cursor:pointer;font:inherit;color:inherit;transition:background .15s}
 .spk:hover{background:rgba(255,255,255,.07)}
 .spk.sel{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue) inset;background:rgba(63,106,246,.12)}
-.spk .ph{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font:800 17px Montserrat,sans-serif;color:#fff;background:linear-gradient(135deg,var(--blue),var(--cyan));box-shadow:0 0 0 3px rgba(255,255,255,.06),0 0 22px rgba(63,106,246,.4)}
+.spk .ph{width:60px;height:60px;border-radius:50%;overflow:hidden;display:grid;place-items:center;font:800 17px Montserrat,sans-serif;color:#fff;background:linear-gradient(135deg,var(--blue),var(--cyan));box-shadow:0 0 0 3px rgba(255,255,255,.06),0 0 22px rgba(63,106,246,.4)}
 .spk.pend .ph{background:linear-gradient(135deg,#3A3F52,#262A38);box-shadow:0 0 0 3px rgba(245,181,71,.25)}
 .spk.no .ph{background:#262A38;box-shadow:none;opacity:.6}
 .spk b{font:700 13.5px Montserrat,sans-serif}
@@ -1563,8 +1565,10 @@ async function uploadLogo(pid, file) {
     try { blob = await prepareLogo(file); } catch (e) { logoMsg = 'This image format can\'t be read on this device. Save the logo as PNG or JPG, or take a screenshot of it, and try again.'; return; }
     if (!blob) { logoMsg = 'That SVG is over 2 MB. Use a smaller file or a PNG.'; return; }
     const res = await assetsNs.upload(blob);
-    const old = (get('commercial').partners.find(x => x.id === pid) || {}).logo;
-    mut('commercial', d => { const it = d.partners.find(x => x.id === pid); if (it) it.logo = res.id; });
+    // 'spk:<id>' is a speaker photo; anything else is a partner logo.
+    const sp = pid.startsWith('spk:'), id = sp ? pid.slice(4) : pid, f = sp ? 'photo' : 'logo';
+    const old = ((sp ? get('programme').speakers : get('commercial').partners).find(x => x.id === id) || {})[f];
+    mut(sp ? 'programme' : 'commercial', d => { const it = (sp ? d.speakers : d.partners).find(x => x.id === id); if (it) it[f] = res.id; });
     if (old && old !== res.id) assetsNs.delete(old).catch(() => {});
   } catch (err) {
     const c = err && err.code;
@@ -1721,6 +1725,7 @@ VIEWS.commercial = () => {
 
 // Programme: speaker cards with open slots and a side panel, the days as a timeline, setup at the bottom.
 let spkSel = null, spkFilter = 'all', spkCount = 0, agOpen = null;
+const spkPh = x => { const ini = esc(initials(x.name || '?')); return x.photo ? `<img src="${esc(logoSrc(x.photo))}" alt="" data-ini="${ini}" onerror="this.parentNode.textContent=this.dataset.ini">` : ini; };
 // Session colour by kind of format; the legend lists each kind once.
 const FMT_KINDS = [['Networking', /network|break/, '#3DDC97'], ['Industry sharing', /sharing|pocket/, '#A77BFF'], ['Keynote', /keynote/, '#3F6AF6'], ['Opening', /ceremon|opening|perasmian/, '#FF6F91'], ['Panel', /panel/, '#F5B547'], ['Speaker session', /speaker|session/, '#65D0EA']];
 const fmtKind = f => FMT_KINDS.find(k => k[1].test(String(f || '').toLowerCase())) || ['Other', null, '#5A6070'];
@@ -1753,18 +1758,19 @@ VIEWS.programme = () => {
   // Speakers: cards plus open slots, side panel for the selected speaker
   const pills = [['all', 'All', p.speakers.length], ...p.targets.map(t => [t.id, t.name + 's', p.speakers.filter(x => x.type === t.id).length])];
   const segs = p.targets.filter(t => spkFilter === 'all' || t.id === spkFilter);
-  const card = x => `<button type="button" class="spk ${x.status === 'Confirmed' ? '' : x.status === 'Declined' ? 'no' : 'pend'} ${x.id === spkSel ? 'sel' : ''}" data-spk="${x.id}"><span class="tg2">${esc(tname(x.type))}</span><span class="ph">${esc(initials(x.name || '?'))}</span><b>${esc(x.name || 'Unnamed')}</b><small>${esc(x.role || '')}</small><span class="cst ${x.status === 'Confirmed' ? 'Confirmed' : x.status === 'Declined' ? 'Dropped' : 'Negotiating'}">${esc(x.status)}</span></button>`;
+  const card = x => `<button type="button" class="spk ${x.status === 'Confirmed' ? '' : x.status === 'Declined' ? 'no' : 'pend'} ${x.id === spkSel ? 'sel' : ''}" data-spk="${x.id}"><span class="tg2">${esc(tname(x.type))}</span><span class="ph">${spkPh(x)}</span><b>${esc(x.name || 'Unnamed')}</b><small>${esc(x.role || '')}</small><span class="cst ${x.status === 'Confirmed' ? 'Confirmed' : x.status === 'Declined' ? 'Dropped' : 'Negotiating'}">${esc(x.status)}</span></button>`;
   let grid = segs.map(t => { const list = p.speakers.filter(x => x.type === t.id), open = Math.max(0, t.slots - list.filter(x => x.status !== 'Declined').length);
     return list.map(card).join('') + Array.from({length: open}, () => `<button type="button" class="spk open" data-act="addSpeaker" data-id="${t.id}"><span class="tg2">${esc(t.name)}</span><span class="ph">＋</span><small>Open slot · add speaker</small></button>`).join(''); }).join('');
   if (spkFilter === 'all') grid += p.speakers.filter(x => !p.targets.some(t => t.id === x.type)).map(card).join('');
   const x = p.speakers.find(y => y.id === spkSel);
   h += `<div class="card gpanel"><div class="dch"><h3>Speakers</h3><div class="hpills" role="group" aria-label="Show speakers">${pills.map(([k, l, n]) => `<button type="button" class="hpill ${spkFilter === k ? 'on' : ''}" data-sf="${esc(k)}">${esc(l)}<span class="n">${n}</span></button>`).join('')}</div><button class="btn primary" data-act="addSpeaker">＋ Add speaker</button></div>
     <div class="gsplit"><div class="spk-grid">${grid || '<div class="empty">No speakers yet.</div>'}</div>
-    ${x ? `<aside class="cedit" style="padding:16px!important;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.03)" aria-label="Edit speaker"><div class="eh"><div class="clogo">${esc(initials(x.name || '?'))}</div><div style="min-width:0"><h3>${esc(x.name || 'Unnamed speaker')}</h3><small>Confirmed speakers fill their segment's slots</small></div></div>
+    ${x ? `<aside class="cedit" style="padding:16px!important;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.03)" aria-label="Edit speaker"><div class="eh"><div class="clogo round">${spkPh(x)}</div><div style="min-width:0"><h3>${esc(x.name || 'Unnamed speaker')}</h3><small>Confirmed speakers fill their segment's slots</small></div></div>
       <label class="field">Speaker${inp(`programme:speakers:${x.id}:name`, x.name, 'placeholder="Name"')}</label>
       <label class="field">Role / brand / topic${inp(`programme:speakers:${x.id}:role`, x.role, 'placeholder="e.g. Marketing Guru"')}</label>
       <div class="cf2"><label class="field">Segment<select data-b="programme:speakers:${x.id}:type">${opts(p.targets.map(t => [t.id, t.name]), x.type, 'Choose segment')}</select></label>
       <label class="field">Status<select data-b="programme:speakers:${x.id}:status">${opts(SPEAKER_STATUS, x.status)}</select></label></div>
+      ${assetsNs && !readOnly ? (() => { const k = 'spk:' + x.id, busy = logoBusy[k]; return `<div class="field">Photo<div class="logo-cell"><span class="btn del filebtn">${busy ? 'Uploading…' : x.photo ? 'Change' : 'Upload photo'}<input type="file" accept="image/*" data-logo="${k}" aria-label="${x.photo ? 'Change' : 'Upload'} photo of ${esc(x.name || 'speaker')}" ${busy ? 'disabled' : ''}></span>${busy ? '' : `<div class="pastebox" contenteditable="true" data-paste-logo="${k}" role="textbox" aria-label="Paste a photo of ${esc(x.name || 'speaker')}" data-ph="or paste"></div>`}${x.photo && !busy ? del('delPhoto', x.id) : ''}</div></div>${logoMsg ? `<p class="help" style="margin:0;color:var(--danger)" role="alert">${esc(logoMsg)}</p>` : ''}`; })() : ''}
       <label class="field">Notes${inp(`programme:speakers:${x.id}:notes`, x.notes, 'placeholder="Fee, PIC, follow-up…"')}</label>
       <div class="cacts"><span></span>${del('delSpeaker', x.id)}</div></aside>` : '<aside class="cedit"><div class="empty">Add a speaker to start.</div></aside>'}</div></div>`;
 
@@ -2192,6 +2198,7 @@ document.addEventListener('click', e => {
       mut('commercial', d => { if (!d.partners.some(x => x.id === t.p.id)) d.partners.splice(Math.min(t.index, d.partners.length), 0, clone(t.p)); });
       comSel = t.p.id; comCount = get('commercial').partners.length;
     },
+    delPhoto: () => { const old = (get('programme').speakers.find(x => x.id === id) || {}).photo; mut('programme', d => { const it = d.speakers.find(x => x.id === id); if (it) it.photo = ''; }); if (old && assetsNs) assetsNs.delete(old).catch(() => {}); },
     delLogo: () => { const old = (get('commercial').partners.find(x => x.id === id) || {}).logo; mut('commercial', d => { const it = d.partners.find(x => x.id === id); if (it) it.logo = ''; }); if (old && assetsNs) assetsNs.delete(old).catch(() => {}); },
     toggleInd: () => { indAll = !indAll; render(); },
     reportPng: () => profileReport('png'),
