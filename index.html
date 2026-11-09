@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{--hold:#f3dfb2;--bg:#f5f5f2;--card:#fff;--text:#151515;--muted:#6c6c66;--line:#deded8;--soft:#ecece7;--fill:#151515;--on-fill:#fff;--stat:#fafaf8;--input:#fff;--danger:#a3281f;--ok:#2f6b3a;--warn:#8a5a00;--pend-bg:#151515;--pend-fg:#efefeb}
@@ -263,10 +263,162 @@ body.gating .gate [role=alert]{color:#ff9d94!important}
 .muted{color:var(--muted)}
 @media(max-width:850px){.grid4,.grid3,.two{grid-template-columns:1fr}.header{flex-direction:column;align-items:flex-start}.meta{text-align:left}h1{font-size:32px}.grid4{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.grid4{grid-template-columns:1fr}.stream .fields{grid-template-columns:1fr}}
+/* ---------- CONNECTD X dark theme for the team view (sign-in, sales and contractor views keep their own look) ---------- */
+.rail,.topbar{display:none}
+body.x{--bg:#07090F;--card:rgba(20,24,36,.72);--text:#ECEFF7;--muted:rgba(225,230,245,.62);--line:rgba(255,255,255,.09);--soft:rgba(255,255,255,.07);--fill:#fff;--on-fill:#060A1D;--stat:rgba(255,255,255,.04);--input:rgba(255,255,255,.04);--danger:#FF8A9C;--ok:#3DDC97;--warn:#F5B547;--pend-bg:rgba(245,181,71,.1);--pend-fg:#ECEFF7;--hold:rgba(245,181,71,.35);
+  --navy:#060A1D;--blue:#3F6AF6;--cyan:#65D0EA;--purple:#A77BFF;--pink:#FF6F91;--amber:#F5B547;--faint:rgba(225,230,245,.4);--line2:rgba(255,255,255,.15);
+  background:#07090F;font-family:Inter,Manrope,system-ui,sans-serif;font-size:14px}
+body.x::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(1000px 520px at 60% 25%,rgba(63,106,246,.16),transparent 65%),radial-gradient(600px 400px at 90% 100%,rgba(101,208,234,.08),transparent 70%),#07090F}
+body.x h1,body.x h2,body.x h3,body.x .metric,body.x .progress-title,body.x .tier-sold,body.x .profile-stat strong{font-family:Montserrat,Inter,sans-serif}
+body.x .page{width:auto;margin:0 0 0 64px;padding:0 24px 40px}
+body.x .card{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+body.x .fill{background:linear-gradient(90deg,var(--blue),var(--cyan))}
+body.x .btn{background:rgba(255,255,255,.04);border-color:var(--line2)}
+body.x .btn.primary{background:#fff;color:var(--navy);border-color:#fff}
+body.x select option{background:#141927;color:#ECEFF7}
+body.x nav.tabs{display:none}
+body.x .header{align-items:center;padding:18px 0 4px}
+body.x h1{font-size:28px;letter-spacing:-.5px}
+body.x .kicker{color:var(--cyan);text-transform:uppercase;letter-spacing:.1em;font-size:11.5px}
+body.x .meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+body.x .meta>.btn.primary{margin:0!important;order:5}
+body.x .meta>div[style]{margin:0!important}
+body.x .section{margin-top:18px}
+/* icon rail */
+body.x .rail{position:fixed;left:0;top:0;bottom:0;width:64px;z-index:50;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 0;border-right:1px solid var(--line);background:rgba(7,9,15,.88)}
+.r-mark{width:34px;height:34px;border-radius:50%;margin-bottom:14px;display:grid;place-items:center;font:900 13px Montserrat,sans-serif;color:var(--cyan);background:radial-gradient(circle,var(--navy) 58%,transparent 60%),conic-gradient(from 200deg,var(--blue),var(--cyan),#fff,var(--blue));box-shadow:0 0 16px rgba(63,106,246,.55)}
+.r-i{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--faint);position:relative;border:0;background:none;cursor:pointer;padding:0}
+.r-i:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.r-i[aria-current="true"]{background:#fff;color:var(--navy)}
+.r-i svg{width:18px;height:18px}
+.r-i:hover::after{content:attr(data-tip);position:absolute;left:50px;white-space:nowrap;background:#1A1F2E;border:1px solid var(--line2);padding:5px 9px;border-radius:8px;font:500 12px Inter,sans-serif;color:var(--text);z-index:60}
+.r-sp{flex:1}
+/* top stat bar */
+body.x .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bottom:1px solid var(--line);overflow-x:auto}
+.tchip{display:flex;align-items:center;gap:7px;padding:6px 11px;border:1px solid var(--line);border-radius:10px;white-space:nowrap;color:var(--muted);font-size:12px;background:rgba(255,255,255,.03)}
+.tchip b{color:var(--text);font:700 12.5px Montserrat,sans-serif}
+.tchip em{font-style:normal;color:var(--cyan)}
+.tchip .muted{font-size:12px}
+.t-grow{flex:1;min-width:12px}
+.t-user{display:flex;align-items:center;gap:9px;white-space:nowrap}
+.t-user .av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:700 10.5px Montserrat,sans-serif;color:#fff;background:linear-gradient(135deg,var(--blue),var(--cyan))}
+.t-user b{display:block;font-size:12.5px;line-height:1.15}.t-user small{display:block;color:var(--faint);font-size:11px}
+/* dashboard: filters */
+.hbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 12px}
+.hpills{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
+.hpill{display:flex;align-items:center;gap:7px;padding:6px 11px;border-radius:9px;color:var(--muted);font:500 12.5px Inter,sans-serif;cursor:pointer;border:0;background:none}
+.hpill .n{font:700 10.5px Montserrat,sans-serif;padding:1px 6px;border-radius:6px;background:rgba(255,255,255,.08);color:var(--text)}
+.hpill.on{background:#fff;color:var(--navy)}.hpill.on .n{background:var(--navy);color:#fff}
+.hpill i{width:8px;height:8px;border-radius:3px}
+.htg{margin-left:auto;display:flex;gap:16px;color:var(--muted);font-size:12.5px}
+.htg label{display:flex;align-items:center;gap:8px;cursor:pointer}
+.htg input{position:absolute;opacity:0;width:1px;height:1px}
+.hsw{width:30px;height:17px;border-radius:99px;background:#3A4052;position:relative;transition:.2s}
+.hsw::after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:.2s}
+.htg input:checked+.hsw{background:var(--blue)}.htg input:checked+.hsw::after{left:15px}
+.htg input:focus-visible+.hsw{outline:2px solid var(--cyan);outline-offset:2px}
+/* dashboard: 3D hall */
+.stage{position:relative;height:620px;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:radial-gradient(800px 420px at 55% 55%,#141A2C,#0A0D16 70%);perspective:1800px;cursor:grab;touch-action:none;user-select:none}
+.stage.dragging{cursor:grabbing}.stage.dragging .hworld{transition:none}
+.stage::before{content:"";position:absolute;inset:0;opacity:.35;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:40px 40px}
+.hworld{position:absolute;left:56%;top:50%;width:1370px;height:690px;transform-style:preserve-3d;transform:translate(-50%,-50%) rotateX(var(--tilt)) rotateZ(var(--spin)) scale(var(--zoom));transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.hworld *{transform-style:preserve-3d}
+.hfloor{position:absolute;inset:0;clip-path:polygon(0.7% 4.3%,98.5% 4.3%,98.5% 99.3%,62.8% 99.3%,62.8% 68.1%,0.7% 68.1%);background:linear-gradient(135deg,#1B2133,#141927)}
+.hzone{position:absolute;border:1.5px dashed rgba(255,255,255,.16);border-radius:8px;display:grid;place-items:center;text-align:center;color:var(--faint);font:700 13px Montserrat,sans-serif;letter-spacing:.04em;text-transform:uppercase}
+.hzone small{display:block;font:500 11px Inter,sans-serif;text-transform:none;letter-spacing:0}
+.hzone.solid{border-style:solid;background:rgba(255,255,255,.03)}
+.htitle{position:absolute;font:800 18px Montserrat,sans-serif;color:rgba(255,255,255,.18);letter-spacing:.12em}
+.hcarpet{position:absolute;border-radius:6px;background:rgba(255,255,255,.035)}
+.hlabel{position:absolute;font:700 12px Montserrat,sans-serif;color:var(--muted);white-space:nowrap;transform:translateY(-100%);padding-bottom:4px}
+.hlabel span{font:500 11px Inter,sans-serif;color:var(--faint)}
+.hb{position:absolute;cursor:pointer;transform:translateZ(1px)}
+/* Floor decorations sit level with the booths, so they must not catch clicks meant for a booth. */
+.hfloor,.hzone,.htitle,.hcarpet,.hlabel{pointer-events:none}
+.ht{position:absolute;inset:2px;border-radius:5px;background:rgba(255,255,255,.05);border:1.5px dashed rgba(255,255,255,.14);display:grid;place-items:center;font:700 11px Montserrat,sans-serif;color:var(--faint);transition:.2s}
+.hb.sec .ht{background:rgba(101,208,234,.2);border:1.5px solid rgba(101,208,234,.65);box-shadow:0 0 22px rgba(101,208,234,.35);color:#CFF3FB}
+.hb.hold .ht{background:rgba(245,181,71,.16);border:1.5px solid rgba(245,181,71,.55);color:#FFE2AE}
+.hb.org .ht{background:rgba(63,106,246,.24);border:1.5px solid rgba(63,106,246,.7);color:#C7D5FF}
+.hb.na .ht{background:repeating-linear-gradient(45deg,rgba(255,255,255,.05) 0 3px,transparent 3px 8px)}
+.hb:hover .ht,.hb.sel .ht{background:rgba(255,255,255,.22);border-color:#fff}
+.hw{position:absolute;height:44px;transform-origin:0 0;border-radius:3px 3px 0 0;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,#151827,#0B0D16);border:1px solid rgba(255,255,255,.12);border-bottom:0}
+.hw::before{content:"";position:absolute;inset:0;opacity:.75;background:linear-gradient(115deg,transparent 30%,rgba(167,123,255,.55) 42%,transparent 50%),linear-gradient(65deg,transparent 52%,rgba(101,208,234,.5) 60%,transparent 68%)}
+.hw::after{content:"";position:absolute;right:0;top:0;bottom:0;width:6px;background:var(--pillar);box-shadow:0 0 10px var(--pillar)}
+.hw.hold{opacity:.8;--pillar:#F5B547!important}
+.hw span{position:absolute;left:6px;right:10px;top:50%;transform:translateY(-50%);font:900 10px/1.05 Montserrat,sans-serif;color:#fff;text-align:center;text-shadow:0 0 6px rgba(0,0,0,.8)}
+.hled{position:absolute;height:70px;transform-origin:0 0;border-radius:6px 6px 0 0;pointer-events:none;background:radial-gradient(circle at 50% 60%,rgba(167,123,255,.9),rgba(63,106,246,.6) 40%,#0B0D16 75%);border:1px solid rgba(255,255,255,.2);display:grid;place-items:center;font:900 18px Montserrat,sans-serif;color:#fff;text-shadow:0 0 14px #A77BFF}
+.hled i{font-style:normal;color:var(--cyan)}
+.hworld.nonames .hw span{display:none}
+.hworld.nozones .hzone,.hworld.nozones .htitle{opacity:0}
+.hworld.dim .hb:not(.match),.hworld.dim .hw:not(.match){opacity:.15}
+/* overlays */
+.hpanel{background:rgba(20,24,36,.82);border:1px solid var(--line);border-radius:18px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.hfloat{position:absolute;left:16px;top:16px;width:300px;padding:16px;z-index:3;display:flex;flex-direction:column;gap:12px;cursor:default}
+.hfloat .ft{display:flex;align-items:flex-start;gap:10px}
+.hthumb{width:44px;height:44px;border-radius:10px;flex:none;background:linear-gradient(115deg,#151827 30%,rgba(167,123,255,.8) 45%,#151827 60%),#151827;border:1px solid var(--line2);display:grid;place-items:center;font:900 8px Montserrat,sans-serif;color:#fff;overflow:hidden}
+.hthumb img{width:100%;height:100%;object-fit:contain;background:#fff}
+.hfloat h3{font:700 15px Montserrat,sans-serif;line-height:1.25;margin:0}
+.hbadge{display:inline-block;font:600 10.5px Inter,sans-serif;padding:2px 7px;border-radius:6px;margin-top:5px}
+.hbadge.sec{background:rgba(101,208,234,.16);color:var(--cyan)}.hbadge.hold{background:rgba(245,181,71,.16);color:var(--amber)}
+.hbadge.av,.hbadge.na{background:rgba(255,255,255,.08);color:var(--muted)}.hbadge.org{background:rgba(63,106,246,.2);color:#A9BEFF}
+.hrow{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted)}
+.hrow b{color:var(--text);font-weight:600;text-align:right}
+.hmini{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hmini>div{padding:10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.hmini small{display:block;color:var(--faint);font-size:11px}
+.hmini b{font:800 15px Montserrat,sans-serif}
+.hmeter{height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.hmeter i{display:block;height:100%;background:linear-gradient(90deg,var(--amber),#FFD98A)}
+.hwarn{padding:9px 11px;border-radius:10px;background:rgba(245,181,71,.1);border:1px solid rgba(245,181,71,.25);color:#FFD98A;font-size:12px}
+.hcompass{position:absolute;right:18px;top:18px;width:96px;height:96px;border-radius:50%;z-index:3;display:grid;place-items:center;text-align:center;background:radial-gradient(circle,#161A28 55%,#0C0E16 56%,#1C2132 70%,#0C0E16 71%);border:1px solid var(--line2);box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.hcompass b{font:800 13px Montserrat,sans-serif}
+.hcompass small{position:absolute;bottom:14px;left:0;right:0;font-size:9.5px;color:var(--faint)}
+.hcompass i{position:absolute;top:8px;left:50%;width:0;height:0;border:6px solid transparent;border-bottom:12px solid var(--pink);transform:translateX(-50%);filter:drop-shadow(0 0 4px var(--pink))}
+.htools{position:absolute;right:18px;bottom:18px;display:flex;flex-direction:column;gap:6px;z-index:3}
+.htools button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line2);background:rgba(13,16,25,.85);color:var(--muted);font:600 15px Inter,sans-serif;cursor:pointer}
+.htools button:hover{color:#fff;border-color:#fff}
+.hhint{position:absolute;left:18px;bottom:14px;font-size:11px;color:var(--faint);z-index:3}
+.hlegend{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;display:flex;gap:14px;font-size:11.5px;color:var(--muted);z-index:3;padding:7px 14px;border-radius:99px;white-space:nowrap}
+.hlegend span{display:flex;align-items:center;gap:6px}.hlegend i{width:9px;height:9px;border-radius:3px}
+/* dashboard: cards below the hall */
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.dcard{padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.dcard.wide{grid-column:1/-1}
+.dch{display:flex;align-items:center;gap:9px}
+.dch h3{font:700 14px Montserrat,sans-serif;flex:1;margin:0}
+.dch .more{color:var(--faint);font-size:12px}
+.isles{display:grid;grid-template-columns:repeat(9,1fr);gap:10px}
+.isle{padding:18px 8px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line);text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+.isle small{font-size:12px;color:var(--muted)}
+.isle b{font:800 26px/1.1 Montserrat,sans-serif}.isle b em{font-style:normal;color:var(--cyan)}
+.isle .lb{font-size:11.5px;color:var(--faint)}
+.dtot{border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:10px}
+.dtot .tl{display:flex;justify-content:space-between;align-items:baseline}
+.dtot h4{font:700 15px Montserrat,sans-serif;margin:0}.dtot .tl b{font:700 13px Montserrat,sans-serif}
+.dtot p{font-size:12.5px;color:var(--muted);margin:0}.dtot p b{color:var(--text)}
+.alerts{display:flex;flex-direction:column;gap:8px}
+.al{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-left:3px solid var(--c)}
+.al b{font-weight:600;font-size:12.5px;display:block}.al small{color:var(--muted);font-size:11.5px}
+.al .tag{margin-left:auto;font:600 10.5px Inter,sans-serif;padding:2px 7px;border-radius:6px;background:rgba(255,255,255,.07);color:var(--muted);white-space:nowrap}
+.mem{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+.mem:last-child{border:0}
+.mem .av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:700 10.5px Montserrat,sans-serif;color:#fff;flex:none}
+.mem b{display:block;font-weight:600;font-size:12.5px}.mem small{color:var(--faint);font-size:11px}
+.mem .v{margin-left:auto;font:700 12px Montserrat,sans-serif}
+@media (max-width:1100px){.isles{grid-template-columns:repeat(5,1fr)}}
+@media (max-width:760px){
+  body.x .rail{display:none}body.x .page{margin:0;padding:0 12px 28px}
+  body.x nav.tabs{display:flex;background:#07090F}
+  body.x .t-user{display:none}
+  .stage{height:460px}.hfloat{position:relative;left:auto;top:auto;width:auto;margin:10px}
+  .hcompass{transform:scale(.7);transform-origin:top right}.hlegend,.hhint{display:none}
+  .dgrid{grid-template-columns:1fr}.isles{grid-template-columns:repeat(3,1fr)}.htg{margin-left:0}
+}
 </style>
 </head>
 <body>
+<nav class="rail" id="rail" aria-label="Sections"></nav>
 <div class="page">
+  <div class="topbar" id="topbar"></div>
   <div class="header">
     <div><div class="kicker">CONNECTD X 2026 · Internal team tracker</div><h1>Event progress</h1></div>
     <div class="meta"><button class="btn primary" data-mode="sales" style="margin-bottom:10px">Open sales view</button><div id="asof">Loading…</div><div class="sync" id="sync"><i></i><span>Connecting</span></div><div style="display:flex;gap:6px;justify-content:flex-end;margin-top:8px"><button class="btn del" data-setpw>Set password</button><button class="btn del" data-signout>Sign out</button></div></div>
@@ -985,7 +1137,7 @@ function showBanner(msg, err) { $('#banner').innerHTML = msg ? `<div class="bann
 /* ---------- render plumbing ---------- */
 let rq = false, remotePending = false;
 function requestRender() { if (rq) return; rq = true; setTimeout(() => { rq = false; render(); }, 0); }
-function editingNow() { const a = document.activeElement; return a && (a.id === 'roi-host' || $('#main').contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)); }
+function editingNow() { if (hall.drag) return true; const a = document.activeElement; return a && (a.id === 'roi-host' || $('#main').contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)); }
 function remoteRender() { if (editingNow()) { remotePending = true; return; } requestRender(); }
 document.addEventListener('focusout', () => setTimeout(() => { if (remotePending && !editingNow()) { remotePending = false; render(); } }, 50));
 
@@ -999,6 +1151,8 @@ function render() {
   const allLoaded = KEYS.every(k => loaded[k]) || offline;
   $('#asof').textContent = !allLoaded ? 'Loading…' : times.length ? 'Last updated ' + fmtDate(times[times.length - 1]) : 'No updates yet';
   document.body.classList.toggle('sales', mode !== 'team'); document.body.classList.toggle('contractor', mode === 'contractor');
+  document.body.classList.toggle('x', mode === 'team');
+  renderShell();
   $('#foot').textContent = mode !== 'team' ? (times.length ? 'Figures update live from the CONNECTD X team tracker · last updated ' + fmtDate(times[times.length - 1]) + '.' : 'Figures update live from the CONNECTD X team tracker.') : TEAM_FOOT;
   if (mode !== 'team') { if (roiHost) roiHost.remove(); $('#main').innerHTML = VIEWS[mode](); if (mode === 'sales') placeRoi(); return; }
   const html = VIEWS[tab]();
@@ -1269,131 +1423,12 @@ function dateRange(a, b) {
   const sameMonth = A.getUTCMonth() === B.getUTCMonth() && A.getUTCFullYear() === B.getUTCFullYear();
   return sameMonth ? `${A.getUTCDate()}–${B.toLocaleDateString('en-MY', {...o, day: 'numeric', month: 'long', year: 'numeric'})}` : `${A.toLocaleDateString('en-MY', {...o, day: 'numeric', month: 'short'})} – ${B.toLocaleDateString('en-MY', {...o, day: 'numeric', month: 'short', year: 'numeric'})}`;
 }
-function countdownBox() {
-  const c = calcCountdown();
-  if (!c) return `<div class="countdown"><div><div class="cd-num">–</div><div class="cd-unit">days to go</div></div><div class="cd-info"><div class="cd-title">Event date not set</div><div class="cd-meta">Set it in Programme &amp; speakers to start the countdown.</div></div><div>${goto('programme', 'Set event date')}</div></div>`;
-  const meta = [dateRange(c.start, c.end), c.time && fmtTime(c.time) ? 'starts ' + fmtTime(c.time) : '', c.venue].filter(Boolean).map(esc).join(' · ');
-  let big, unit, stats = '';
-  if (c.phase === 'before') {
-    big = fmtN(c.days); unit = c.days === 1 ? 'day to go' : 'days to go';
-    const wk = Math.floor(c.days / 7), rd = c.days % 7;
-    stats = `<div class="cd-stats"><div class="cd-stat"><strong>${wk}<small style="font-size:15px">w</small> ${rd}<small style="font-size:15px">d</small></strong><span>weeks and days</span></div><div class="cd-stat"><strong>${fmtN(c.weekdays)}</strong><span>working days left</span></div></div>`;
-  } else if (c.phase === 'during') {
-    big = c.totalDays > 1 ? `Day ${c.dayNo}` : 'Today'; unit = c.totalDays > 1 ? `of ${c.totalDays} · event is live` : 'event is live';
-  } else {
-    big = fmtN(c.since); unit = c.since === 1 ? 'day since the event' : 'days since the event';
-  }
-  return `<div class="countdown" role="timer" aria-label="${esc(big + ' ' + unit)}"><div><div class="cd-num">${big}</div><div class="cd-unit">${unit}</div></div><div class="cd-info"><div class="cd-title">${esc(c.label)}</div><div class="cd-meta">${meta}</div></div>${stats}</div>`;
-}
-
 /* ---------- views ---------- */
 const VIEWS = {};
 
-VIEWS.dashboard = () => {
-  const C = calcCommercial(), P = calcProgramme(), M = calcMarketing();
-  const part = get('participants'), s = part.summary, ops = get('ops');
-  const main = P.targets[0];
-  let h = countdownBox() + `<div class="section"><div class="grid4">
-    ${kpi('Partnership sales', money(C.sales), `confirmed sales value · ${C.conf.length} partner${C.conf.length === 1 ? '' : 's'}${C.pipeline && isFinance ? ' · ' + fmtRM(C.pipeline) + ' in negotiation' : ''}`)}
-    ${kpi('Cash collected', money(C.collected), isFinance ? `received to date · ${fmtRM(C.outstanding)} outstanding (incl. SST, from P&amp;L)` : 'visible to finance admins only')}
-    ${main ? kpi(esc(main.name) + 's', `${main.secured} / ${main.slots}`, `${Math.round(pct(main.secured, main.slots))}% secured · ${Math.max(0, main.slots - main.secured)} pending`) : kpi('Speakers', '0', 'add speaker slots in Programme')}
-    ${kpi('Participants', fmtN(part.confirmed || (s && s.records) || 0), s ? `confirmed participants · ${fmtN(s.records)} registration records${num(part.target) ? ' · ' + Math.round(pct(num(part.confirmed), num(part.target))) + '% of target' : ''}` : 'upload a registration export to profile')}
-  </div></div>`;
-
-  // Partnership
-  h += `<div class="section"><h2>Partnership sales</h2><div class="two"><div class="card">
-    ${!isFinance ? FIN_ONLY : `<div class="progress-row"><div class="progress-title">Sales progress against target</div><div class="progress-num">${fmtRM(C.sales)} / ${fmtRM(C.target)}</div></div>
-    ${bar(pct(C.sales, C.target), true)}
-    <div class="metric-label"><b>${fmtP(pct(C.sales, C.target))} achieved</b> · ${fmtRM(Math.max(0, C.target - C.sales))} remaining to target</div>
-    <div style="height:18px"></div>
-    <div class="progress-row"><div class="progress-title">Collection against confirmed sales (incl. SST)</div><div class="progress-num">${fmtRM(C.collected)} / ${fmtRM(C.billed)}</div></div>
-    ${bar(pct(C.collected, C.billed))}
-    <div class="metric-label">${fmtP(pct(C.collected, C.billed))} collected · ${fmtRM(C.outstanding)} outstanding</div>`}
-  </div><div class="card">
-    ${C.tiers.length ? C.tiers.map(t => `<div class="tier"><div><div class="tier-name">${esc(t.name)}</div><div class="tier-price">${fmtRM(t.price)} / partner · ${fmtN(t.booths)} booth${num(t.booths) === 1 ? '' : 's'}</div></div><div class="tier-sold">${t.sold} sold${isFinance ? `<span>${fmtRM(t.soldValue)} value</span>` : ''}</div></div>`).join('') : `<div class="empty">No partnership tiers yet. ${goto('commercial', 'Set up tiers')}</div>`}
-  </div></div></div>`;
-
-  // Booths
-  h += `<div class="section"><h2>Booth layout</h2><div class="card">${floorPlan()}</div></div>`;
-  h += `<div class="section"><h2>Booth availability by island</h2><div class="card">
-    ${C.islands.length ? `<div class="islands">${C.islands.map(i => `<div class="profile-stat ${i.secured >= num(i.total) && num(i.total) ? 'full' : ''}"><span>${esc(i.name)}</span><strong>${i.secured}/${fmtN(i.total)}</strong><span>secured / total</span></div>`).join('')}</div>
-    <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--line)">
-      <div class="progress-row"><div class="progress-title">Total booths secured</div><div class="progress-num">${C.secured} / ${C.totalBooths} booths</div></div>
-      ${bar(pct(C.secured, C.totalBooths), true)}
-      <div class="metric-label"><b>${fmtP(Math.round(pct(C.secured, C.totalBooths) * 10) / 10)} secured</b> · ${Math.max(0, C.totalBooths - C.secured)} booths remaining</div>
-    </div>` : `<div class="empty">No islands set up yet. ${goto('commercial', 'Add islands')}</div>`}
-  </div></div>`;
-
-  // Programme
-  const ag = sortedAgenda();
-  h += `<div class="section"><h2>Programme & speakers</h2><div class="two">
-    ${P.targets.length ? P.targets.map(t => `<div class="card">
-      <div class="progress-row"><div class="progress-title">${esc(t.name)}</div><div class="progress-num">${t.secured} secured · ${Math.max(0, t.slots - t.secured)} pending</div></div>
-      ${bar(pct(t.secured, t.slots))}
-      <div class="names">${t.conf.length ? t.conf.map(s => `<span class="chip">${esc(s.name)}${s.role ? ' · ' + esc(s.role) : ''}</span>`).join('') : '<span class="muted" style="font-size:13px">None confirmed yet</span>'}</div>
-    </div>`).join('') : `<div class="card"><div class="empty">No speaker slots yet. ${goto('programme', 'Set up slots')}</div></div>`}
-  </div>
-  <div class="card" style="margin-top:18px"><div class="progress-row"><div class="progress-title">Tentative programme</div><div class="progress-num">${eventDays().length} day${eventDays().length === 1 ? '' : 's'} · ${ag.length} session${ag.length === 1 ? '' : 's'}</div></div>
-      ${ag.length ? `<div class="agenda-cols">${agendaCols()}</div>` : `<div class="empty">No sessions drafted yet. ${goto('programme', 'Draft the programme')}</div>`}
-  </div></div>`;
-
-  // Participants
-  h += `<div class="section"><h2>Participant profiling</h2>`;
-  if (s) {
-    h += `<div class="two"><div class="card"><div class="grid3">
-      ${stat(s.leadershipPct == null ? '–' : Math.round(s.leadershipPct) + '%', 'leadership-level: founders, CEOs/MDs, directors, C-suite or investors')}
-      ${stat(s.revenueLe3Pct == null ? '–' : Math.round(s.revenueLe3Pct) + '%', 'reported annual company revenue of RM3m or below')}
-      ${stat(s.founders == null ? '–' : fmtN(s.founders), 'Founder / Co-Founder designations recorded')}
-    </div></div><div class="card"><ul class="mini-list">
-      ${(s.industries || []).slice(0, 5).map(([n, c]) => `<li><span>${esc(n)}</span><b>${fmtN(c)}</b></li>`).join('')}
-      ${(s.locations || []).length ? `<li><span>Top location · ${esc(s.locations[0][0])}</span><b>${fmtN(s.locations[0][1])}</b></li>` : ''}
-    </ul></div></div>`;
-  } else h += `<div class="card"><div class="empty">No registration data yet. ${goto('participants', 'Upload export')}</div></div>`;
-  h += `</div>`;
-
-  // Marketing
-  const t = M.t;
-  h += `<div class="section"><h2>Marketing performance</h2>`;
-  if (M.m.entries.length) {
-    h += `<div class="grid4">
-      ${kpi('Contents', fmtN(t.contents), 'ads contents deployed')}
-      ${kpi('LP views', fmtN(t.lpViews), 'landing page views generated')}
-      ${kpi('Reach', fmtN(t.reach), 'people reached')}
-      ${kpi('Impressions', fmtN(t.impressions), 'total impressions')}
-    </div><div class="two" style="margin-top:14px">
-      <div class="card"><div class="progress-title">Ads objective</div><div class="metric-label" style="font-size:17px;color:var(--text);margin-top:10px">${esc(M.m.objective || 'Not set')}</div>
-        <div class="smallstats" style="margin-top:16px">
-          ${stat(orDash(t.ctr, v => fmtP(Math.round(v * 100) / 100)), 'click-through rate')}
-          ${stat(orDash(t.cplv, fmtRM), 'cost per LP view')}
-          ${stat(t.regs ? fmtN(t.regs) : '–', 'registrations from ads')}
-          ${stat(orDash(t.cpr, fmtRM), 'cost per registration')}
-        </div></div>
-      <div class="card"><div class="progress-title">Total ads spent</div><div class="metric">${fmtRM(t.spend)}</div>
-        ${num(M.m.budget) ? `<div style="margin-top:12px">${bar(t.budgetUsed)}<div class="metric-label">${fmtP(Math.round(t.budgetUsed * 10) / 10)} of ${fmtRM(M.m.budget)} budget used</div></div>` : ''}
-        <div class="metric-label">CPM ${orDash(t.cpm, fmtRM)}</div></div>
-    </div>`;
-  } else h += `<div class="card"><div class="empty">No marketing results logged yet. ${goto('marketing', 'Log results')}</div></div>`;
-  h += `</div>`;
-
-  // Ops
-  h += `<div class="section"><h2>Operational & workstream status</h2><div class="card">
-    ${ops.streams.length ? `<ul class="notes">${ops.streams.map(w => `<li><span class="pill ${w.status.replace(/\s/g, '')}">${esc(w.status)}</span><b>${esc(w.name || 'Untitled')}:</b> ${esc(w.note || 'No notes yet.')}</li>`).join('')}</ul>` : `<div class="empty">No workstreams yet. ${goto('ops', 'Add workstreams')}</div>`}
-  </div></div>`;
-
-  // Pending
-  const acts = [];
-  P.targets.forEach(x => { const r = x.slots - x.secured; if (r > 0) acts.push(`Secure remaining ${r} ${x.name} slot${r === 1 ? '' : 's'}.`); });
-  if (isFinance && C.target && C.sales < C.target) acts.push(`Accelerate partnership sales: ${fmtRM(C.target - C.sales)} remaining to target.`);
-  if (isFinance && C.outstanding > 0) acts.push(`Collect ${fmtRM(C.outstanding)} outstanding from confirmed partnership sales.`);
-  ops.streams.filter(w => w.status !== 'Completed' && (w.next || '').trim()).forEach(w => acts.push(`${w.name}: ${w.next}`));
-  if (acts.length) h += `<div class="section pending"><h2>Pending / next actions</h2><ol>${acts.map(a => `<li>${esc(a)}</li>`).join('')}</ol></div>`;
-  return h;
-};
+VIEWS.dashboard = () => dashboard();
 
 const byStart = (a, b) => String(a.start || '99').localeCompare(String(b.start || '99'));
-function sortedAgenda() {
-  return [...get('programme').agenda].sort((a, b) => String(a.day).localeCompare(String(b.day), undefined, {numeric: true}) || byStart(a, b));
-}
 function deriveDays(agenda) {
   const dates = [...new Set((agenda || []).map(a => a.day || ''))].sort();
   if (!dates.length) dates.push('');
@@ -2292,6 +2327,221 @@ async function financeAction(email, allow) {
   if (error) adminState.msg = error.message;
   await loadAdmins();
 }
+
+
+/* ---------- shell: icon rail and top stat bar (team view) ---------- */
+const SVG = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const ICON = {
+  dashboard: SVG('<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>'),
+  commercial: SVG('<path d="M8 12l3 3 6-6"/><circle cx="12" cy="12" r="9"/>'),
+  pnl: SVG('<path d="M4 4h16v16H4zM4 9h16M9 9v11"/>'),
+  programme: SVG('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'),
+  participants: SVG('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>'),
+  marketing: SVG('<path d="M3 10v4l13 5V5zM16 9a3 3 0 0 1 0 6M6 15l1 5h3l-1-4"/>'),
+  ops: SVG('<path d="M9 6h12M9 12h12M9 18h12"/><path d="m3 6 1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/>'),
+  admins: SVG('<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/>'),
+  sales: SVG('<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.4"/>'),
+  out: SVG('<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 16l4-4-4-4M14 12H4"/>')
+};
+const initials = n => String(n || '?').replace(/@.*/, '').split(/[\s._-]+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+function renderShell() {
+  const team = mode === 'team';
+  const tabs = TABS.filter(([id]) => isFinance || id !== 'pnl');
+  $('#rail').innerHTML = !team ? '' : `<div class="r-mark">X</div>${tabs.map(([id, label]) => `<button class="r-i" data-tab="${id}" aria-current="${tab === id}" data-tip="${label}" aria-label="${label}">${ICON[id] || ''}</button>`).join('')}<span class="r-sp"></span><button class="r-i" data-mode="sales" data-tip="Sales view" aria-label="Open sales view">${ICON.sales}</button><button class="r-i" data-signout data-tip="Sign out" aria-label="Sign out">${ICON.out}</button>`;
+  const cur = tabs.find(([id]) => id === tab);
+  $('h1').innerHTML = team && cur ? (tab === 'dashboard' ? 'Event Dashboard' : cur[1]) : 'Event progress';
+  if (!team) { $('#topbar').innerHTML = ''; return; }
+  const C = calcCommercial(), P = calcProgramme(), cd = calcCountdown(), part = get('participants'), main = P.targets[0];
+  const all = Object.values(calcBooths()).filter(b => b.status !== 'org' && b.status !== 'na'), sec = all.filter(b => b.status === 'sec').length;
+  const chip = (label, val, extra = '') => `<div class="tchip">${label} <b>${val}</b>${extra}</div>`;
+  const pc = (a, b) => b ? ` <em>${fmtP(Math.round(pct(a, b) * 10) / 10)}</em>` : '';
+  const me = adminState.me || '';
+  $('#topbar').innerHTML = [
+    cd && cd.phase === 'before' ? chip('Days to go', fmtN(cd.days)) : cd && cd.phase === 'during' ? chip('Event', 'Live') : '',
+    chip('Sales', money(C.sales), isFinance ? pc(C.sales, C.target) : ''),
+    chip('Collected', money(C.collected), isFinance ? pc(C.collected, C.billed) : ''),
+    chip('Booths', `${sec}/${all.length}`),
+    main ? chip(esc(main.name) + 's', `${main.secured}/${main.slots}`) : '',
+    chip('Participants', fmtN(num(part.confirmed) || (part.summary && part.summary.records) || 0))
+  ].join('') + `<span class="t-grow"></span><div class="t-user"><div class="av">${esc(initials(me))}</div><div><b>${esc(me.replace(/@.*/, ''))}</b><small>${isFinance ? 'Finance admin' : 'Admin'}</small></div></div>`;
+}
+
+/* ---------- dashboard: 3D booth hall ---------- */
+// The view (angle, zoom, filter, selected booth) survives re-renders and live updates.
+const hall = {spin: -24, tilt: 57, zoom: .8, filter: 'all', sel: null, names: true, zones: true, drag: null, moved: false};
+const HO = {x: 430, y: 290}; // plan origin, so the hall starts at 0,0
+const PILLAR = {A: '#A77BFF', B: '#65D0EA', C: '#FF6F91', D: '#65D0EA', E: '#A77BFF', F: '#FF6F91', G: '#A77BFF', H: '#65D0EA', I: '#65D0EA', J: '#3F6AF6'};
+const HST = {sec: 'Secured', hold: 'On hold', av: 'Available', org: 'Organiser', na: 'Not for sale'};
+function hallCells() {
+  const cell = {};
+  FLOOR.forEach(g => { const bw = g.w / g.cols, bh = g.h / g.rows; for (let r = 0; r < g.rows; r++) for (let c = 0; c < g.cols; c++) cell[g.L + (r * g.cols + c + 1)] = {x: g.x - HO.x + c * bw, y: g.y - HO.y + r * bh, w: bw, h: bh, r, c, g}; });
+  return cell;
+}
+// Back walls: single-row islands back onto their top edge, deeper ones onto their centre line; I and J stand lengthwise.
+function wallSide(k) {
+  if (k.g.L === 'I' || k.g.L === 'J') return k.c === 0 ? 'right' : 'left';
+  if (k.g.rows === 1) return 'top';
+  return k.r < k.g.rows / 2 ? 'bottom' : 'top';
+}
+function wallHtml(k, cls, label) {
+  // A wall lies on the floor along one edge, then rotateX(-90deg) stands it up.
+  let x = k.x, y = k.y, len = k.w, rot = 0;
+  const side = wallSide(k);
+  if (side === 'bottom') { x = k.x + k.w; y = k.y + k.h; rot = 180; }
+  if (side === 'left') { y = k.y + k.h; len = k.h; rot = -90; }
+  if (side === 'right') { x = k.x + k.w; len = k.h; rot = 90; }
+  return `<div class="hw ${cls}" style="left:${x}px;top:${y}px;width:${len}px;--pillar:${PILLAR[k.g.L] || '#A77BFF'};transform:rotateZ(${rot}deg) rotateX(-90deg) translateY(-44px)">${label ? `<span>${esc(label)}</span>` : ''}</div>`;
+}
+const partnerBooths = (B, p) => Object.values(B).filter(x => x.partner === p).map(x => x.id);
+function hallCard(B) {
+  const b = B[hall.sel];
+  if (!b) return `<div class="ft"><div class="hthumb">CNTD X</div><div><h3>Click a booth</h3><span class="hbadge av">Hall 6 · ${Object.keys(B).length} booths</span></div></div><div class="hrow"><span>Drag the hall to turn it</span></div>`;
+  const p = b.partner, g = FLOOR.find(f => f.L === b.L);
+  const title = p ? (p.name || 'Unnamed partner') : b.status === 'org' ? '#businessSynergy' : 'Booth ' + b.id;
+  const thumb = p && p.logo ? `<img src="${esc(logoSrc(p.logo))}" alt="" onerror="this.remove()">` : 'CNTD X';
+  let h = `<div class="ft"><div class="hthumb">${thumb}</div><div><h3>${esc(title)}</h3><span class="hbadge ${b.status}">${HST[b.status]}</span></div></div>`;
+  h += `<div class="hrow"><span>Island</span><b>${esc(b.L)} · ${esc(SHORT[b.L] || (g && g.cat) || '')}</b></div>`;
+  if (p) {
+    h += `<div class="hmini"><div><small>Booths</small><b>${esc(boothRanges(partnerBooths(B, p)))}</b></div><div><small>Package</small><b>${esc((b.tier || '–').replace(/ Partner$/, ''))}</b></div></div>`;
+    if (isFinance && p.status === 'Confirmed') {
+      const o = (get('pnl').ov || {})[p.id] || {};
+      const paid = blankable(o.paid) ? num(p.collected) : num(o.paid), full = blankable(o.full) ? num(p.value) * (1 + SST) : num(o.full);
+      if (full) h += `<div class="hrow"><span>Payment</span><b>${fmtRM(paid)} / ${fmtRM(full)}</b></div><div class="hmeter"><i style="width:${Math.min(100, pct(paid, full))}%"></i></div>`;
+    }
+    const sp = [p.sales1, p.sales2].map(x => String(x || '').trim()).filter(Boolean).join(' + ');
+    if (sp) h += `<div class="hrow"><span>Salesperson</span><b>${esc(sp)}</b></div>`;
+    if (b.tbc) h += `<div class="hrow"><span>Booth no.</span><b>Placed automatically</b></div>`;
+    if (b.status === 'hold') h += `<div class="hwarn">On hold, not confirmed yet.${sp ? ' Follow up with ' + esc(sp) + '.' : ''}</div>`;
+  } else if (b.status === 'av') h += `<div class="hrow"><span>Status</span><b>Open for sale</b></div>`;
+  else if (b.status === 'org') h += `<div class="hrow"><span>Use</span><b>Organiser booth</b></div>`;
+  return h;
+}
+function hallMatch(b) { return hall.filter === 'all' || b.status === hall.filter; }
+function dashboard() {
+  const B = calcBooths(), cell = hallCells(), all = Object.values(B);
+  const n = st => all.filter(b => b.status === st).length;
+  const dim = hall.filter !== 'all';
+  const z = (x, y, w, ht, label, cls = '') => `<div class="hzone ${cls}" style="left:${x - HO.x}px;top:${y - HO.y}px;width:${w}px;height:${ht}px">${label}</div>`;
+  let w = `<div class="hfloor"></div>
+    <div class="htitle" style="left:${640 - HO.x}px;top:${328 - HO.y}px">HALL 6A</div><div class="htitle" style="left:${1110 - HO.x}px;top:${328 - HO.y}px">HALL 6B</div><div class="htitle" style="left:${1580 - HO.x}px;top:${470 - HO.y}px">HALL 6C</div>
+    ${z(1520, 494, 215, 184, 'Seating<small>300 pax</small>')}${z(918, 364, 92, 152, 'Podcast<small>corner</small>')}${z(1400, 752, 232, 186, 'Business lounge', 'solid')}${z(1648, 886, 104, 52, 'Store')}${z(440, 768, 842, 92, 'Pre-function · Registration')}${z(1545, 356, 170, 86, '', 'solid')}
+    <div class="hled" style="left:${1555 - HO.x}px;top:${362 - HO.y}px;width:150px;transform:rotateX(-90deg) translateY(-70px)">CONNECTD&nbsp;<i>X</i></div>`;
+  FLOOR.forEach(g => { w += `<div class="hcarpet" style="left:${g.x - HO.x - 6}px;top:${g.y - HO.y - 6}px;width:${g.w + 12}px;height:${g.h + 12}px"></div><div class="hlabel" style="left:${g.x - HO.x}px;top:${g.y - HO.y - 8}px">${esc(g.L)} <span>· ${esc(SHORT[g.L] || g.cat)}</span></div>`; });
+  const labelled = new Set();
+  all.forEach(b => {
+    const k = cell[b.id]; if (!k) return;
+    const m = hallMatch(b) ? ' match' : '', sel = hall.sel && (b.id === hall.sel || (b.partner && B[hall.sel] && B[hall.sel].partner === b.partner)) ? ' sel' : '';
+    w += `<div class="hb ${b.status}${m}${sel}" data-id="${b.id}" style="left:${k.x}px;top:${k.y}px;width:${k.w}px;height:${k.h}px" title="${esc(b.id + ' · ' + HST[b.status] + (b.partner ? ' · ' + (b.partner.name || '') : ''))}"><div class="ht">${b.id}</div></div>`;
+    if (b.status === 'sec' || b.status === 'hold' || b.status === 'org') {
+      let label = '';
+      if (b.partner && !labelled.has(b.partner)) { labelled.add(b.partner); label = shortName(b.partner.name); if (label.length > 18) label = label.split(' ').slice(0, 2).join(' '); }
+      if (b.status === 'org' && b.id === 'J1') label = '#businessSynergy';
+      w += wallHtml(k, b.status + m, label);
+    }
+  });
+  const pills = [['all', 'All', all.length, ''], ['sec', 'Secured', n('sec'), 'var(--cyan)'], ['hold', 'On hold', n('hold'), 'var(--amber)'], ['av', 'Available', n('av'), '#3A4052'], ['org', 'Organiser', n('org'), 'var(--blue)']].filter(x => x[0] === 'all' || x[2]);
+  let h = `<div class="hbar"><div class="hpills" role="group" aria-label="Show booths">${pills.map(([k, l, c, col]) => `<button class="hpill ${hall.filter === k ? 'on' : ''}" data-hf="${k}">${col ? `<i style="background:${col}"></i>` : ''}${l}<span class="n">${c}</span></button>`).join('')}</div>
+    <div class="htg"><label><input type="checkbox" id="hNames" ${hall.names ? 'checked' : ''}><span class="hsw"></span>Show names</label><label><input type="checkbox" id="hZones" ${hall.zones ? 'checked' : ''}><span class="hsw"></span>Show zones</label></div></div>
+  <section class="stage" aria-label="Hall 6 booth layout in 3D. Drag to turn it, click a booth for details.">
+    <div class="hworld${dim ? ' dim' : ''}${hall.names ? '' : ' nonames'}${hall.zones ? '' : ' nozones'}" id="hworld" style="--spin:${hall.spin}deg;--tilt:${hall.tilt}deg;--zoom:${hall.zoom}">${w}</div>
+    <div class="hfloat hpanel" id="hcard">${hallCard(B)}</div>
+    <div class="hcompass"><i></i><b>HALL 6</b><small id="hang">${hall.spin}°</small></div>
+    <div class="htools"><button data-hv="zin" title="Zoom in" aria-label="Zoom in">+</button><button data-hv="zout" title="Zoom out" aria-label="Zoom out">−</button><button data-hv="rl" title="Turn left" aria-label="Turn left">⟲</button><button data-hv="rr" title="Turn right" aria-label="Turn right">⟳</button><button data-hv="flat" title="Top view" aria-label="Top view">⬒</button></div>
+    <div class="hlegend hpanel"><span><i style="background:var(--cyan)"></i>Secured</span><span><i style="background:var(--amber)"></i>On hold</span><span><i style="background:var(--blue)"></i>Organiser</span><span><i style="background:#3A4052"></i>Available</span></div>
+    <div class="hhint">Drag to turn and tilt · click a booth for details</div>
+  </section>`;
+
+  // Islands: secured / total, then the hall total (organiser booths not counted)
+  const sale = all.filter(b => b.status !== 'org' && b.status !== 'na'), sec = sale.filter(b => b.status === 'sec').length;
+  const isl = FLOOR.filter(g => !g.org).sort((a, b) => a.L.localeCompare(b.L));
+  h += `<div class="dgrid"><div class="card dcard wide"><div class="dch"><h3>Booth availability by island</h3></div>
+    <div class="isles">${isl.map(g => { const bs = all.filter(b => b.L === g.L), s = bs.filter(b => b.status === 'sec').length; return `<div class="isle" title="${esc(g.cat)}"><small>Island ${esc(g.L)}</small><b><em>${s}</em>/${bs.length}</b><span class="lb">secured / total</span></div>`; }).join('')}</div>
+    <div class="dtot"><div class="tl"><h4>Total booths secured</h4><b>${sec} / ${sale.length} booths</b></div>${bar(pct(sec, sale.length), true)}<p><b>${fmtP(Math.round(pct(sec, sale.length) * 10) / 10)} secured</b> · ${Math.max(0, sale.length - sec)} booths remaining</p></div></div>`;
+
+  // Needs attention
+  const C = calcCommercial(), P = calcProgramme(), ops = get('ops'), al = [];
+  const held = [...new Set(all.filter(b => b.status === 'hold' && b.partner).map(b => b.partner))];
+  if (n('hold')) al.push(['var(--amber)', `${n('hold')} booth${n('hold') === 1 ? '' : 's'} on hold`, held.slice(0, 3).map(p => shortName(p.name)).join(', ') + (held.length > 3 ? ` + ${held.length - 3} more` : ''), 'Sales']);
+  if (isFinance && C.outstanding > 0) al.push(['var(--pink)', `${fmtRM(C.outstanding)} outstanding`, `From ${C.conf.length} confirmed partners, incl. SST`, 'Finance']);
+  if (isFinance && C.target && C.sales < C.target) al.push(['var(--blue)', `${fmtRM(C.target - C.sales)} to sales target`, `${fmtP(Math.round(pct(C.sales, C.target) * 10) / 10)} of ${fmtRM(C.target)} achieved`, 'Sales']);
+  P.targets.forEach(t => { const r = t.slots - t.secured; if (r > 0) { const sl = P.p.speakers.filter(x => x.type === t.id && x.status !== 'Confirmed' && x.status !== 'Declined').map(x => x.name).filter(Boolean); al.push(['var(--purple)', `${r} ${t.name.toLowerCase()} slot${r === 1 ? '' : 's'} open`, sl.length ? sl.join(', ') + ' in progress' : 'No one shortlisted yet', 'Programme']); } });
+  ops.streams.filter(x => x.status !== 'Completed' && (x.next || '').trim()).forEach(x => al.push([x.status === 'Blocked' ? 'var(--pink)' : 'var(--cyan)', x.name || 'Workstream', x.next, x.status]));
+  h += `<div class="card dcard"><div class="dch"><h3>Needs attention</h3><span class="more">${al.length}</span></div>${al.length ? `<div class="alerts">${al.map(([c, t, d, tag]) => `<div class="al" style="--c:${c}"><div><b>${esc(t)}</b><small>${esc(d)}</small></div><span class="tag">${esc(tag)}</span></div>`).join('')}</div>` : '<div class="empty">Nothing waiting.</div>'}</div>`;
+
+  // Sales team: counted by Salesperson 1 and 2; deal value goes to Salesperson 1 only, and only finance admins see it
+  const team = {}, add = (nm, f) => { nm = String(nm || '').trim(); if (nm) f(team[nm] = team[nm] || {c: 0, h: 0, v: 0}); };
+  C.c.partners.forEach(p => { if (p.status !== 'Confirmed' && p.status !== 'Negotiating') return;
+    [p.sales1, p.sales2].forEach((nm, i) => add(nm, t => { if (p.status === 'Confirmed') { t.c++; if (!i) t.v += num(p.value); } else t.h++; })); });
+  const COLS = ['#8B7BFF', '#2FA6C4', '#3F6AF6', '#2FB5A8', '#C98A1E', '#E0567A', '#5B8DF7'];
+  const rows = Object.entries(team).sort((a, b) => b[1].v - a[1].v || b[1].c - a[1].c);
+  h += `<div class="card dcard"><div class="dch"><h3>Sales team</h3><span class="more">${isFinance ? 'Confirmed value' : 'Partners'}</span></div>${rows.length ? rows.map(([nm, t], i) => `<div class="mem"><div class="av" style="background:${COLS[i % COLS.length]}">${esc(initials(nm))}</div><div><b>${esc(nm)}</b><small>${t.c} confirmed · ${t.h} negotiating</small></div><span class="v">${isFinance ? (t.v ? fmtRM(t.v) : '–') : ''}</span></div>`).join('') : '<div class="empty">No salespeople on partners yet.</div>'}</div></div>`;
+  return h;
+}
+function applyHall() {
+  const w = $('#hworld'); if (!w) return;
+  w.style.setProperty('--spin', hall.spin + 'deg'); w.style.setProperty('--tilt', hall.tilt + 'deg'); w.style.setProperty('--zoom', hall.zoom);
+  const a = $('#hang'); if (a) a.textContent = hall.spin + '°';
+}
+function selectBooth(id) {
+  hall.sel = id;
+  const B = calcBooths(), p = B[id] && B[id].partner;
+  document.querySelectorAll('.hb').forEach(el => { const x = B[el.dataset.id]; el.classList.toggle('sel', el.dataset.id === id || !!(p && x && x.partner === p)); });
+  const c = $('#hcard'); if (c) c.innerHTML = hallCard(B);
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest) return;
+  const hb = e.target.closest('.hb[data-id]');
+  if (hb) { if (!hall.moved) selectBooth(hb.dataset.id); return; }
+  const f = e.target.closest('[data-hf]');
+  if (f) {
+    hall.filter = f.dataset.hf;
+    document.querySelectorAll('.hpill').forEach(x => x.classList.toggle('on', x === f));
+    const w = $('#hworld'); if (!w) return;
+    w.classList.toggle('dim', hall.filter !== 'all');
+    const B = calcBooths();
+    w.querySelectorAll('.hb').forEach(el => el.classList.toggle('match', hallMatch(B[el.dataset.id] || {})));
+    w.querySelectorAll('.hw').forEach(el => el.classList.toggle('match', hall.filter === 'all' || el.classList.contains(hall.filter)));
+    return;
+  }
+  const v = e.target.closest('[data-hv]');
+  if (v) {
+    const a = v.dataset.hv;
+    if (a === 'zin') hall.zoom = Math.min(1.2, Math.round((hall.zoom + .08) * 100) / 100);
+    if (a === 'zout') hall.zoom = Math.max(.4, Math.round((hall.zoom - .08) * 100) / 100);
+    if (a === 'rl') hall.spin -= 15;
+    if (a === 'rr') hall.spin += 15;
+    if (a === 'flat') { const top = hall.tilt !== 0; hall.tilt = top ? 0 : 57; hall.spin = top ? 0 : -24; }
+    applyHall();
+  }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'hNames') { hall.names = e.target.checked; const w = $('#hworld'); if (w) w.classList.toggle('nonames', !hall.names); }
+  if (e.target.id === 'hZones') { hall.zones = e.target.checked; const w = $('#hworld'); if (w) w.classList.toggle('nozones', !hall.zones); }
+});
+// Drag to change the angle: left/right turns the hall (reversed, as asked), up/down tilts it.
+document.addEventListener('pointerdown', e => {
+  const st = e.target.closest && e.target.closest('.stage');
+  if (!st || e.button !== 0 || e.target.closest('.hfloat,.htools')) return;
+  hall.drag = {x: e.clientX, y: e.clientY, spin: hall.spin, tilt: hall.tilt, id: e.pointerId, el: st}; hall.moved = false;
+});
+document.addEventListener('pointermove', e => {
+  const d = hall.drag; if (!d) return;
+  const dx = e.clientX - d.x, dy = e.clientY - d.y;
+  if (!hall.moved && Math.hypot(dx, dy) < 4) return;
+  if (!hall.moved) { try { d.el.setPointerCapture(d.id); } catch (err) {} d.el.classList.add('dragging'); }
+  hall.moved = true;
+  hall.spin = Math.round(d.spin - dx * .3);
+  hall.tilt = Math.max(0, Math.min(75, Math.round(d.tilt - dy * .25)));
+  applyHall();
+});
+function endDrag() {
+  if (!hall.drag) return;
+  hall.drag.el.classList.remove('dragging'); hall.drag = null;
+  setTimeout(() => { hall.moved = false; }, 0);
+  if (remotePending && !editingNow()) { remotePending = false; render(); }
+}
+document.addEventListener('pointerup', endDrag);
+document.addEventListener('pointercancel', endDrag);
 
 /* ---------- boot ---------- */
 setInterval(() => { if (gate === 'ready' && (tab === 'dashboard' || mode !== 'team') && !editingNow()) render(); }, 60000);
