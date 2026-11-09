@@ -480,6 +480,10 @@ body.x .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bot
 @media (max-width:1100px){.ck4{grid-template-columns:1fr 1fr}.csplit,.pcols,.pvs{grid-template-columns:1fr}.cedit{position:static}}
 @media (max-width:760px){.chead{display:none}.crow,.clist.nov .crow{grid-template-columns:minmax(0,1fr) auto}.crow>:nth-child(2),.crow>:nth-child(3),.crow>.cval{display:none}.pedit,.cf2{grid-template-columns:1fr}}
 
+.cundo{display:flex;align-items:center;gap:10px;margin:0 14px 10px;padding:9px 12px;border-radius:12px;background:rgba(245,181,71,.1);border:1px solid rgba(245,181,71,.3);font-size:12.5px;color:#FFD98A}
+.cundo b{color:var(--text)}.cundo .btn{margin-left:auto}
+.cname b.unnamed{color:var(--pink)}
+.btn.del.armed{white-space:normal;text-align:left}
 /* ---------- Programme and Participant profiling (team view) ---------- */
 .ckx{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
 .gpanel{padding:18px 20px!important;margin-top:14px;display:flex;flex-direction:column;gap:14px}
@@ -1643,7 +1647,8 @@ function agendaCols() {
 }
 
 // Commercial: partner list with a side panel to edit the selected partner; tiers, islands and the target sit below.
-let comSel = null, comFilter = 'all', comCount = 0;
+// comTrash holds sponsors removed since the page opened, newest last, so Undo can put them back.
+let comSel = null, comFilter = 'all', comCount = 0, comTrash = [];
 const TIER_COLS = ['#3F6AF6', '#65D0EA', '#A77BFF', '#F5B547', '#FF6F91', '#3DDC97'];
 // Company initials, or the logo when one loads (a broken logo falls back to the initials).
 const logoBox = p => { const ini = esc(initials(shortName(p && p.name).replace(/^messrs\s+/i, ''))); return p && p.logo ? `<img src="${esc(logoSrc(p.logo))}" alt="" data-ini="${ini}" onerror="this.parentNode.textContent=this.dataset.ini">` : ini; };
@@ -1652,7 +1657,7 @@ VIEWS.commercial = () => {
   // A newly added partner opens in the side panel straight away.
   if (c.partners.length > comCount && comCount) comSel = c.partners[c.partners.length - 1].id;
   comCount = c.partners.length;
-  if (!c.partners.some(p => p.id === comSel)) comSel = (c.partners[0] || {}).id || null;
+  if (comSel !== 'removed' && !c.partners.some(p => p.id === comSel)) comSel = (c.partners[0] || {}).id || null;
   const neg = c.partners.filter(p => p.status === 'Negotiating'), sale = Object.values(B).filter(b => b.status !== 'org' && b.status !== 'na'), sec = sale.filter(b => b.status === 'sec').length;
   const tcol = id => TIER_COLS[Math.max(0, c.tiers.findIndex(t => t.id === id)) % TIER_COLS.length];
   const tname = id => ((c.tiers.find(t => t.id === id) || {}).name || 'No tier').replace(/ Partner$/, '');
@@ -1670,9 +1675,10 @@ VIEWS.commercial = () => {
   h += `<datalist id="sp">${[...new Set(c.partners.flatMap(p => [p.sales1, p.sales2]).map(x => String(x || '').trim()).filter(Boolean))].map(n => `<option value="${esc(n)}">`).join('')}</datalist>
   <div class="csplit"><div class="card clist${isFinance ? '' : ' nov'}"><div class="ctop"><div class="hpills" role="group" aria-label="Show partners">${pills.map(([k, l, n]) => `<button type="button" class="hpill ${comFilter === k ? 'on' : ''}" data-cf="${esc(k)}">${l}<span class="n">${n}</span></button>`).join('')}</div>
     <button class="btn primary" data-act="addPartner" ${c.tiers.length ? '' : 'disabled'}>＋ Add partner</button></div>
+    ${comTrash.length ? `<div class="cundo" role="status">Removed <b>${esc(comTrash[comTrash.length - 1].p.name || 'Unnamed partner')}</b>${comTrash.length > 1 ? ` and ${comTrash.length - 1} more` : ''}<button class="btn" data-act="undoPartner">Undo</button></div>` : ''}
     <div class="chead"><span>Partner</span><span>Package</span><span>Salesperson</span>${isFinance ? '<span style="text-align:right">Deal value</span>' : ''}<span>Status</span></div>
     ${shown.map(p => { const col = tcol(p.tier), sp = [p.sales1, p.sales2].map(x => String(x || '').trim()).filter(Boolean);
-      return `<div class="crow ${p.id === comSel ? 'sel' : ''}" data-pid="${p.id}" tabindex="0" role="button" aria-label="Edit ${esc(p.name || 'unnamed partner')}"><div class="cname"><div class="clogo">${logoBox(p)}</div><div style="min-width:0"><b>${esc(p.name || 'Unnamed partner')}</b><small>${p.island ? 'Island ' + esc(p.island) : 'No island'}${p.boothNo ? ' · ' + esc(p.boothNo) : ''}</small></div></div>
+      return `<div class="crow ${p.id === comSel ? 'sel' : ''}" data-pid="${p.id}" tabindex="0" role="button" aria-label="Edit ${esc(p.name || 'unnamed partner')}"><div class="cname"><div class="clogo">${logoBox(p)}</div><div style="min-width:0"><b class="${p.name ? '' : 'unnamed'}">${esc(p.name || 'Unnamed partner')}</b><small>${p.island ? 'Island ' + esc(p.island) : 'No island'}${p.boothNo ? ' · ' + esc(p.boothNo) : ''}</small></div></div>
         <span class="ctag" style="color:${col};border-color:${col}55;background:${col}14">${esc(tname(p.tier))}</span><span class="cwho">${esc(sp.join(' + ') || '–')}</span>${isFinance ? `<span class="cval">${num(p.value) ? fmtRM(p.value) : '<span class="muted">–</span>'}</span>` : ''}<span class="cst ${esc(p.status)}">${esc(p.status)}</span></div>`; }).join('') || '<div class="empty" style="padding:14px 18px">No partners here.</div>'}
     ${logoMsg ? `<p class="help" style="margin:10px 18px 0;color:var(--danger)" role="alert">${esc(logoMsg)}</p>` : ''}
     ${c.tiers.length ? '' : '<p class="help" style="margin:10px 18px">Add a tier below before adding partners.</p>'}</div>`;
@@ -1692,7 +1698,8 @@ VIEWS.commercial = () => {
     <div class="field">Logo${logoCell(p).replace(/^<td>|<\/td>$/g, '')}</div>
     ${assetsChecked && !assetsNs && !readOnly && !offline ? '<p class="help" style="margin:0">Logo upload isn\'t available right now. Reload the page and try again.</p>' : ''}
     <label class="field">Notes${inp(`commercial:partners:${p.id}:notes`, p.notes, 'placeholder="PIC, payment terms…"')}</label>
-    <div class="cacts"><span class="help" style="margin:0">${p.status === 'Confirmed' ? 'Counts towards sales and booths' : 'Only confirmed partners count'}</span>${del('delPartner', p.id)}</div></aside>` : `<aside class="card cedit"><div class="empty">No partners yet. Add one to start.</div></aside>`;
+    <div class="cacts"><span class="help" style="margin:0">${p.status === 'Confirmed' ? 'Counts towards sales and booths' : 'Only confirmed partners count'}</span>${del('delPartner', p.id).replace('>Confirm<', `>Remove ${esc(shortName(p.name || 'this partner'))}?<`)}</div></aside>` : comSel === 'removed' && comTrash.length ? `<aside class="card cedit"><h3>Removed ${esc(comTrash[comTrash.length - 1].p.name || 'unnamed partner')}</h3><p class="help" style="margin:0">Pick a partner from the list to edit it, or bring this one back.</p><div><button class="btn primary" data-act="undoPartner">Undo</button></div></aside>`
+    : `<aside class="card cedit"><div class="empty">${c.partners.length ? 'Pick a partner from the list to edit it.' : 'No partners yet. Add one to start.'}</div></aside>`;
   h += `</div>`;
 
   // Settings: target, tiers, islands
@@ -2171,7 +2178,16 @@ document.addEventListener('click', e => {
   const rm = (k, arr) => mut(k, d => { d[arr] = d[arr].filter(x => x.id !== id); });
   const A = {
     addPartner: () => mut('commercial', d => { const t = d.tiers[0] || {}; d.partners.push({id: uid(), name: '', tier: t.id || '', island: (d.islands[0] || {}).id || '', booths: t.booths || 1, value: t.price || 0, collected: 0, status: 'Confirmed', sales1: '', sales2: '', notes: ''}); }),
-    delPartner: () => rm('commercial', 'partners'),
+    delPartner: () => {
+      const ps = get('commercial').partners, i = ps.findIndex(x => x.id === id);
+      if (i >= 0) comTrash.push({p: clone(ps[i]), index: i});
+      comSel = 'removed'; rm('commercial', 'partners');
+    },
+    undoPartner: () => {
+      const t = comTrash.pop(); if (!t) return;
+      mut('commercial', d => { if (!d.partners.some(x => x.id === t.p.id)) d.partners.splice(Math.min(t.index, d.partners.length), 0, clone(t.p)); });
+      comSel = t.p.id; comCount = get('commercial').partners.length;
+    },
     delLogo: () => { const old = (get('commercial').partners.find(x => x.id === id) || {}).logo; mut('commercial', d => { const it = d.partners.find(x => x.id === id); if (it) it.logo = ''; }); if (old && assetsNs) assetsNs.delete(old).catch(() => {}); },
     toggleInd: () => { indAll = !indAll; render(); },
     reportPng: () => profileReport('png'),
