@@ -617,6 +617,63 @@ body.x .s-tabs{border-color:var(--line)}
 .arow.act details summary{cursor:pointer;color:var(--faint);font-size:12px;margin-top:4px}
 @media (max-width:1100px){.okan{grid-template-columns:1fr 1fr}.asplit{grid-template-columns:1fr}}
 @media (max-width:760px){.actf{grid-template-columns:1fr 1fr}.actf .btns{grid-column:1/-1}}
+body.staff [data-mode]{display:none}
+/* daily progress */
+.dpday{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.dpday>div{flex:1 1 220px}.dpday b{display:block;font:700 16px Montserrat,sans-serif}.dpday span{color:var(--muted);font-size:12.5px}
+.dpbar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:12px}
+.dpbar label.field{flex:1 1 150px;min-width:0}
+.dpv{display:inline-flex;padding:3px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
+.dpv button{border:0;background:none;color:var(--muted);font:600 13px Inter,sans-serif;padding:8px 13px;border-radius:9px;cursor:pointer}
+.dpv button[aria-pressed="true"]{background:#fff;color:var(--navy)}
+.dpk{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}
+.dpk>div{padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.dpk small{display:block;color:var(--muted);font-size:12px}.dpk b{font:800 24px/1.3 Montserrat,sans-serif}
+.dpk .done b{color:var(--ok)}.dpk .progress b{color:var(--amber)}.dpk .blocked b{color:var(--pink)}
+.dps{font:600 11px Inter,sans-serif;padding:4px 9px;border-radius:99px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;justify-self:start}
+.dps::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.dps.done{background:rgba(61,220,151,.13);color:var(--ok)}.dps.progress{background:rgba(245,181,71,.14);color:var(--amber)}.dps.blocked{background:rgba(255,111,145,.14);color:var(--pink)}
+.dpb{font:600 12px Inter,sans-serif;padding:7px 11px;border-radius:10px;border:1px solid var(--line);white-space:nowrap}
+.dpb.done{color:var(--ok);border-color:rgba(61,220,151,.35)}.dpb.pend{color:var(--amber);border-color:rgba(245,181,71,.35)}.dpb.late{color:var(--pink);border-color:rgba(255,111,145,.4)}
+.dplist{display:flex;flex-direction:column;gap:10px}
+.dpt{border:1px solid var(--line);border-left:3px solid var(--c);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;background:rgba(255,255,255,.02)}
+.dpt.done{--c:var(--ok)}.dpt.progress{--c:var(--amber)}.dpt.blocked{--c:var(--pink)}
+.dph{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.dph b{font-weight:600;font-size:14px;flex:1 1 200px}
+.dph .btn,.dpr .btn{font-size:12px;padding:6px 10px}
+.dpm{color:var(--faint);font-size:12px}
+.dpl{font-size:12.5px;color:var(--muted)}.dpl b{color:var(--text);font-weight:600}.dpl i,.dpu i{font-style:normal;color:var(--text)}
+.dpc{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border-radius:10px;background:rgba(63,106,246,.12);border:1px solid rgba(63,106,246,.32);font-size:12.5px}
+.dpc b{color:#A9BEFF;font-weight:600}
+.dpseg{display:flex;gap:6px;flex-wrap:wrap}
+.dpseg button{font:600 12.5px Inter,sans-serif;padding:8px 13px;border-radius:99px;border:1px solid var(--line2);background:none;color:var(--muted);cursor:pointer}
+.dpseg button[aria-pressed="true"].done{background:var(--ok);border-color:var(--ok);color:#06210F}
+.dpseg button[aria-pressed="true"].progress{background:var(--amber);border-color:var(--amber);color:#2A1A00}
+.dpseg button[aria-pressed="true"].blocked{background:var(--pink);border-color:var(--pink);color:#2A0010}
+.dpf{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.dpa{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.err{color:var(--danger);font-size:12.5px}
+.dpr{display:grid;grid-template-columns:minmax(0,1.2fr) auto minmax(0,2fr) auto;gap:8px 12px;align-items:start;padding:12px 0;border-bottom:1px solid var(--line)}
+.dpr:last-child{border:0}
+.dpr>div>b{font-weight:600;font-size:13.5px;display:block}.dpr small{color:var(--faint);font-size:11.5px}
+.dpu{font-size:12.5px;color:var(--muted)}
+.dpstale{color:var(--amber);font-size:11.5px;white-space:nowrap}
+.dpx{grid-column:1/-1}
+.dpfu{display:flex;gap:8px}.dpfu input{flex:1}
+.dphist{border-left:2px solid var(--line2);margin-left:4px;padding:2px 0 2px 12px;display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:var(--muted)}
+.dphist b{color:var(--text);font-weight:600}.dphc{color:#A9BEFF}
+.dptw{overflow-x:auto}
+.dptab{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+.dptab th{text-align:left;font-weight:600;color:var(--faint);font-size:12px;padding:0 10px 8px 0;border-bottom:1px solid var(--line)}
+.dptab td{padding:10px 10px 10px 0;border-bottom:1px solid var(--line)}.dptab tr:last-child td{border:0}
+.dptab .n{text-align:right;font-variant-numeric:tabular-nums;width:90px}.dptab td.bad{color:var(--pink);font-weight:700}
+.dpg.blocked{border-color:rgba(255,111,145,.35)}
+.dpp{display:grid;grid-template-columns:1fr 1.3fr 1fr .9fr auto;gap:8px;align-items:center}
+.dpp.head span{color:var(--faint);font-size:12px;font-weight:600}
+.dpp.new{padding-top:10px;border-top:1px solid var(--line)}
+.dpe{font-size:12.5px;color:var(--muted);word-break:break-all}
+.dpq{display:flex;gap:8px;align-items:center}.dpq input:not([type=checkbox]){flex:1}.dpq select{flex:0 1 180px}
+.dpchk{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);white-space:nowrap}.dpchk input{width:auto}
+@media (max-width:760px){.dpk{grid-template-columns:1fr 1fr}.dpk>div:first-child{grid-column:1/-1}.dpr{grid-template-columns:1fr auto}.dpu{grid-column:1/-1}.dpp{grid-template-columns:1fr 1fr}.dpp.head{display:none}.dpp .dpe{grid-column:1/-1;order:-1}}
+
 @media (max-width:760px){.okan{grid-template-columns:1fr}.mfn{grid-template-columns:90px 1fr 80px}}
 @media (max-width:1100px){.isles{grid-template-columns:repeat(5,1fr)}}
 @media (max-width:760px){
@@ -1284,8 +1341,10 @@ const STREAM_STATUS = ['Not started', 'In progress', 'Waiting', 'Blocked', 'Comp
 const PNL_STATUS = ['Paid', 'Part paid', 'Due', 'Quoted', 'Requested', 'Estimate', 'TBC', 'Free'];
 const PNL_GROUPS = {Income: ['Booth & Sponsorship Sales', 'Ticket Sales', 'Other Income'], Cost: ['Venue', 'Logistics & Production', 'Marketing & Promotion', 'Manpower & Commission', 'Programme & Speakers', 'F&B', 'Others']};
 
-const TABS = [['dashboard','Dashboard'],['commercial','Commercial & partnership'],['pnl','P&amp;L'],['programme','Programme & speakers'],['participants','Participant profiling'],['marketing','Marketing performance'],['ops','Operations & workstreams'],['admins','Admins'],['settings','Settings']];
+const TABS = [['dashboard','Dashboard'],['commercial','Commercial & partnership'],['pnl','P&amp;L'],['programme','Programme & speakers'],['participants','Participant profiling'],['marketing','Marketing performance'],['ops','Operations & workstreams'],['progress','Daily progress'],['admins','Admins'],['settings','Settings']];
 let tab = 'dashboard';
+// Staff (in Daily progress but not tracker admins) see only that tab, plus Settings when they are a director.
+const visTabs = () => TABS.filter(([id]) => isStaff ? id === 'progress' || (id === 'settings' && dp.me && dp.me.director) : isFinance || id !== 'pnl');
 let mode = 'team';
 try { if (localStorage.getItem('cdx-mode') === 'sales') mode = 'sales'; } catch (e) {}
 if (/sales/i.test(location.hash + location.search)) mode = 'sales';
@@ -1367,11 +1426,11 @@ function render() {
   if (gate !== 'ready') { renderGate(); return; }
   if ($('#gate-bg')) { $('#gate-bg').remove(); document.body.classList.remove('gating'); }
   const a = document.activeElement; const f = a && a.dataset && a.dataset.b ? a.dataset.b : null;
-  if (!isFinance && tab === 'pnl') tab = 'dashboard';
-  $('#tabs').innerHTML = TABS.filter(([id]) => isFinance || id !== 'pnl').map(([id, label]) => `<button class="tab" data-tab="${id}" aria-current="${tab === id}">${label}${id === 'admins' && adminState.requests.length ? ` <span class="pill" style="margin:0 0 0 4px;background:var(--danger);color:#fff">${adminState.requests.length}</span>` : ''}</button>`).join('');
+  if (!visTabs().some(([id]) => id === tab)) tab = isStaff ? 'progress' : 'dashboard';
+  $('#tabs').innerHTML = visTabs().map(([id, label]) => `<button class="tab" data-tab="${id}" aria-current="${tab === id}">${label}${id === 'admins' && adminState.requests.length ? ` <span class="pill" style="margin:0 0 0 4px;background:var(--danger);color:#fff">${adminState.requests.length}</span>` : ''}</button>`).join('');
   const times = KEYS.map(k => state[k] && state[k].updatedAt).filter(Boolean).sort();
   const allLoaded = KEYS.every(k => loaded[k]) || offline;
-  $('#asof').textContent = !allLoaded ? 'Loading…' : times.length ? 'Last updated ' + fmtDate(times[times.length - 1]) : 'No updates yet';
+  $('#asof').textContent = isStaff ? '' : !allLoaded ? 'Loading…' : times.length ? 'Last updated ' + fmtDate(times[times.length - 1]) : 'No updates yet';
   document.body.classList.toggle('sales', mode !== 'team'); document.body.classList.toggle('contractor', mode === 'contractor');
   document.body.classList.toggle('x', mode !== 'contractor'); document.body.classList.toggle('xt', mode === 'team');
   renderShell();
@@ -1546,6 +1605,12 @@ document.addEventListener('paste', e => {
   if (cd) { f = [...(cd.files || [])].find(x => /^image\//.test(x.type)); if (!f) { const it = [...(cd.items || [])].find(x => x.kind === 'file' && /^image\//.test(x.type)); f = it && it.getAsFile(); } }
   if (f) uploadLogo(box.dataset.pasteLogo, f);
   else { logoMsg = 'There\'s no image on your clipboard. Copy the logo image first (long-press it and choose Copy), then paste here.'; render(); }
+});
+document.addEventListener('input', e => {
+  const d = e.target.dataset || {};
+  if (d.dpd) { const [id, f] = d.dpd.split(':'); (dp.drafts[id] = dp.drafts[id] || {})[f] = e.target.value; }
+  if (d.dpn) dp.note[d.dpn] = e.target.value;
+  if (d.dpadd && dp.adding) dp.adding[d.dpadd] = e.target.value;
 });
 document.addEventListener('input', e => { const box = e.target.closest && e.target.closest('[data-paste-logo]'); if (box) box.textContent = ''; });
 document.addEventListener('drop', e => { const box = e.target.closest && e.target.closest('[data-paste-logo]'); if (!box) return; e.preventDefault(); const f = [...(e.dataTransfer.files || [])][0]; if (f) uploadLogo(box.dataset.pasteLogo, f); });
@@ -2148,6 +2213,7 @@ function downloadActivity() {
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 VIEWS.settings = () => {
+  if (isStaff) return dpSettings();
   if (actState.rows === null) loadActivity();
   const rows = actFiltered(), all = actState.rows || [];
   const people = [...new Set(all.map(r => r.email))].sort();
@@ -2162,7 +2228,7 @@ VIEWS.settings = () => {
     const list = ch.length > 4 ? `<ul>${ch.slice(0, 3).map(t => `<li>${esc(t)}</li>`).join('')}</ul><details><summary>${ch.length - 3} more changes</summary><ul>${ch.slice(3).map(t => `<li>${esc(t)}</li>`).join('')}</ul></details>` : `<ul>${ch.map(t => `<li>${esc(t)}</li>`).join('')}</ul>`;
     body += `<div class="arow act"><span class="when">${esc(time(r.at))}</span><div class="av" style="background:${r.email === 'system' ? 'var(--faint)' : AV_COLS[Math.max(i, 0) % AV_COLS.length]}">${esc(initials(r.email))}</div><div class="who"><b>${esc(r.email)} <span class="cst">${esc(ACT_SEC[r.section] || r.section)}</span></b>${list}</div></div>`;
   });
-  return `${actState.msg ? `<div class="banner err" style="margin-top:14px">${esc(actState.msg)}</div>` : ''}
+  return `${dpSettings()}${actState.msg ? `<div class="banner err" style="margin-top:14px">${esc(actState.msg)}</div>` : ''}
   <div class="card dcard" style="margin-top:14px"><div class="dch"><h3>Activity report</h3><span class="more">${actState.rows === null ? 'Loading…' : `${rows.length} ${rows.length === 1 ? 'save' : 'saves'}${all.length >= 5000 ? ' · latest 5,000 only, pick a From date to go further back' : ''}`}</span></div>
     <p class="help" style="margin:0">Every save in the tracker and every admin change, newest first, with who made it. It shows which fields changed, not the amounts. P&amp;L entries are visible only to admins with P&amp;L access.</p>
     <div class="actf">${sel('who', 'Person', people)}${sel('sec', 'Section', secs, ACT_SEC)}
@@ -2171,6 +2237,212 @@ VIEWS.settings = () => {
       <div class="btns"><button class="btn" data-act="refreshActivity">Refresh</button><button class="btn" data-act="csvActivity"${rows.length ? '' : ' disabled'}>Download CSV</button></div></div>
     <div>${actState.rows === null ? '<div class="empty">Loading…</div>' : body || `<div class="empty">${all.length ? 'Nothing matches these filters.' : 'No changes recorded yet. Changes made from now on appear here.'}</div>`}</div></div>`;
 };
+
+/* ---------- daily progress ---------- */
+// Its own tables (supabase/daily-progress.sql), read and written only through those functions, which also check who may do what.
+// A task is kept once and stays on the board each day until it is marked Done; each day's progress is a separate update.
+const DP_ST = [['done', 'Done'], ['progress', 'In progress'], ['blocked', 'Blocked']];
+const DP_ROLE = [['member', 'Member'], ['pic', 'Dept PIC'], ['pm', 'Project manager'], ['director', 'Director']];
+const DP_ORDER = {blocked: 0, progress: 1, done: 2};
+const KL = {timeZone: 'Asia/Kuala_Lumpur'};
+const dp = {me: null, board: null, day: '', view: '', dept: '', project: '', pic: '', msg: '', setMsg: '', loading: false, missing: false,
+  drafts: {}, busy: {}, err: {}, adding: null, addErr: '', submitting: false, hist: {}, open: {}, note: {}};
+let isStaff = false;
+async function loadDp() {
+  if (!sb || !sb.rpc || dp.loading) return;
+  dp.loading = true;
+  const [m, b] = await Promise.all([sb.rpc('dp_me'), sb.rpc('dp_board', {p_day: dp.day || null})]);
+  dp.loading = false;
+  if (m.error && /dp_me/.test(m.error.message)) { dp.missing = true; remoteRender(); return; }
+  dp.me = m.data || null;
+  if (b.error) dp.msg = 'Could not load daily progress: ' + b.error.message;
+  else { dp.board = b.data; dp.day = b.data.day; dp.msg = ''; }
+  remoteRender();
+}
+const dpName = e => { const p = dp.me && dp.me.people.find(x => x.email === e); return (p && p.name) || String(e || '').replace(/@.*/, ''); };
+const dpDept = id => ((dp.me && dp.me.departments.find(d => d.id === id)) || {}).name || '';
+const dpProj = id => ((dp.me && dp.me.projects.find(j => j.id === id)) || {}).name || '';
+const dpTime = d => new Date(d).toLocaleTimeString('en-MY', {...KL, hour: 'numeric', minute: '2-digit'}).toUpperCase();
+const dpDay = d => new Date(d + 'T12:00:00+08:00').toLocaleDateString('en-MY', {...KL, weekday: 'short', day: 'numeric', month: 'short'});
+const dpChip = s => `<span class="dps ${s}">${(DP_ST.find(x => x[0] === s) || DP_ST[1])[1]}</span>`;
+const dpSort = (a, b) => DP_ORDER[a.status] - DP_ORDER[b.status] || a.title.localeCompare(b.title);
+// Submitted / Late / Pending for a department on the board's day. 4:00 PM Malaysia time.
+function dpSub(dept) {
+  const b = dp.board, s = b.submissions.find(x => x.dept_id === dept);
+  if (s) return s.late ? {k: 'late', t: 'Late · submitted ' + dpTime(s.at), s} : {k: 'done', t: 'Submitted · ' + dpTime(s.at), s};
+  return b.day < b.today || Date.now() > new Date(b.deadline).getTime() ? {k: 'late', t: 'Late · not submitted'} : {k: 'pend', t: 'Pending · due 4:00 PM'};
+}
+const dpTasks = () => dp.board.tasks.filter(t => (!dp.dept || t.dept_id === dp.dept) && (!dp.project || t.project_id === dp.project) && (!dp.pic || t.pic === dp.pic));
+function dpComments(t) {
+  if (!t.comments || !t.comments.length) return '';
+  return `<div class="dpc dpx">${t.comments.map(c => `<div><b>Follow-up from ${esc(dpName(c.author))}</b> <span class="dpm">${esc(dpDay(new Date(c.at).toLocaleDateString('en-CA', KL)))}</span><br>${esc(c.body)}</div>`).join('')}</div>`;
+}
+function dpHistory(t) {
+  if (!dp.open[t.id]) return '';
+  const h = dp.hist[t.id];
+  if (!h) return '<div class="dphist dpx"><span class="dpm">Loading…</span></div>';
+  const items = h.updates.map(u => ({d: u.day, o: 0, h: `<div><b>${esc(dpDay(u.day))}</b> ${dpChip(u.status)} ${esc(u.remarks || 'No remarks')}${u.next_action ? ` · <i>Next:</i> ${esc(u.next_action)}` : ''} <span class="dpm">${esc(dpName(u.author))}${u.edited_at ? ' · edited ' + esc(dpTime(u.edited_at)) : ''}</span></div>`}))
+    .concat((h.comments || []).map(c => { const d = new Date(c.at).toLocaleDateString('en-CA', KL); return {d, o: 1, h: `<div class="dphc"><b>${esc(dpDay(d))}</b> Follow-up from ${esc(dpName(c.author))}: ${esc(c.body)}</div>`}; }))
+    .sort((a, b) => a.d.localeCompare(b.d) || a.o - b.o);
+  return `<div class="dphist dpx">${items.map(x => x.h).join('') || '<span class="dpm">No updates yet.</span>'}</div>`;
+}
+const dpHistBtn = t => `<button class="btn" data-act="dpHist" data-id="${t.id}">${dp.open[t.id] ? 'Hide history' : 'History'}</button>`;
+// Your own task on today's board: status, remarks and next action, saved with one click.
+function dpEditRow(t) {
+  const td = t.today || {}, d = dp.drafts[t.id] || {}, st = d.status || td.status || t.status;
+  const rem = d.remarks ?? td.remarks ?? '', nx = d.next ?? td.next_action ?? '', proj = dpProj(t.project_id);
+  return `<div class="dpt ${st}"><div class="dph"><b>${esc(t.title)}</b>${proj ? `<span class="cst">${esc(proj)}</span>` : ''}<span class="dpm">${t.today ? 'Saved ' + esc(dpTime(td.edited_at || td.at)) : 'Not updated today'}</span>${dpHistBtn(t)}</div>
+    ${t.last ? `<div class="dpl"><b>${esc(dpDay(t.last.day))}:</b> ${esc(t.last.remarks || 'No remarks')}${t.last.next_action ? ` · <i>Next:</i> ${esc(t.last.next_action)}` : ''}</div>` : ''}
+    ${dpComments(t)}
+    <div class="dpseg" role="group" aria-label="Status">${DP_ST.map(([k, l]) => `<button class="${k}" aria-pressed="${st === k}" data-act="dpStatus" data-id="${t.id}" data-v="${k}">${l}</button>`).join('')}</div>
+    <div class="dpf"><label class="field">Remarks / progress<textarea rows="2" data-dpd="${t.id}:remarks" placeholder="What you achieved, or why it isn't finished">${esc(rem)}</textarea></label>
+    ${st === 'done' ? '' : `<label class="field">Next action<textarea rows="2" data-dpd="${t.id}:next" placeholder="${esc(t.last && t.last.next_action ? 'Last time: ' + t.last.next_action : 'The next step to move it forward')}">${esc(nx)}</textarea></label>`}</div>
+    <div class="dpa"><button class="btn primary" data-act="dpSave" data-id="${t.id}"${dp.busy[t.id] ? ' disabled' : ''}>${dp.busy[t.id] ? 'Saving…' : 'Save'}</button>${dp.err[t.id] ? `<span class="err" role="alert">${esc(dp.err[t.id])}</span>` : ''}</div>
+    ${dpHistory(t)}</div>`;
+}
+// Anyone else's task, a past day, or the management list.
+function dpReadRow(t, mgmt) {
+  const b = dp.board, u = t.today || t.last, proj = dpProj(t.project_id);
+  const when = t.today ? (b.day === b.today ? 'Today' : dpDay(b.day)) : t.last ? dpDay(t.last.day) : '';
+  return `<div class="dpr"><div><b>${esc(t.title)}</b><small>${esc(dpName(t.pic))} · ${esc(dpDept(t.dept_id))}${proj ? ' · ' + esc(proj) : ''}</small></div>${dpChip(t.status)}
+    <div class="dpu">${u ? `<span class="dpm">${esc(when)}</span> ${esc(u.remarks || 'No remarks')}${u.next_action ? `<br><i>Next:</i> ${esc(u.next_action)}` : ''}` : '<span class="dpm">No update yet</span>'}${!t.today && b.day === b.today && t.status !== 'done' ? ' <span class="dpstale">Not updated today</span>' : ''}</div>
+    ${dpHistBtn(t)}${dpComments(t)}
+    ${mgmt && t.canComment ? `<div class="dpfu dpx"><input data-dpn="${t.id}" value="${esc(dp.note[t.id] || '')}" placeholder="Follow-up or instruction for ${esc(dpName(t.pic))}" aria-label="Follow-up"><button class="btn" data-act="dpComment" data-id="${t.id}">Add follow-up</button></div>` : ''}
+    ${dp.err['c' + t.id] ? `<span class="err dpx" role="alert">${esc(dp.err['c' + t.id])}</span>` : ''}${dpHistory(t)}</div>`;
+}
+VIEWS.progress = () => {
+  if (!dp.board && !dp.missing) loadDp();
+  if (dp.missing) return '<div class="banner err" style="margin-top:14px">Daily progress is not switched on yet: run supabase/daily-progress.sql in the Supabase SQL Editor.</div>';
+  if (!dp.board || !dp.me) return `${dp.msg ? `<div class="banner err" style="margin-top:14px">${esc(dp.msg)}</div>` : ''}<div class="card dcard" style="margin-top:14px"><div class="empty">Loading…</div></div>`;
+  const me = dp.me, b = dp.board, p = me.person && me.person.active ? me.person : null, today = b.day === b.today;
+  const canMgmt = me.director || me.pmOf.length > 0 || (p && p.role === 'pic');
+  if (!dp.view) dp.view = !p || me.director || me.pmOf.length > 0 || p.role === 'pm' ? 'mgmt' : 'team';
+  if (!canMgmt) dp.view = 'team';
+  const tasks = dpTasks(), cnt = s => tasks.filter(t => t.status === s).length;
+  const depts = me.departments.filter(d => d.active), subN = depts.filter(d => b.submissions.some(s => s.dept_id === d.id)).length;
+  const sel = (f, label, list) => `<label class="field">${label}<select data-dpf="${f}"><option value="">All</option>${list.map(([v, l]) => `<option value="${esc(v)}"${dp[f] === v ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select></label>`;
+  const pics = [...new Set(b.tasks.map(t => t.pic))].map(e => [e, dpName(e)]).sort((x, y) => x[1].localeCompare(y[1]));
+  const mySub = p && p.dept_id ? dpSub(p.dept_id) : null;
+  const longDay = new Date(b.day + 'T12:00:00+08:00').toLocaleDateString('en-MY', {...KL, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+  let h = `${dp.msg ? `<div class="banner err" style="margin-top:14px">${esc(dp.msg)}</div>` : ''}
+  <div class="dpday"><div><b>${esc(longDay)}</b><span>${today ? 'Daily updates are due by 4:00 PM' : 'Past day: read only'}</span></div>
+    ${mySub ? `<span class="dpb ${mySub.k}">${esc(dpDept(p.dept_id))}: ${esc(mySub.t)}</span>` : ''}
+    ${p && p.role === 'pic' && mySub && !mySub.s ? `<button class="btn primary" data-act="dpSubmit"${dp.submitting ? ' disabled' : ''}>${dp.submitting ? 'Submitting…' : 'Submit daily update'}</button>` : ''}
+    <button class="btn" data-act="dpRefresh">Refresh</button></div>
+  <div class="dpbar">${canMgmt ? `<div class="dpv" role="group" aria-label="View">${[['team', 'My day'], ['mgmt', 'Management']].map(([v, l]) => `<button data-act="dpView" data-id="${v}" aria-pressed="${dp.view === v}">${l}</button>`).join('')}</div>` : ''}
+    <label class="field">Date<input type="date" data-dpf="day" value="${esc(b.day)}" max="${esc(b.today)}"></label>
+    ${sel('dept', 'Department', depts.map(d => [d.id, d.name]))}${sel('project', 'Project', me.projects.filter(j => j.active).map(j => [j.id, j.name]))}${dp.view === 'mgmt' ? sel('pic', 'PIC', pics) : ''}</div>
+  <div class="dpk"><div><small>Total tasks</small><b>${tasks.length}</b></div><div class="done"><small>Done</small><b>${cnt('done')}</b></div><div class="progress"><small>In progress</small><b>${cnt('progress')}</b></div><div class="blocked"><small>Blocked</small><b>${cnt('blocked')}</b></div><div><small>Departments submitted</small><b>${subN}/${depts.length}</b></div></div>`;
+  if (dp.view === 'mgmt') {
+    const rows = depts.filter(d => !dp.dept || d.id === dp.dept).map(d => { const ts = tasks.filter(t => t.dept_id === d.id), s = dpSub(d.id), n = k => ts.filter(t => t.status === k).length;
+      return `<tr><td>${esc(d.name)}</td><td class="n">${n('done')}</td><td class="n">${n('progress')}</td><td class="n${n('blocked') ? ' bad' : ''}">${n('blocked')}</td><td><span class="dpb ${s.k}">${esc(s.t)}</span>${s.s ? ` <span class="dpm">${esc(dpName(s.s.by))}</span>` : ''}</td></tr>`; }).join('');
+    h += `<div class="card dcard" style="margin-top:14px"><div class="dch"><h3>Department overview</h3></div><div class="dptw"><table class="dptab"><thead><tr><th>Department</th><th class="n">Done</th><th class="n">In progress</th><th class="n">Blocked</th><th>Submission</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+    [['blocked', 'Blocked', 'Follow these up first.'], ['progress', 'In progress / outstanding', 'Carried forward each day until done.'], ['done', 'Completed', today ? 'Marked done today.' : 'Marked done on this day.']].forEach(([k, title, sub]) => {
+      const ts = tasks.filter(t => t.status === k).sort(dpSort);
+      h += `<div class="card dcard dpg ${k}" style="margin-top:14px"><div class="dch"><h3>${title}</h3><span class="more">${ts.length} · ${sub}</span></div>${ts.length ? `<div>${ts.map(t => dpReadRow(t, true)).join('')}</div>` : '<div class="empty">None.</div>'}</div>`;
+    });
+    return h;
+  }
+  if (!p) return h + `<div class="banner" style="margin-top:14px">You're not in a department yet, so you have no tasks to update. ${me.director ? 'Add yourself in Settings → Team &amp; departments.' : 'Ask a director to add you in Settings.'}</div>`;
+  const mine = tasks.filter(t => t.mine).sort(dpSort), others = tasks.filter(t => !t.mine).sort(dpSort);
+  const canAssign = me.director || p.role === 'pic', a = dp.adding;
+  const team = me.people.filter(x => x.active && x.dept_id && (me.director || x.dept_id === p.dept_id)).map(x => [x.email, (x.name || x.email) + (x.email === me.email ? ' (me)' : '')]);
+  const add = !a ? '' : `<div class="dpt progress"><div class="dpf"><label class="field">Task / deliverable<input data-dpadd="title" value="${esc(a.title)}" placeholder="e.g. Secure Maybank sponsorship"></label>
+      <label class="field">Project<select data-dpadd="project">${opts(me.projects.filter(j => j.active).map(j => [j.id, j.name]), a.project, 'No project')}</select></label></div>
+      ${canAssign ? `<label class="field">PIC<select data-dpadd="pic">${opts(team, a.pic || me.email)}</select></label>` : ''}
+      <div class="dpa"><button class="btn primary" data-act="dpAdd">Add task</button><button class="btn" data-act="dpAddCancel">Cancel</button>${dp.addErr ? `<span class="err" role="alert">${esc(dp.addErr)}</span>` : ''}</div></div>`;
+  const upd = mine.filter(t => t.today).length;
+  h += `<div class="card dcard" style="margin-top:14px"><div class="dch"><h3>My tasks</h3><span class="more">${upd}/${mine.length} updated</span>${today && !a ? '<button class="btn" data-act="dpAddOpen">+ Add task</button>' : ''}</div>${add}
+    <div class="dplist">${mine.length ? mine.map(t => today ? dpEditRow(t) : dpReadRow(t)).join('') : `<div class="empty">${today ? 'No open tasks. Add what you are working on today.' : 'No tasks on this day.'}</div>`}</div></div>
+  <div class="card dcard" style="margin-top:14px"><div class="dch"><h3>${esc(dpDept(p.dept_id) || 'Department')} progress</h3><span class="more">${others.length} other ${others.length === 1 ? 'task' : 'tasks'}</span></div>${others.length ? `<div>${others.map(t => dpReadRow(t)).join('')}</div>` : '<div class="empty">No other tasks.</div>'}</div>`;
+  return h;
+};
+async function dpSave(id) {
+  const t = dp.board.tasks.find(x => String(x.id) === String(id)); if (!t) return;
+  const td = t.today || {}, d = dp.drafts[id] || {};
+  const st = d.status || td.status || t.status, rem = d.remarks ?? td.remarks ?? '', nx = d.next ?? td.next_action ?? '';
+  dp.err[id] = '';
+  if (st !== 'done' && !nx.trim()) { dp.err[id] = 'Add the next action for tasks that are not done.'; render(); return; }
+  dp.busy[id] = true; render();
+  const {error} = await sb.rpc('dp_save_update', {p_task: t.id, p_status: st, p_remarks: rem, p_next: nx});
+  dp.busy[id] = false;
+  if (error) dp.err[id] = error.message; else { delete dp.drafts[id]; delete dp.hist[id]; if (dp.open[id]) dpLoadHist(id); }
+  await loadDp();
+  render();
+}
+async function dpAdd() {
+  const a = dp.adding; if (!a) return;
+  if (!a.title.trim()) { dp.addErr = 'Add a short task name.'; render(); return; }
+  dp.addErr = '';
+  const {error} = await sb.rpc('dp_add_task', {p_title: a.title, p_project: a.project || null, p_pic: a.pic || null});
+  if (error) { dp.addErr = error.message; render(); return; }
+  dp.adding = null; await loadDp(); render();
+}
+async function dpSubmit() {
+  const p = dp.me && dp.me.person; if (!p || dp.submitting) return;
+  dp.submitting = true; dp.msg = ''; render();
+  const {error} = await sb.rpc('dp_submit', {p_dept: p.dept_id, p_day: dp.board.day});
+  dp.submitting = false;
+  if (error) dp.msg = error.message;
+  await loadDp(); render();
+}
+async function dpComment(id) {
+  const body = (dp.note[id] || '').trim(); dp.err['c' + id] = '';
+  if (!body) { dp.err['c' + id] = 'Write the follow-up first.'; render(); return; }
+  const {error} = await sb.rpc('dp_comment', {p_task: Number(id), p_body: body});
+  if (error) dp.err['c' + id] = error.message; else { delete dp.note[id]; delete dp.hist[id]; if (dp.open[id]) dpLoadHist(id); }
+  await loadDp(); render();
+}
+async function dpLoadHist(id) {
+  const {data, error} = await sb.rpc('dp_history', {p_task: Number(id)});
+  dp.hist[id] = error ? {updates: [], comments: [], err: error.message} : data;
+  render();
+}
+function dpHist(id) { dp.open[id] = !dp.open[id]; if (dp.open[id] && !dp.hist[id]) dpLoadHist(id); render(); }
+
+/* ---------- settings: team & departments (directors) ---------- */
+async function dpSet(fn, args) {
+  dp.setMsg = '';
+  const {error} = await sb.rpc(fn, args);
+  if (error) dp.setMsg = error.message;
+  await loadDp(); render();
+}
+function dpSetPerson(email, f, v) {
+  const x = dp.me.people.find(p => p.email === email); if (!x) return;
+  const n = {...x, [f]: v};
+  dpSet('dp_set_person', {p_email: n.email, p_name: n.name, p_dept: n.dept_id || '', p_role: n.role, p_active: n.active});
+}
+function dpSetDept(id, f, v) {
+  const x = dp.me.departments.find(d => d.id === id); if (!x) return;
+  const n = {...x, [f]: v};
+  dpSet('dp_set_department', {p_id: n.id, p_name: n.name, p_sort: n.sort, p_active: n.active});
+}
+function dpSetProj(id, f, v) {
+  const x = dp.me.projects.find(j => j.id === id); if (!x) return;
+  const n = {...x, [f]: v};
+  dpSet('dp_set_project', {p_id: n.id, p_name: n.name, p_pm: n.pm_email || '', p_active: n.active});
+}
+const dpSlug = s => (s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24) || 'item') + '-' + Date.now().toString(36);
+const dpVal = id => ($('#' + id) || {}).value || '';
+function dpSettings() {
+  if (!dp.me && !dp.missing) loadDp();
+  if (dp.missing) return '<div class="card dcard" style="margin-top:14px"><div class="dch"><h3>Team &amp; departments</h3></div><p class="help" style="margin:0">Daily progress is not switched on yet: run supabase/daily-progress.sql in the Supabase SQL Editor.</p></div>';
+  const me = dp.me; if (!me || !me.director) return '';
+  const D = me.departments.map(d => [d.id, d.name]), chk = (attr, on) => `<label class="dpchk"><input type="checkbox" ${attr}${on ? ' checked' : ''}> Active</label>`;
+  const pmList = [...new Map(me.people.map(x => [x.email, x.name || x.email]).concat((adminState.admins || []).map(e => [e.toLowerCase(), e]))).entries()];
+  return `${dp.setMsg ? `<div class="banner err" style="margin-top:14px">${esc(dp.setMsg)}</div>` : ''}
+  <div class="card dcard" style="margin-top:14px"><div class="dch"><h3>Team &amp; departments</h3><span class="more">${me.people.filter(x => x.active).length} active</span></div>
+    <p class="help" style="margin:0">Everyone who files daily progress. People who aren't tracker admins sign in with Register on the sign-in page and see only Daily progress. Tracker admins count as directors. Changes save as you make them.</p>
+    <div class="dpp head"><span>Name</span><span>Email</span><span>Department</span><span>Role</span><span></span></div>
+    ${me.people.map(x => { const e = esc(x.email); return `<div class="dpp"><input data-dpp="${e}:name" value="${esc(x.name)}" placeholder="Name" aria-label="Name"><span class="dpe">${e}</span><select data-dpp="${e}:dept_id" aria-label="Department">${opts(D, x.dept_id || '', 'No department')}</select><select data-dpp="${e}:role" aria-label="Role">${opts(DP_ROLE, x.role)}</select>${chk(`data-dpp="${e}:active"`, x.active)}</div>`; }).join('')}
+    <div class="dpp new"><input id="dpn-name" placeholder="Name" aria-label="New person's name"><input id="dpn-email" type="email" placeholder="Email" aria-label="New person's email"><select id="dpn-dept" aria-label="Department">${opts(D, '', 'Department')}</select><select id="dpn-role" aria-label="Role">${opts(DP_ROLE, 'member')}</select><button class="btn primary" data-act="dpAddPerson">Add person</button></div></div>
+  <div class="dgrid"><div class="card dcard"><div class="dch"><h3>Departments</h3></div>
+      ${me.departments.map(d => `<div class="dpq"><input data-dpdep="${esc(d.id)}:name" value="${esc(d.name)}" aria-label="Department name">${chk(`data-dpdep="${esc(d.id)}:active"`, d.active)}</div>`).join('')}
+      <div class="dpq"><input id="dpn-deptname" placeholder="New department" aria-label="New department"><button class="btn" data-act="dpAddDept">Add</button></div></div>
+    <div class="card dcard"><div class="dch"><h3>Projects</h3><span class="more">the PM sees and follows up its tasks</span></div>
+      ${me.projects.map(j => `<div class="dpq"><input data-dpj="${esc(j.id)}:name" value="${esc(j.name)}" aria-label="Project name"><select data-dpj="${esc(j.id)}:pm_email" aria-label="Project manager">${opts(pmList, j.pm_email || '', 'No PM')}</select>${chk(`data-dpj="${esc(j.id)}:active"`, j.active)}</div>`).join('')}
+      <div class="dpq"><input id="dpn-proj" placeholder="New project" aria-label="New project"><button class="btn" data-act="dpAddProj">Add</button></div></div></div>`;
+}
 
 /* ---------- sales view ---------- */
 function barList(arr, total) {
@@ -2287,6 +2559,19 @@ document.addEventListener('click', e => {
   const rm = (k, arr) => mut(k, d => { d[arr] = d[arr].filter(x => x.id !== id); });
   const A = {
     refreshActivity: () => loadActivity(),
+    dpStatus: () => { (dp.drafts[id] = dp.drafts[id] || {}).status = b.dataset.v; render(); },
+    dpSave: () => dpSave(id),
+    dpAddOpen: () => { dp.adding = {title: '', project: '', pic: ''}; dp.addErr = ''; render(); },
+    dpAddCancel: () => { dp.adding = null; render(); },
+    dpAdd: () => dpAdd(),
+    dpSubmit: () => dpSubmit(),
+    dpComment: () => dpComment(id),
+    dpHist: () => dpHist(id),
+    dpView: () => { dp.view = id; render(); },
+    dpRefresh: () => { dp.hist = {}; loadDp(); },
+    dpAddPerson: () => dpSet('dp_set_person', {p_email: dpVal('dpn-email'), p_name: dpVal('dpn-name'), p_dept: dpVal('dpn-dept'), p_role: dpVal('dpn-role') || 'member', p_active: true}),
+    dpAddDept: () => { const n = dpVal('dpn-deptname').trim(); if (n) dpSet('dp_set_department', {p_id: dpSlug(n), p_name: n, p_sort: Math.max(0, ...dp.me.departments.map(d => d.sort)) + 1, p_active: true}); },
+    dpAddProj: () => { const n = dpVal('dpn-proj').trim(); if (n) dpSet('dp_set_project', {p_id: dpSlug(n), p_name: n, p_pm: '', p_active: true}); },
     csvActivity: () => downloadActivity(),
     addPartner: () => mut('commercial', d => { const t = d.tiers[0] || {}; d.partners.push({id: uid(), name: '', tier: t.id || '', island: (d.islands[0] || {}).id || '', booths: t.booths || 1, value: t.price || 0, collected: 0, status: 'Confirmed', sales1: '', sales2: '', notes: ''}); }),
     delPartner: () => {
@@ -2340,6 +2625,8 @@ document.addEventListener('change', e => {
   if (el.id === 'file') { if (el.files[0]) handleFile(el.files[0]); return; }
   if (el.dataset.logo) { if (el.files[0]) uploadLogo(el.dataset.logo, el.files[0]); return; }
   if (el.dataset.actf) { actState[el.dataset.actf] = el.value; if (el.dataset.actf === 'from') loadActivity(); render(); return; }
+  if (el.dataset.dpf) { dp[el.dataset.dpf] = el.value; if (el.dataset.dpf === 'day') { if (!el.value) dp.day = ''; dp.board = null; dp.hist = {}; dp.open = {}; loadDp(); } render(); return; }
+  for (const [k, fn] of [['dpp', dpSetPerson], ['dpdep', dpSetDept], ['dpj', dpSetProj]]) if (el.dataset[k]) { const i = el.dataset[k].lastIndexOf(':'); fn(el.dataset[k].slice(0, i), el.dataset[k].slice(i + 1), el.type === 'checkbox' ? el.checked : el.value); return; }
   if (el.id === 'sheet') { upload.sheet = el.value; loadSheet(); render(); return; }
   if (el.id === 'event') { upload.event = el.value; buildMap(); render(); return; }
   if (el.dataset.map) { upload.map[el.dataset.map] = el.value; render(); return; }
@@ -2555,12 +2842,12 @@ function renderGate() {
   if (!$('#gate-bg')) document.body.insertAdjacentHTML('afterbegin', '<div id="gate-bg" aria-hidden="true"><video ' + (matchMedia('(prefers-reduced-motion: reduce)').matches ? '' : 'autoplay ') + 'muted loop playsinline preload="auto" poster="assets/signin-poster.jpg"><source src="assets/signin-loop.mp4" type="video/mp4"></video></div>');
   let h;
   const err = gateMsg ? `<p class="help" style="margin-top:12px" role="alert">${esc(gateMsg)}</p>` : '';
-  const tabs = `<div class="gate-tabs" role="tablist"><button class="tab" role="tab" data-gtab="signin" aria-current="${gateTab === 'signin'}">Sign in</button><button class="tab" role="tab" data-gtab="register" aria-current="${gateTab === 'register'}">Register as admin</button></div>`;
+  const tabs = `<div class="gate-tabs" role="tablist"><button class="tab" role="tab" data-gtab="signin" aria-current="${gateTab === 'signin'}">Sign in</button><button class="tab" role="tab" data-gtab="register" aria-current="${gateTab === 'register'}">Register</button></div>`;
   if (gate === 'loading') h = '<div class="empty">Loading…</div>';
   else if (gate === 'sent') h = `<h2>Check your inbox</h2><p class="help" style="font-size:15px">We sent a sign-in link to <b>${esc(gateEmail)}</b>. Open it on this device to continue.</p><div class="row-actions"><button class="btn" data-gate="login">Back</button></div>`;
   else if (gate === 'registered') h = `<div class="kicker">Request sent</div><h2>Confirm your email</h2><p class="help" style="font-size:15px">We sent a confirmation email to <b>${esc(gateEmail)}</b>. Open it to confirm your address. After that, an existing admin needs to approve your access. Once approved, sign in here with your email and password.</p><div class="row-actions"><button class="btn" data-gate="login">Back to sign in</button></div>`;
-  else if (gate === 'pending') h = `<div class="kicker">Waiting for approval</div><h2>Almost there</h2><p class="help" style="font-size:15px">You're signed in as <b>${esc(gateEmail)}</b>, but an admin hasn't approved your access yet. Ask an existing admin to approve you in the <b>Admins</b> tab of the tracker.</p>${err}<div class="row-actions"><button class="btn primary" data-recheck>Check again</button><button class="btn" data-signout>Sign out</button></div>`;
-  else if (gateTab === 'register') h = `<div class="kicker">CONNECTD X 2026</div><h2>Progress Tracker</h2>${tabs}<p class="help" style="font-size:15px">Register with your email to request admin access. We'll send one email to confirm your address, then an existing admin approves you.</p>
+  else if (gate === 'pending') h = `<div class="kicker">Waiting for approval</div><h2>Almost there</h2><p class="help" style="font-size:15px">You're signed in as <b>${esc(gateEmail)}</b>, but you don't have access yet. Ask an admin to approve you in the <b>Admins</b> tab, or a director to add you to the team in <b>Settings</b> for Daily progress.</p>${err}<div class="row-actions"><button class="btn primary" data-recheck>Check again</button><button class="btn" data-signout>Sign out</button></div>`;
+  else if (gateTab === 'register') h = `<div class="kicker">CONNECTD X 2026</div><h2>Progress Tracker</h2>${tabs}<p class="help" style="font-size:15px">Register with your email. We'll send one email to confirm your address. Then an admin approves you, or a director adds you to Daily progress.</p>
     <form id="register"><label class="field">Email<input type="email" id="reg-email" required autocomplete="email" value="${esc(gateEmail)}" placeholder="you@company.com"></label>
     <label class="field">Password<input type="password" id="reg-pw1" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
     <label class="field">Type the password again<input type="password" id="reg-pw2" required minlength="8" autocomplete="new-password"></label>
@@ -2715,6 +3002,14 @@ async function start(recheck) {
   starting = false;
   isEditor = data === true;
   if (!isEditor) {
+    // Staff: in Daily progress but not a tracker admin. Only that tab, read through its own functions.
+    const {data: me} = await sb.rpc('dp_me');
+    if (me && me.person) {
+      isStaff = true; isFinance = false; mode = 'team'; tab = 'progress'; dp.me = me; adminState.me = me.email;
+      document.body.classList.add('staff'); KEYS.forEach(k => { loaded[k] = true; });
+      gate = 'ready'; setSync('ok', 'Live'); render(); setInterval(() => { if (tab === 'progress') loadDp(); }, 60000);
+      return;
+    }
     const {data: u} = await sb.auth.getUser();
     gateEmail = (u && u.user && u.user.email) || gateEmail;
     if (recheck) gateMsg = 'Not approved yet. Try again after an admin approves you.';
@@ -2726,7 +3021,7 @@ async function start(recheck) {
   // Before finance-access.sql has been run the function doesn't exist yet, and everyone keeps full access.
   { const {data: f, error} = await sb.rpc('is_finance'); isFinance = error ? true : f === true; }
   db = makeDb(); assetsNs = makeAssets(); assetsChecked = true;
-  render(); subscribeAll(); loadAdmins(); setInterval(loadAdmins, 60000);
+  render(); subscribeAll(); loadAdmins(); setInterval(loadAdmins, 60000); setInterval(() => { if (tab === 'progress') loadDp(); }, 60000);
 }
 
 /* ---------- admins ---------- */
@@ -2762,6 +3057,7 @@ const ICON = {
   participants: SVG('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>'),
   marketing: SVG('<path d="M3 10v4l13 5V5zM16 9a3 3 0 0 1 0 6M6 15l1 5h3l-1-4"/>'),
   ops: SVG('<path d="M9 6h12M9 12h12M9 18h12"/><path d="m3 6 1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/>'),
+  progress: SVG('<rect x="4" y="4" width="16" height="17" rx="2"/><path d="M9 2.5h6v3H9zM8 11l2 2 4-4M8 17h8"/>'),
   admins: SVG('<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/>'),
   settings: SVG('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'),
   sales: SVG('<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.4"/>'),
@@ -2770,11 +3066,12 @@ const ICON = {
 const initials = n => String(n || '?').replace(/@.*/, '').split(/[\s._-]+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
 function renderShell() {
   const team = mode === 'team';
-  const tabs = TABS.filter(([id]) => isFinance || id !== 'pnl');
-  $('#rail').innerHTML = !team ? '' : `<div class="r-mark">X</div>${tabs.map(([id, label]) => `<button class="r-i" data-tab="${id}" aria-current="${tab === id}" data-tip="${label}" aria-label="${label}">${ICON[id] || ''}</button>`).join('')}<span class="r-sp"></span><button class="r-i" data-mode="sales" data-tip="Sales view" aria-label="Open sales view">${ICON.sales}</button><button class="r-i" data-signout data-tip="Sign out" aria-label="Sign out">${ICON.out}</button>`;
+  const tabs = visTabs();
+  $('#rail').innerHTML = !team ? '' : `<div class="r-mark">X</div>${tabs.map(([id, label]) => `<button class="r-i" data-tab="${id}" aria-current="${tab === id}" data-tip="${label}" aria-label="${label}">${ICON[id] || ''}</button>`).join('')}<span class="r-sp"></span>${isStaff ? '' : '<button class="r-i" data-mode="sales" data-tip="Sales view" aria-label="Open sales view">' + ICON.sales + '</button>'}<button class="r-i" data-signout data-tip="Sign out" aria-label="Sign out">${ICON.out}</button>`;
   const cur = tabs.find(([id]) => id === tab);
   $('h1').innerHTML = team && cur ? (tab === 'dashboard' ? 'Event Dashboard' : cur[1]) : 'Event progress';
   if (!team) { $('#topbar').innerHTML = ''; return; }
+  if (isStaff) { const p = (dp.me && dp.me.person) || {}; $('#topbar').innerHTML = `<span class="t-grow"></span><div class="t-user"><div class="av">${esc(initials(p.name || adminState.me))}</div><div><b>${esc(p.name || adminState.me.replace(/@.*/, ''))}</b><small>${esc([(DP_ROLE.find(r => r[0] === p.role) || [])[1], dpDept(p.dept_id)].filter(Boolean).join(' · '))}</small></div></div>`; return; }
   const C = calcCommercial(), P = calcProgramme(), cd = calcCountdown(), part = get('participants'), main = P.targets[0];
   const all = Object.values(calcBooths()).filter(b => b.status !== 'org' && b.status !== 'na'), sec = all.filter(b => b.status === 'sec').length;
   const chip = (label, val, extra = '') => `<div class="tchip">${label} <b>${val}</b>${extra}</div>`;
