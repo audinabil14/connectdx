@@ -657,6 +657,7 @@ body.staff [data-mode]{display:none}
 .dpu{font-size:12.5px;color:var(--muted)}
 .dpstale{color:var(--amber);font-size:11.5px;white-space:nowrap}
 .dpx{grid-column:1/-1}
+.dpbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .dpfu{display:flex;gap:8px}.dpfu input{flex:1}
 .dphist{border-left:2px solid var(--line2);margin-left:4px;padding:2px 0 2px 12px;display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:var(--muted)}
 .dphist b{color:var(--text);font-weight:600}.dphc{color:#A9BEFF}
@@ -2286,12 +2287,16 @@ function dpHistory(t) {
     .sort((a, b) => a.d.localeCompare(b.d) || a.o - b.o);
   return `<div class="dphist dpx">${items.map(x => x.h).join('') || '<span class="dpm">No updates yet.</span>'}</div>`;
 }
+// The task's PIC, their department PIC or a director can remove a task (kept in the database, hidden here).
+const dpCanRemove = t => { const me = dp.me, p = me.person; return t.mine || me.director || !!(p && p.active && p.role === 'pic' && p.dept_id === t.dept_id); };
+const dpDel = t => dpCanRemove(t) ? del('delTask', t.id) : '';
+const dpUndo = dept => del('delSubmission', esc(dept)).replace('>Remove<', '>Undo submission<');
 const dpHistBtn = t => `<button class="btn" data-act="dpHist" data-id="${t.id}">${dp.open[t.id] ? 'Hide history' : 'History'}</button>`;
 // Your own task on today's board: status, remarks and next action, saved with one click.
 function dpEditRow(t) {
   const td = t.today || {}, d = dp.drafts[t.id] || {}, st = d.status || td.status || t.status;
   const rem = d.remarks ?? td.remarks ?? '', nx = d.next ?? td.next_action ?? '', proj = dpProj(t.project_id);
-  return `<div class="dpt ${st}"><div class="dph"><b>${esc(t.title)}</b>${proj ? `<span class="cst">${esc(proj)}</span>` : ''}<span class="dpm">${t.today ? 'Saved ' + esc(dpTime(td.edited_at || td.at)) : 'Not updated today'}</span>${dpHistBtn(t)}</div>
+  return `<div class="dpt ${st}"><div class="dph"><b>${esc(t.title)}</b>${proj ? `<span class="cst">${esc(proj)}</span>` : ''}<span class="dpm">${t.today ? 'Saved ' + esc(dpTime(td.edited_at || td.at)) : 'Not updated today'}</span>${dpHistBtn(t)}${dpDel(t)}</div>
     ${t.last ? `<div class="dpl"><b>${esc(dpDay(t.last.day))}:</b> ${esc(t.last.remarks || 'No remarks')}${t.last.next_action ? ` · <i>Next:</i> ${esc(t.last.next_action)}` : ''}</div>` : ''}
     ${dpComments(t)}
     <div class="dpseg" role="group" aria-label="Status">${DP_ST.map(([k, l]) => `<button class="${k}" aria-pressed="${st === k}" data-act="dpStatus" data-id="${t.id}" data-v="${k}">${l}</button>`).join('')}</div>
@@ -2306,7 +2311,7 @@ function dpReadRow(t, mgmt) {
   const when = t.today ? (b.day === b.today ? 'Today' : dpDay(b.day)) : t.last ? dpDay(t.last.day) : '';
   return `<div class="dpr"><div><b>${esc(t.title)}</b><small>${esc(dpName(t.pic))} · ${esc(dpDept(t.dept_id))}${proj ? ' · ' + esc(proj) : ''}</small></div>${dpChip(t.status)}
     <div class="dpu">${u ? `<span class="dpm">${esc(when)}</span> ${esc(u.remarks || 'No remarks')}${u.next_action ? `<br><i>Next:</i> ${esc(u.next_action)}` : ''}` : '<span class="dpm">No update yet</span>'}${!t.today && b.day === b.today && t.status !== 'done' ? ' <span class="dpstale">Not updated today</span>' : ''}</div>
-    ${dpHistBtn(t)}${dpComments(t)}
+    <div class="dpbtns">${dpHistBtn(t)}${dpDel(t)}</div>${dpComments(t)}
     ${mgmt && t.canComment ? `<div class="dpfu dpx"><input data-dpn="${t.id}" value="${esc(dp.note[t.id] || '')}" placeholder="Follow-up or instruction for ${esc(dpName(t.pic))}" aria-label="Follow-up"><button class="btn" data-act="dpComment" data-id="${t.id}">Add follow-up</button></div>` : ''}
     ${dp.err['c' + t.id] ? `<span class="err dpx" role="alert">${esc(dp.err['c' + t.id])}</span>` : ''}${dpHistory(t)}</div>`;
 }
@@ -2328,14 +2333,17 @@ VIEWS.progress = () => {
   <div class="dpday"><div><b>${esc(longDay)}</b><span>${today ? 'Daily updates are due by 4:00 PM' : 'Past day: read only'}</span></div>
     ${mySub ? `<span class="dpb ${mySub.k}">${esc(dpDept(p.dept_id))}: ${esc(mySub.t)}</span>` : ''}
     ${p && p.role === 'pic' && mySub && !mySub.s ? `<button class="btn primary" data-act="dpSubmit"${dp.submitting ? ' disabled' : ''}>${dp.submitting ? 'Submitting…' : 'Submit daily update'}</button>` : ''}
+    ${p && p.role === 'pic' && mySub && mySub.s && today ? dpUndo(p.dept_id) : ''}
     <button class="btn" data-act="dpRefresh">Refresh</button></div>
   <div class="dpbar">${canMgmt ? `<div class="dpv" role="group" aria-label="View">${[['team', 'My day'], ['mgmt', 'Management']].map(([v, l]) => `<button data-act="dpView" data-id="${v}" aria-pressed="${dp.view === v}">${l}</button>`).join('')}</div>` : ''}
     <label class="field">Date<input type="date" data-dpf="day" value="${esc(b.day)}" max="${esc(b.today)}"></label>
     ${sel('dept', 'Department', depts.map(d => [d.id, d.name]))}${sel('project', 'Project', me.projects.filter(j => j.active).map(j => [j.id, j.name]))}${dp.view === 'mgmt' ? sel('pic', 'PIC', pics) : ''}</div>
   <div class="dpk"><div><small>Total tasks</small><b>${tasks.length}</b></div><div class="done"><small>Done</small><b>${cnt('done')}</b></div><div class="progress"><small>In progress</small><b>${cnt('progress')}</b></div><div class="blocked"><small>Blocked</small><b>${cnt('blocked')}</b></div><div><small>Departments submitted</small><b>${subN}/${depts.length}</b></div></div>`;
   if (dp.view === 'mgmt') {
+    // An undone submission stays visible to management as "reopened".
+    const undo = id => { const u = (b.undos || []).filter(x => x.dept_id === id); return u.length ? ` <span class="dpm" title="${esc(u.map(x => dpName(x.by) + ' at ' + dpTime(x.at)).join(', '))}">· reopened${u.length > 1 ? ' ' + u.length + '×' : ''} by ${esc(dpName(u[u.length - 1].by))}</span>` : ''; };
     const rows = depts.filter(d => !dp.dept || d.id === dp.dept).map(d => { const ts = tasks.filter(t => t.dept_id === d.id), s = dpSub(d.id), n = k => ts.filter(t => t.status === k).length;
-      return `<tr><td>${esc(d.name)}</td><td class="n">${n('done')}</td><td class="n">${n('progress')}</td><td class="n${n('blocked') ? ' bad' : ''}">${n('blocked')}</td><td><span class="dpb ${s.k}">${esc(s.t)}</span>${s.s ? ` <span class="dpm">${esc(dpName(s.s.by))}</span>` : ''}</td></tr>`; }).join('');
+      return `<tr><td>${esc(d.name)}</td><td class="n">${n('done')}</td><td class="n">${n('progress')}</td><td class="n${n('blocked') ? ' bad' : ''}">${n('blocked')}</td><td><span class="dpb ${s.k}">${esc(s.t)}</span>${s.s ? ` <span class="dpm">${esc(dpName(s.s.by))}</span>` : ''}${undo(d.id)}${me.director && today && s.s ? ' ' + dpUndo(d.id) : ''}</td></tr>`; }).join('');
     h += `<div class="card dcard" style="margin-top:14px"><div class="dch"><h3>Department overview</h3></div><div class="dptw"><table class="dptab"><thead><tr><th>Department</th><th class="n">Done</th><th class="n">In progress</th><th class="n">Blocked</th><th>Submission</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
     [['blocked', 'Blocked', 'Follow these up first.'], ['progress', 'In progress / outstanding', 'Carried forward each day until done.'], ['done', 'Completed', today ? 'Marked done today.' : 'Marked done on this day.']].forEach(([k, title, sub]) => {
       const ts = tasks.filter(t => t.status === k).sort(dpSort);
@@ -2383,8 +2391,14 @@ async function dpSubmit() {
   dp.submitting = true; dp.msg = ''; render();
   const {error} = await sb.rpc('dp_submit', {p_dept: p.dept_id, p_day: dp.board.day});
   dp.submitting = false;
-  if (error) dp.msg = error.message;
-  await loadDp(); render();
+  await loadDp();
+  dp.msg = error ? error.message : ''; render();
+}
+async function dpDo(fn, args) {
+  const {error} = await sb.rpc(fn, args);
+  await loadDp();
+  // Shown after the reload, which clears the message.
+  dp.msg = error ? error.message : ''; render();
 }
 async function dpComment(id) {
   const body = (dp.note[id] || '').trim(); dp.err['c' + id] = '';
@@ -2565,6 +2579,8 @@ document.addEventListener('click', e => {
     dpAddCancel: () => { dp.adding = null; render(); },
     dpAdd: () => dpAdd(),
     dpSubmit: () => dpSubmit(),
+    delSubmission: () => dpDo('dp_unsubmit', {p_dept: id}),
+    delTask: () => { delete dp.drafts[id]; dpDo('dp_remove_task', {p_task: Number(id)}); },
     dpComment: () => dpComment(id),
     dpHist: () => dpHist(id),
     dpView: () => { dp.view = id; render(); },

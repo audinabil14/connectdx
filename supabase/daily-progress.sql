@@ -71,6 +71,19 @@ create table if not exists public.dp_comments (
   body text not null,
   at timestamptz not null default now()
 );
+-- Removed tasks are hidden everywhere but kept, with who removed them and when.
+alter table public.dp_tasks add column if not exists removed_at timestamptz;
+alter table public.dp_tasks add column if not exists removed_by text;
+-- Each undone submission is kept here, so reopening a day leaves a trail.
+create table if not exists public.dp_submission_undos (
+  id bigint generated always as identity primary key,
+  dept_id text not null,
+  day date not null,
+  submitted_by text not null,
+  submitted_at timestamptz not null,
+  undone_by text not null,
+  undone_at timestamptz not null default now()
+);
 create index if not exists dp_updates_task on public.dp_updates (task_id, day desc);
 create index if not exists dp_comments_task on public.dp_comments (task_id, at);
 alter table public.dp_departments enable row level security;
@@ -80,6 +93,7 @@ alter table public.dp_tasks enable row level security;
 alter table public.dp_updates enable row level security;
 alter table public.dp_submissions enable row level security;
 alter table public.dp_comments enable row level security;
+alter table public.dp_submission_undos enable row level security;
 
 -- 3. Who is asking.
 create or replace function public.dp_today() returns date
@@ -96,10 +110,10 @@ $$;
 -- Can the caller see this task (and its updates)?
 create or replace function public.dp_can_see(t public.dp_tasks) returns boolean
 language sql stable security definer set search_path = public as $$
-  select public.dp_is_director()
+  select t.removed_at is null and (public.dp_is_director()
     or t.pic_email = public.dp_my_email()
     or exists (select 1 from public.dp_people p where p.email = public.dp_my_email() and p.active and p.dept_id = t.dept_id)
-    or exists (select 1 from public.dp_projects j where j.id = t.project_id and lower(j.pm_email) = public.dp_my_email());
+    or exists (select 1 from public.dp_projects j where j.id = t.project_id and lower(j.pm_email) = public.dp_my_email()));
 $$;
 
 -- Comments are for the task's PIC, their department PIC, the project's PM and directors.
@@ -165,7 +179,10 @@ begin
     'submissions', coalesce((
       select jsonb_agg(jsonb_build_object('dept_id', s.dept_id, 'by', s.submitted_by, 'at', s.at,
                                           'late', s.at > ((s.day + time '16:00') at time zone 'Asia/Kuala_Lumpur')))
-      from public.dp_submissions s where s.day = d), '[]'));
+      from public.dp_submissions s where s.day = d), '[]'),
+    'undos', coalesce((
+      select jsonb_agg(jsonb_build_object('dept_id', x.dept_id, 'by', x.undone_by, 'at', x.undone_at) order by x.undone_at)
+      from public.dp_submission_undos x where x.day = d), '[]'));
 end $$;
 
 -- A task's full history, oldest first.
@@ -206,7 +223,7 @@ language plpgsql security definer set search_path = public as $$
 declare t public.dp_tasks;
 begin
   select * into t from public.dp_tasks where id = p_task;
-  if t.id is null or not (t.pic_email = public.dp_my_email() or public.dp_is_director()
+  if t.id is null or t.removed_at is not null or not (t.pic_email = public.dp_my_email() or public.dp_is_director()
      or exists (select 1 from public.dp_people p where p.email = public.dp_my_email() and p.active and p.role = 'pic' and p.dept_id = t.dept_id)) then
     raise exception 'Only the task''s PIC, the department PIC or a director can change this task';
   end if;
@@ -220,7 +237,7 @@ language plpgsql security definer set search_path = public as $$
 declare t public.dp_tasks;
 begin
   select * into t from public.dp_tasks where id = p_task;
-  if t.id is null or t.pic_email <> public.dp_my_email() then raise exception 'Only the task''s PIC can update it'; end if;
+  if t.id is null or t.removed_at is not null or t.pic_email <> public.dp_my_email() then raise exception 'Only the task''s PIC can update it'; end if;
   if p_status not in ('done', 'progress', 'blocked') then raise exception 'Pick Done, In progress or Blocked'; end if;
   if p_status <> 'done' and coalesce(trim(p_next), '') = '' then raise exception 'Add the next action for tasks that are not done'; end if;
   insert into public.dp_updates (task_id, day, status, remarks, next_action, author)
@@ -242,12 +259,38 @@ begin
   insert into public.dp_submissions (dept_id, day, submitted_by) values (p_dept, d, public.dp_my_email());
 end $$;
 
+-- Reopen today's submission: the department PIC or a director, today only. The undone submission is kept in dp_submission_undos.
+create or replace function public.dp_unsubmit(p_dept text) returns void
+language plpgsql security definer set search_path = public as $$
+declare s public.dp_submissions;
+begin
+  if not (public.dp_is_director() or exists (select 1 from public.dp_people p where p.email = public.dp_my_email() and p.active and p.role = 'pic' and p.dept_id = p_dept)) then
+    raise exception 'Only the department PIC can undo its submission';
+  end if;
+  delete from public.dp_submissions where dept_id = p_dept and day = public.dp_today() returning * into s;
+  if s.dept_id is null then raise exception 'There is no submission today to undo. Earlier days cannot be reopened'; end if;
+  insert into public.dp_submission_undos (dept_id, day, submitted_by, submitted_at, undone_by) values (s.dept_id, s.day, s.submitted_by, s.at, public.dp_my_email());
+end $$;
+
+-- Remove a task: the task's PIC, their department PIC or a director. It is hidden everywhere but kept.
+create or replace function public.dp_remove_task(p_task bigint) returns void
+language plpgsql security definer set search_path = public as $$
+declare t public.dp_tasks;
+begin
+  select * into t from public.dp_tasks where id = p_task;
+  if t.id is null or t.removed_at is not null or not (t.pic_email = public.dp_my_email() or public.dp_is_director()
+     or exists (select 1 from public.dp_people p where p.email = public.dp_my_email() and p.active and p.role = 'pic' and p.dept_id = t.dept_id)) then
+    raise exception 'Only the task''s PIC, the department PIC or a director can remove this task';
+  end if;
+  update public.dp_tasks set removed_at = now(), removed_by = public.dp_my_email() where id = p_task;
+end $$;
+
 create or replace function public.dp_comment(p_task bigint, p_body text) returns void
 language plpgsql security definer set search_path = public as $$
 declare t public.dp_tasks;
 begin
   select * into t from public.dp_tasks where id = p_task;
-  if t.id is null or not public.dp_can_comment(t) then raise exception 'Only directors and the project''s PM can add follow-ups'; end if;
+  if t.id is null or t.removed_at is not null or not public.dp_can_comment(t) then raise exception 'Only directors and the project''s PM can add follow-ups'; end if;
   if coalesce(trim(p_body), '') = '' then raise exception 'Write the follow-up first'; end if;
   insert into public.dp_comments (task_id, author, body) values (p_task, public.dp_my_email(), trim(p_body));
 end $$;
@@ -300,6 +343,6 @@ $$;
 
 revoke execute on function public.dp_is_director(), public.dp_can_see(public.dp_tasks), public.dp_can_read_comments(public.dp_tasks), public.dp_can_comment(public.dp_tasks) from public;
 grant execute on function public.dp_me(), public.dp_board(date), public.dp_history(bigint), public.dp_add_task(text, text, text), public.dp_edit_task(bigint, text, text),
-  public.dp_save_update(bigint, text, text, text), public.dp_submit(text, date), public.dp_comment(bigint, text),
+  public.dp_save_update(bigint, text, text, text), public.dp_submit(text, date), public.dp_unsubmit(text), public.dp_remove_task(bigint), public.dp_comment(bigint, text),
   public.dp_set_department(text, text, int, boolean), public.dp_set_project(text, text, text, boolean), public.dp_set_person(text, text, text, text, boolean)
   to authenticated;
