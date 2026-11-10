@@ -270,7 +270,7 @@ body.x{--bg:#07090F;--card:rgba(20,24,36,.72);--text:#ECEFF7;--muted:rgba(225,23
   background:#07090F;font-family:Inter,Manrope,system-ui,sans-serif;font-size:14px}
 body.x::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(1000px 520px at 60% 25%,rgba(63,106,246,.16),transparent 65%),radial-gradient(600px 400px at 90% 100%,rgba(101,208,234,.08),transparent 70%),#07090F}
 body.x h1,body.x h2,body.x h3,body.x .metric,body.x .progress-title,body.x .tier-sold,body.x .profile-stat strong{font-family:Montserrat,Inter,sans-serif}
-body.x .page{width:auto;margin:0 0 0 64px;padding:0 24px 40px}
+body.xt .page{width:auto;margin:0 0 0 64px;padding:0 24px 40px}
 body.x .card{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 body.x .fill{background:linear-gradient(90deg,var(--blue),var(--cyan))}
 body.x .btn{background:rgba(255,255,255,.04);border-color:var(--line2)}
@@ -285,7 +285,7 @@ body.x .meta>.btn.primary{margin:0!important;order:5}
 body.x .meta>div[style]{margin:0!important}
 body.x .section{margin-top:18px}
 /* icon rail */
-body.x .rail{position:fixed;left:0;top:0;bottom:0;width:64px;z-index:50;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 0;border-right:1px solid var(--line);background:rgba(7,9,15,.88)}
+body.xt .rail{position:fixed;left:0;top:0;bottom:0;width:64px;z-index:50;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 0;border-right:1px solid var(--line);background:rgba(7,9,15,.88)}
 .r-mark{width:34px;height:34px;border-radius:50%;margin-bottom:14px;display:grid;place-items:center;font:900 13px Montserrat,sans-serif;color:var(--cyan);background:radial-gradient(circle,var(--navy) 58%,transparent 60%),conic-gradient(from 200deg,var(--blue),var(--cyan),#fff,var(--blue));box-shadow:0 0 16px rgba(63,106,246,.55)}
 .r-i{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--faint);position:relative;border:0;background:none;cursor:pointer;padding:0}
 .r-i:hover{color:var(--text);background:rgba(255,255,255,.05)}
@@ -294,7 +294,7 @@ body.x .rail{position:fixed;left:0;top:0;bottom:0;width:64px;z-index:50;display:
 .r-i:hover::after{content:attr(data-tip);position:absolute;left:50px;white-space:nowrap;background:#1A1F2E;border:1px solid var(--line2);padding:5px 9px;border-radius:8px;font:500 12px Inter,sans-serif;color:var(--text);z-index:60}
 .r-sp{flex:1}
 /* top stat bar */
-body.x .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bottom:1px solid var(--line);overflow-x:auto}
+body.xt .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bottom:1px solid var(--line);overflow-x:auto}
 .tchip{display:flex;align-items:center;gap:7px;padding:6px 11px;border:1px solid var(--line);border-radius:10px;white-space:nowrap;color:var(--muted);font-size:12px;background:rgba(255,255,255,.03)}
 .tchip b{color:var(--text);font:700 12.5px Montserrat,sans-serif}
 .tchip em{font-style:normal;color:var(--cyan)}
@@ -305,7 +305,7 @@ body.x .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bot
 .t-user b{display:block;font-size:12.5px;line-height:1.15}.t-user small{display:block;color:var(--faint);font-size:11px}
 /* dashboard: filters */
 .hbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 12px}
-.hpills{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
+.hpills{display:flex;gap:4px;padding:4px;max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
 .hpill{display:flex;align-items:center;gap:7px;padding:6px 11px;border-radius:9px;color:var(--muted);font:500 12.5px Inter,sans-serif;cursor:pointer;border:0;background:none}
 .hpill .n{font:700 10.5px Montserrat,sans-serif;padding:1px 6px;border-radius:6px;background:rgba(255,255,255,.08);color:var(--text)}
 .hpill.on{background:#fff;color:var(--navy)}.hpill.on .n{background:var(--navy);color:#fff}
@@ -405,6 +405,18 @@ body.x .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bot
 .mem b{display:block;font-weight:600;font-size:12.5px}.mem small{color:var(--faint);font-size:11px}
 .mem .v{margin-left:auto;font:700 12px Montserrat,sans-serif}
 
+/* ---------- sales view in the dark theme (the contractor view keeps the light one) ---------- */
+body.x .s-hero{background:radial-gradient(700px 300px at 85% 0%,rgba(63,106,246,.45),transparent 60%),radial-gradient(500px 260px at 0% 100%,rgba(101,208,234,.18),transparent 60%),#0B1230;color:var(--text);border:1px solid var(--line2);position:relative;overflow:hidden}
+body.x .s-hero h1{font-family:Montserrat,sans-serif;font-weight:900}
+body.x .s-hero .cd-meta{color:var(--muted)}
+body.x .s-hero .cd-num{color:#fff;text-shadow:0 0 28px rgba(101,208,234,.55);font-family:Montserrat,sans-serif}
+body.x .s-hero .cd-unit{color:var(--cyan)}
+body.x .s-sec>h2{font-family:Montserrat,sans-serif}
+body.x .tcard{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);position:relative;overflow:hidden}
+body.x .tcard::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--blue),var(--cyan))}
+body.x .tcard .t-name,body.x .tcard .t-price,body.x .bigline strong{font-family:Montserrat,sans-serif}
+body.x .isl{border:1px solid var(--line)}
+body.x .s-tabs{border-color:var(--line)}
 /* ---------- Commercial and P&L (team view) ---------- */
 .ck4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px}
 .ck{padding:16px 18px;display:flex;flex-direction:column;gap:8px;min-width:0}
@@ -608,8 +620,8 @@ body.x .topbar{display:flex;align-items:center;gap:8px;padding:14px 0;border-bot
 @media (max-width:760px){.okan{grid-template-columns:1fr}.mfn{grid-template-columns:90px 1fr 80px}}
 @media (max-width:1100px){.isles{grid-template-columns:repeat(5,1fr)}}
 @media (max-width:760px){
-  body.x .rail{display:none}body.x .page{margin:0;padding:0 12px 28px}
-  body.x nav.tabs{display:flex;background:#07090F}
+  body.xt .rail{display:none}body.xt .page{margin:0;padding:0 12px 28px}
+  body.xt nav.tabs{display:flex;background:#07090F}
   body.x .t-user{display:none}
   .stage{height:460px}.hfloat{position:relative;left:auto;top:auto;width:auto;margin:10px}
   .hcompass{transform:scale(.7);transform-origin:top right}.hlegend,.hhint{display:none}
@@ -885,6 +897,14 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
   --accent: #ededea; --accent-soft: #2a2a27; --on-accent: #151515; --c-inv: #6a6a64;
   --pos: #8fcf99; --pos-soft: #1d2a1f; --warn: #e7b85c; --warn-soft: #2e2510; --neg: #ef8a82; --neg-soft: #33201e;
 } }
+/* The tracker's dark CONNECTD X theme */
+:host(.dark) {
+  --bg: #070C18; --surface: #0E1628; --surface-2: #142038; --line: #23304C;
+  --ink: #E5EBF6; --ink-2: #93A2C0; --navy: #0B1230; --on-navy: #EEF3FF; --on-navy-2: #8D9DC0;
+  --accent: #65D0EA; --accent-soft: #0C2F3B; --on-accent: #060A1D; --c-inv: #6E7FA3;
+  --pos: #4ADE80; --pos-soft: #0F2A1B; --warn: #FBBF24; --warn-soft: #2E2308; --neg: #F87171; --neg-soft: #331414;
+  color-scheme: dark;
+}
 .app { background: transparent; }
 .wrap { max-width: none; padding-left: 0; padding-right: 0; }
 .hero { border-radius: 24px; }
@@ -1353,7 +1373,7 @@ function render() {
   const allLoaded = KEYS.every(k => loaded[k]) || offline;
   $('#asof').textContent = !allLoaded ? 'Loading…' : times.length ? 'Last updated ' + fmtDate(times[times.length - 1]) : 'No updates yet';
   document.body.classList.toggle('sales', mode !== 'team'); document.body.classList.toggle('contractor', mode === 'contractor');
-  document.body.classList.toggle('x', mode === 'team');
+  document.body.classList.toggle('x', mode !== 'contractor'); document.body.classList.toggle('xt', mode === 'team');
   renderShell();
   $('#foot').textContent = mode !== 'team' ? (times.length ? 'Figures update live from the CONNECTD X team tracker · last updated ' + fmtDate(times[times.length - 1]) + '.' : 'Figures update live from the CONNECTD X team tracker.') : TEAM_FOOT;
   if (mode !== 'team') { if (roiHost) roiHost.remove(); $('#main').innerHTML = VIEWS[mode](); if (mode === 'sales') placeRoi(); return; }
@@ -2191,7 +2211,7 @@ VIEWS.sales = () => {
     }).join('')}</div></div></div>`;
 
   // Layout
-  h += `<div class="s-sec"><h2>Booth layout</h2><p class="s-sub">Hall 6. Hover or tap a booth to see its island and status.</p><div class="card">${floorPlan()}</div></div>`;
+  h += `<div class="s-sec"><h2>Booth layout</h2><p class="s-sub">Hall 6 in 3D. Drag to turn it, click a booth to see its island and status.</p>${hallSection()}</div>`;
   }
 
   // Profile
@@ -2513,7 +2533,7 @@ function placeRoi() {
   if (!window.mountRoi) { slot.innerHTML = '<div class="card"><div class="empty">The ROI calculator couldn\'t load. Check your connection and reload the page.</div></div>'; return; }
   roiSync();
   if (!roiHost) {
-    roiHost = document.createElement('div'); roiHost.id = 'roi-host';
+    roiHost = document.createElement('div'); roiHost.id = 'roi-host'; roiHost.className = 'dark';
     const sh = roiHost.attachShadow({mode: 'open'});
     sh.innerHTML = `<style>${$('#roi-css').textContent}</style><div class="app-root"></div>`;
     roiStore.el = sh.querySelector('.app-root');
@@ -2775,7 +2795,6 @@ function renderShell() {
 const hall = {spin: -24, tilt: 57, zoom: .8, filter: 'all', sel: null, names: true, zones: true, drag: null, moved: false};
 const HO = {x: 430, y: 290}; // plan origin, so the hall starts at 0,0
 const PILLAR = {A: '#A77BFF', B: '#65D0EA', C: '#FF6F91', D: '#65D0EA', E: '#A77BFF', F: '#FF6F91', G: '#A77BFF', H: '#65D0EA', I: '#65D0EA', J: '#3F6AF6'};
-const HST = {sec: 'Secured', hold: 'On hold', av: 'Available', org: 'Organiser', na: 'Not for sale'};
 function hallCells() {
   const cell = {};
   FLOOR.forEach(g => { const bw = g.w / g.cols, bh = g.h / g.rows; for (let r = 0; r < g.rows; r++) for (let c = 0; c < g.cols; c++) cell[g.L + (r * g.cols + c + 1)] = {x: g.x - HO.x + c * bw, y: g.y - HO.y + r * bh, w: bw, h: bh, r, c, g}; });
@@ -2800,28 +2819,32 @@ const partnerBooths = (B, p) => Object.values(B).filter(x => x.partner === p).ma
 function hallCard(B) {
   const b = B[hall.sel];
   if (!b) return `<div class="ft"><div class="hthumb">CNTD X</div><div><h3>Click a booth</h3><span class="hbadge av">Hall 6 · ${Object.keys(B).length} booths</span></div></div><div class="hrow"><span>Drag the hall to turn it</span></div>`;
-  const p = b.partner, g = FLOOR.find(f => f.L === b.L);
+  const p = hallName(b), g = FLOOR.find(f => f.L === b.L), team = mode === 'team';
   const title = p ? (p.name || 'Unnamed partner') : b.status === 'org' ? '#businessSynergy' : 'Booth ' + b.id;
   const thumb = p && p.logo ? `<img src="${esc(logoSrc(p.logo))}" alt="" onerror="this.remove()">` : 'CNTD X';
-  let h = `<div class="ft"><div class="hthumb">${thumb}</div><div><h3>${esc(title)}</h3><span class="hbadge ${b.status}">${HST[b.status]}</span></div></div>`;
+  let h = `<div class="ft"><div class="hthumb">${thumb}</div><div><h3>${esc(title)}</h3><span class="hbadge ${b.status}">${HL()[b.status]}</span></div></div>`;
   h += `<div class="hrow"><span>Island</span><b>${esc(b.L)} · ${esc(SHORT[b.L] || (g && g.cat) || '')}</b></div>`;
   if (p) {
     h += `<div class="hmini"><div><small>Booths</small><b>${esc(boothRanges(partnerBooths(B, p)))}</b></div><div><small>Package</small><b>${esc((b.tier || '–').replace(/ Partner$/, ''))}</b></div></div>`;
-    if (isFinance && p.status === 'Confirmed') {
+    if (team && isFinance && p.status === 'Confirmed') {
       const o = (get('pnl').ov || {})[p.id] || {};
       const paid = blankable(o.paid) ? num(p.collected) : num(o.paid), full = blankable(o.full) ? num(p.value) * (1 + SST) : num(o.full);
       if (full) h += `<div class="hrow"><span>Payment</span><b>${fmtRM(paid)} / ${fmtRM(full)}</b></div><div class="hmeter"><i style="width:${Math.min(100, pct(paid, full))}%"></i></div>`;
     }
     const sp = [p.sales1, p.sales2].map(x => String(x || '').trim()).filter(Boolean).join(' + ');
-    if (sp) h += `<div class="hrow"><span>Salesperson</span><b>${esc(sp)}</b></div>`;
-    if (b.tbc) h += `<div class="hrow"><span>Booth no.</span><b>Placed automatically</b></div>`;
-    if (b.status === 'hold') h += `<div class="hwarn">On hold, not confirmed yet.${sp ? ' Follow up with ' + esc(sp) + '.' : ''}</div>`;
-  } else if (b.status === 'av') h += `<div class="hrow"><span>Status</span><b>Open for sale</b></div>`;
+    if (team && sp) h += `<div class="hrow"><span>Salesperson</span><b>${esc(sp)}</b></div>`;
+    if (team && b.tbc) h += `<div class="hrow"><span>Booth no.</span><b>Placed automatically</b></div>`;
+    if (team && b.status === 'hold') h += `<div class="hwarn">On hold, not confirmed yet.${sp ? ' Follow up with ' + esc(sp) + '.' : ''}</div>`;
+  } else if (b.status === 'av') h += `<div class="hrow"><span>Status</span><b>${mode === 'sales' ? 'Available to book' : 'Open for sale'}</b></div>`;
+  else if (b.status === 'hold') h += `<div class="hrow"><span>Status</span><b>Reserved</b></div>`;
   else if (b.status === 'org') h += `<div class="hrow"><span>Use</span><b>Organiser booth</b></div>`;
   return h;
 }
 function hallMatch(b) { return hall.filter === 'all' || b.status === hall.filter; }
-function dashboard() {
+// Status words follow the view (Secured / Taken / Occupied); prospects only see names of confirmed partners.
+const HL = () => ({...STATUS_LABEL(), org: 'Organiser'});
+const hallName = b => b.partner && (mode !== 'sales' || b.status === 'sec') ? b.partner : null;
+function hallSection() {
   const B = calcBooths(), cell = hallCells(), all = Object.values(B);
   const n = st => all.filter(b => b.status === st).length;
   const dim = hall.filter !== 'all';
@@ -2835,15 +2858,15 @@ function dashboard() {
   all.forEach(b => {
     const k = cell[b.id]; if (!k) return;
     const m = hallMatch(b) ? ' match' : '', sel = hall.sel && (b.id === hall.sel || (b.partner && B[hall.sel] && B[hall.sel].partner === b.partner)) ? ' sel' : '';
-    w += `<div class="hb ${b.status}${m}${sel}" data-id="${b.id}" style="left:${k.x}px;top:${k.y}px;width:${k.w}px;height:${k.h}px" title="${esc(b.id + ' · ' + HST[b.status] + (b.partner ? ' · ' + (b.partner.name || '') : ''))}"><div class="ht">${b.id}</div></div>`;
+    w += `<div class="hb ${b.status}${m}${sel}" data-id="${b.id}" style="left:${k.x}px;top:${k.y}px;width:${k.w}px;height:${k.h}px" title="${esc(b.id + ' · ' + HL()[b.status] + (hallName(b) ? ' · ' + (hallName(b).name || '') : ''))}"><div class="ht">${b.id}</div></div>`;
     if (b.status === 'sec' || b.status === 'hold' || b.status === 'org') {
       let label = '';
-      if (b.partner && !labelled.has(b.partner)) { labelled.add(b.partner); label = shortName(b.partner.name); if (label.length > 18) label = label.split(' ').slice(0, 2).join(' '); }
+      if (hallName(b) && !labelled.has(b.partner)) { labelled.add(b.partner); label = shortName(b.partner.name); if (label.length > 18) label = label.split(' ').slice(0, 2).join(' '); }
       if (b.status === 'org' && b.id === 'J1') label = '#businessSynergy';
       w += wallHtml(k, b.status + m, label);
     }
   });
-  const pills = [['all', 'All', all.length, ''], ['sec', 'Secured', n('sec'), 'var(--cyan)'], ['hold', 'On hold', n('hold'), 'var(--amber)'], ['av', 'Available', n('av'), '#3A4052'], ['org', 'Organiser', n('org'), 'var(--blue)']].filter(x => x[0] === 'all' || x[2]);
+  const L = HL(), pills = [['all', 'All', all.length, ''], ['sec', L.sec, n('sec'), 'var(--cyan)'], ['hold', L.hold, n('hold'), 'var(--amber)'], ['av', L.av, n('av'), '#3A4052'], ['org', L.org, n('org'), 'var(--blue)']].filter(x => x[0] === 'all' || x[2]);
   let h = `<div class="hbar"><div class="hpills" role="group" aria-label="Show booths">${pills.map(([k, l, c, col]) => `<button class="hpill ${hall.filter === k ? 'on' : ''}" data-hf="${k}">${col ? `<i style="background:${col}"></i>` : ''}${l}<span class="n">${c}</span></button>`).join('')}</div>
     <div class="htg"><label><input type="checkbox" id="hNames" ${hall.names ? 'checked' : ''}><span class="hsw"></span>Show names</label><label><input type="checkbox" id="hZones" ${hall.zones ? 'checked' : ''}><span class="hsw"></span>Show zones</label></div></div>
   <section class="stage" aria-label="Hall 6 booth layout in 3D. Drag to turn it, click a booth for details.">
@@ -2851,9 +2874,15 @@ function dashboard() {
     <div class="hfloat hpanel" id="hcard">${hallCard(B)}</div>
     <div class="hcompass"><i></i><b>HALL 6</b><small id="hang">${hall.spin}°</small></div>
     <div class="htools"><button data-hv="zin" title="Zoom in" aria-label="Zoom in">+</button><button data-hv="zout" title="Zoom out" aria-label="Zoom out">−</button><button data-hv="rl" title="Turn left" aria-label="Turn left">⟲</button><button data-hv="rr" title="Turn right" aria-label="Turn right">⟳</button><button data-hv="flat" title="Top view" aria-label="Top view">⬒</button></div>
-    <div class="hlegend hpanel"><span><i style="background:var(--cyan)"></i>Secured</span><span><i style="background:var(--amber)"></i>On hold</span><span><i style="background:var(--blue)"></i>Organiser</span><span><i style="background:#3A4052"></i>Available</span></div>
+    <div class="hlegend hpanel"><span><i style="background:var(--cyan)"></i>${L.sec}</span><span><i style="background:var(--amber)"></i>${L.hold}</span><span><i style="background:var(--blue)"></i>${L.org}</span><span><i style="background:#3A4052"></i>${L.av}</span></div>
     <div class="hhint">Drag to turn and tilt · click a booth for details</div>
   </section>`;
+  return h;
+}
+function dashboard() {
+  const B = calcBooths(), all = Object.values(B);
+  const n = st => all.filter(b => b.status === st).length;
+  let h = hallSection();
 
   // Islands: secured / total, then the hall total (organiser booths not counted)
   const sale = all.filter(b => b.status !== 'org' && b.status !== 'na'), sec = sale.filter(b => b.status === 'sec').length;
