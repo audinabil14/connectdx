@@ -669,7 +669,6 @@ body.staff [data-mode]{display:none}
 .mkads td{vertical-align:top}
 .mkopen{display:inline-block;margin-top:5px;font-size:12px;color:var(--cyan)}
 .mkobj h4{font:700 12px Inter,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--cyan);margin:4px 0 8px}
-.mkleg{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:var(--muted)}.mkleg input{width:auto;margin-top:2px}
 .mkper{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);padding:14px 18px!important;margin-top:14px}
 .mkper b{color:var(--text);font:700 14px Montserrat,sans-serif;margin-right:4px}
 .mkper input{width:185px}.mkper small{color:var(--faint);font-size:11.5px;flex:1 1 260px}
@@ -1495,7 +1494,7 @@ function calcProgramme() {
   const targets = p.targets.map(t => { const conf = p.speakers.filter(s => s.type === t.id && s.status === 'Confirmed'); return {...t, conf, secured: conf.length, slots: num(t.slots)}; });
   return {p, targets};
 }
-// Ads totals come from the ads log (one row per report update). The earlier summary rows count too while "useLegacy" is on.
+// Ads totals come from the ads log (one row per report update). The old "entries" summary rows stay stored but no longer count.
 const AD_F = {
   Engagement: [['viewsNoAds', 'Views (no ads)'], ['reach', 'Reach'], ['impressions', 'Impressions'], ['views', 'Views'], ['cpr', 'Cost per result (RM)'], ['spend', 'Ads spent (RM)'], ['tickets', 'Tickets from ads']],
   Traffic: [['lpViews', 'LP views'], ['reach', 'Reach'], ['impressions', 'Impressions'], ['cpr', 'Cost per result (RM)'], ['spend', 'Ads spent (RM)'], ['tickets', 'Tickets from ads']]
@@ -1503,8 +1502,8 @@ const AD_F = {
 const SOCIAL_F = [['posted', 'Content posted'], ['produced', 'Content produced'], ['followers', 'Followers'], ['views', 'Views'], ['viewers', 'Viewers'], ['profileActivity', 'Profile activity'], ['profileVisits', 'Profile visits'], ['linkTaps', 'External link taps'], ['interactions', 'Interactions']];
 function calcMarketing() {
   const m = get('marketing'), ads = m.ads || [], reps = ads.flatMap(a => a.reports || []);
-  const old = m.useLegacy !== false ? m.entries : [], both = (k, ok = k) => sum(reps, k) + sum(old, ok);
-  const t = {spend: both('spend'), reach: both('reach'), impressions: both('impressions'), lpViews: both('lpViews'), tickets: both('tickets', 'regs'), contents: ads.length + sum(old, 'contents')};
+  const both = k => sum(reps, k);
+  const t = {spend: both('spend'), reach: both('reach'), impressions: both('impressions'), lpViews: both('lpViews'), tickets: both('tickets'), contents: ads.length};
   const r = (a, b, k = 1) => (a && b) ? a / b * k : null;
   t.cpm = r(t.spend, t.impressions, 1000); t.cplv = r(t.spend, t.lpViews); t.cpt = r(t.spend, t.tickets); t.lpToTicket = r(t.tickets, t.lpViews, 100);
   t.budgetUsed = r(t.spend, num(m.budget), 100);
@@ -2115,17 +2114,6 @@ VIEWS.marketing = () => {
   }
   h += '</div>';
 
-  // The earlier summary log, kept as it was
-  const E = ['contents', 'spend', 'reach', 'impressions', 'clicks', 'lpViews', 'regs'], et = Object.fromEntries(E.map(f => [f, sum(m.entries, f)]));
-  h += `<div class="card gpanel"><div class="dch"><h3>Earlier summary</h3><span class="more">the log used before the ads report · one row per channel per period</span></div>
-  <label class="mkleg"><input type="checkbox" data-mkleg${m.useLegacy !== false ? ' checked' : ''}> Count these rows in the totals at the top. Untick once the same periods are in the ads report, so nothing is counted twice.</label>
-  <div class="tbl-wrap"><table class="tbl" style="min-width:1100px"><thead><tr><th style="width:130px">Period</th><th style="width:150px">Channel</th><th>Contents</th><th>Spend (RM)</th><th>Reach</th><th>Impressions</th><th>Link clicks</th><th>LP views</th><th>Registrations</th><th></th></tr></thead><tbody>
-  ${m.entries.map(e => `<tr><td>${inp(`marketing:entries:${e.id}:period`, e.period, 'placeholder="Week 1 / Sep"')}</td><td>${inp(`marketing:entries:${e.id}:channel`, e.channel, 'list="ch" placeholder="Meta Ads"')}</td>
-    ${E.map(f => `<td>${ninp(`marketing:entries:${e.id}:${f}`, e[f])}</td>`).join('')}<td>${del('delEntry', e.id)}</td></tr>`).join('')}
-  ${m.entries.length ? `<tr class="tot"><td colspan="2">Total</td>${E.map(f => `<td style="text-align:right;padding-right:16px">${f === 'spend' ? f2(et[f]) : fmtN(et[f])}</td>`).join('')}<td></td></tr>` : ''}
-  </tbody></table></div><datalist id="ch"><option value="Meta Ads"><option value="TikTok Ads"><option value="Google Ads"><option value="LinkedIn Ads"><option value="Organic social"><option value="Email / WhatsApp blast"><option value="Marketing partner"></datalist>
-  ${m.entries.length ? '' : '<div class="empty">No rows.</div>'}
-  <div class="row-actions"><button class="btn" data-act="addEntry">＋ Add row</button></div></div>`;
   return h;
 };
 
@@ -2726,8 +2714,6 @@ document.addEventListener('click', e => {
     addRep: () => mut('marketing', d => { const a = (d.ads || []).find(x => x.id === id); if (a) (a.reports = a.reports || []).push({id: uid(), date: new Date().toISOString().slice(0, 10)}); }),
     delAd: () => mut('marketing', d => { d.ads = (d.ads || []).filter(x => x.id !== id); }),
     delRep: () => { const [aid, rid] = id.split('~'); mut('marketing', d => { const a = (d.ads || []).find(x => x.id === aid); if (a) a.reports = (a.reports || []).filter(r => r.id !== rid); }); },
-    addEntry: () => mut('marketing', d => d.entries.push({id: uid(), period: '', channel: '', contents: 0, spend: 0, reach: 0, impressions: 0, clicks: 0, lpViews: 0, regs: 0})),
-    delEntry: () => rm('marketing', 'entries'),
     addStream: () => mut('ops', d => { const w = {id: uid(), name: '', status: STREAM_STATUS.includes(id) ? id : 'Not started', owner: '', due: '', note: '', next: '', updatedAt: new Date().toISOString()}; d.streams.push(w); wsOpen = w.id; }),
     delStream: () => rm('ops', 'streams'),
     addPnl: () => mut('pnl', d => d.lines.push({id: uid(), kind: id, group: PNL_GROUPS[id][id === 'Income' ? 2 : 6], item: '', party: '', full: '', paid: '', status: 'TBC', date: '', notes: ''})),
@@ -2761,7 +2747,6 @@ document.addEventListener('change', e => {
     mut('marketing', d => { const a = (d.ads || []).find(x => x.id === aid), r = a && (a.reports || []).find(x => x.id === rid); if (r) r[f] = v; });
     return;
   }
-  if (el.dataset.mkleg !== undefined) { mut('marketing', d => { d.useLegacy = el.checked; }); return; }
   if (el.dataset.dpf) { dp[el.dataset.dpf] = el.value; if (el.dataset.dpf === 'day') { if (!el.value) dp.day = ''; dp.board = null; dp.hist = {}; dp.open = {}; loadDp(); } render(); return; }
   for (const [k, fn] of [['dpp', dpSetPerson], ['dpdep', dpSetDept], ['dpj', dpSetProj]]) if (el.dataset[k]) { const i = el.dataset[k].lastIndexOf(':'); fn(el.dataset[k].slice(0, i), el.dataset[k].slice(i + 1), el.type === 'checkbox' ? el.checked : el.value); return; }
   if (el.id === 'sheet') { upload.sheet = el.value; loadSheet(); render(); return; }
