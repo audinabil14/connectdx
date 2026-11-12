@@ -2267,11 +2267,11 @@ const dpTime = d => new Date(d).toLocaleTimeString('en-MY', {...KL, hour: 'numer
 const dpDay = d => new Date(d + 'T12:00:00+08:00').toLocaleDateString('en-MY', {...KL, weekday: 'short', day: 'numeric', month: 'short'});
 const dpChip = s => `<span class="dps ${s}">${(DP_ST.find(x => x[0] === s) || DP_ST[1])[1]}</span>`;
 const dpSort = (a, b) => DP_ORDER[a.status] - DP_ORDER[b.status] || a.title.localeCompare(b.title);
-// Submitted / Late / Pending for a department on the board's day. 4:00 PM Malaysia time.
+// Submitted / Late / Pending for a department on the board's day. 7:00 PM Malaysia time.
 function dpSub(dept) {
   const b = dp.board, s = b.submissions.find(x => x.dept_id === dept);
   if (s) return s.late ? {k: 'late', t: 'Late · submitted ' + dpTime(s.at), s} : {k: 'done', t: 'Submitted · ' + dpTime(s.at), s};
-  return b.day < b.today || Date.now() > new Date(b.deadline).getTime() ? {k: 'late', t: 'Late · not submitted'} : {k: 'pend', t: 'Pending · due 4:00 PM'};
+  return b.day < b.today || Date.now() > new Date(b.deadline).getTime() ? {k: 'late', t: 'Late · not submitted'} : {k: 'pend', t: 'Pending · due 7:00 PM'};
 }
 const dpTasks = () => dp.board.tasks.filter(t => (!dp.dept || t.dept_id === dp.dept) && (!dp.project || t.project_id === dp.project) && (!dp.pic || t.pic === dp.pic));
 function dpComments(t) {
@@ -2330,7 +2330,7 @@ VIEWS.progress = () => {
   const mySub = p && p.dept_id ? dpSub(p.dept_id) : null;
   const longDay = new Date(b.day + 'T12:00:00+08:00').toLocaleDateString('en-MY', {...KL, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
   let h = `${dp.msg ? `<div class="banner err" style="margin-top:14px">${esc(dp.msg)}</div>` : ''}
-  <div class="dpday"><div><b>${esc(longDay)}</b><span>${today ? 'Daily updates are due by 4:00 PM' : 'Past day: read only'}</span></div>
+  <div class="dpday"><div><b>${esc(longDay)}</b><span>${today ? 'Daily updates are due by 7:00 PM' : 'Past day: read only'}</span></div>
     ${mySub ? `<span class="dpb ${mySub.k}">${esc(dpDept(p.dept_id))}: ${esc(mySub.t)}</span>` : ''}
     ${p && p.role === 'pic' && mySub && !mySub.s ? `<button class="btn primary" data-act="dpSubmit"${dp.submitting ? ' disabled' : ''}>${dp.submitting ? 'Submitting…' : 'Submit daily update'}</button>` : ''}
     ${p && p.role === 'pic' && mySub && mySub.s && today ? dpUndo(p.dept_id) : ''}

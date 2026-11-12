@@ -1,4 +1,4 @@
--- CONNECTD Event Tracker: Daily progress (team updates before 4:00 PM, department submission, management follow-up).
+-- CONNECTD Event Tracker: Daily progress (team updates before 7:00 PM, department submission, management follow-up).
 -- Run once in the Supabase dashboard: SQL Editor -> New query -> paste -> Run. Safe to run again. Run schema.sql first.
 -- The tables have no policies: everything goes through the functions below, which check who is asking.
 --   Member      updates their own tasks and sees their department.
@@ -158,7 +158,7 @@ begin
   if me is null then raise exception 'You do not have access to Daily progress'; end if;
   return jsonb_build_object(
     'day', d, 'today', public.dp_today(),
-    'deadline', ((d + time '16:00') at time zone 'Asia/Kuala_Lumpur'),
+    'deadline', ((d + time '19:00') at time zone 'Asia/Kuala_Lumpur'),
     'tasks', coalesce((
       select jsonb_agg(x order by x ->> 'title') from (
         select jsonb_build_object(
@@ -178,7 +178,7 @@ begin
       ) s), '[]'),
     'submissions', coalesce((
       select jsonb_agg(jsonb_build_object('dept_id', s.dept_id, 'by', s.submitted_by, 'at', s.at,
-                                          'late', s.at > ((s.day + time '16:00') at time zone 'Asia/Kuala_Lumpur')))
+                                          'late', s.at > ((s.day + time '19:00') at time zone 'Asia/Kuala_Lumpur')))
       from public.dp_submissions s where s.day = d), '[]'),
     'undos', coalesce((
       select jsonb_agg(jsonb_build_object('dept_id', x.dept_id, 'by', x.undone_by, 'at', x.undone_at) order by x.undone_at)
@@ -246,7 +246,7 @@ begin
     set status = excluded.status, remarks = excluded.remarks, next_action = excluded.next_action, edited_at = now();
 end $$;
 
--- The department's final daily submission. Its PIC (or a director), once per day; after 4:00 PM it is marked late.
+-- The department's final daily submission. Its PIC (or a director), once per day; after 7:00 PM it is marked late.
 create or replace function public.dp_submit(p_dept text, p_day date default null) returns void
 language plpgsql security definer set search_path = public as $$
 declare d date := coalesce(p_day, public.dp_today());
