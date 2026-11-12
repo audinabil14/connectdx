@@ -672,6 +672,14 @@ body.staff [data-mode]{display:none}
 .mkper{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);padding:14px 18px!important;margin-top:14px}
 .mkper b{color:var(--text);font:700 14px Montserrat,sans-serif;margin-right:4px}
 .mkper input{width:185px}.mkper small{color:var(--faint);font-size:11.5px;flex:1 1 260px}
+.mkviews{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.mkbud{max-width:620px}
+.mksum{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;align-items:start}
+.mksp{border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;background:rgba(255,255,255,.02)}
+.mkst{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.mkst b{font:700 15px Montserrat,sans-serif}.mkst span{font-size:12px;color:var(--muted)}
+.mkkv{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mkkv small{display:block;font-size:11.5px;color:var(--muted)}.mkkv b{font:800 18px Montserrat,sans-serif;font-variant-numeric:tabular-nums}
+.mkkv i{display:block;font-style:normal;font-size:11.5px;font-weight:600}.mkkv i.up{color:var(--ok)}.mkkv i.dn{color:var(--pink)}
+.mksp .mklinkbtn{align-self:flex-start;font-size:12px}
 .mkmons{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
 .mkm{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:8px 14px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.03);color:var(--text);cursor:pointer;font:inherit}
 .mkm b{font:700 13px Montserrat,sans-serif}.mkm small{font-size:11px;color:var(--faint)}
@@ -1496,14 +1504,14 @@ function calcProgramme() {
 }
 // Ads totals come from the ads log (one row per report update). The old "entries" summary rows stay stored but no longer count.
 const AD_F = {
-  Engagement: [['viewsNoAds', 'Views (no ads)'], ['reach', 'Reach'], ['impressions', 'Impressions'], ['views', 'Views'], ['cpr', 'Cost per result (RM)'], ['spend', 'Ads spent (RM)'], ['tickets', 'Tickets from ads']],
-  Traffic: [['lpViews', 'LP views'], ['reach', 'Reach'], ['impressions', 'Impressions'], ['cpr', 'Cost per result (RM)'], ['spend', 'Ads spent (RM)'], ['tickets', 'Tickets from ads']]
+  Engagement: [['viewsNoAds', 'Views (no ads)'], ['reach', 'Reach'], ['impressions', 'Impressions'], ['views', 'Views'], ['cpr', 'Cost per result (RM)'], ['spend', 'Ads spent (RM)'], ['regs', 'Free registrations'], ['tickets', 'Tickets bought']],
+  Traffic: [['lpViews', 'LP views'], ['reach', 'Reach'], ['impressions', 'Impressions'], ['cpr', 'Cost per result (RM)'], ['spend', 'Ads spent (RM)'], ['regs', 'Free registrations'], ['tickets', 'Tickets bought']]
 };
 const SOCIAL_F = [['posted', 'Content posted'], ['produced', 'Content produced'], ['followers', 'Followers'], ['views', 'Views'], ['viewers', 'Viewers'], ['profileActivity', 'Profile activity'], ['profileVisits', 'Profile visits'], ['linkTaps', 'External link taps'], ['interactions', 'Interactions']];
 function calcMarketing() {
   const m = get('marketing'), ads = m.ads || [], reps = ads.flatMap(a => a.reports || []);
   const both = k => sum(reps, k);
-  const t = {spend: both('spend'), reach: both('reach'), impressions: both('impressions'), lpViews: both('lpViews'), tickets: both('tickets'), contents: ads.length};
+  const t = {spend: both('spend'), reach: both('reach'), impressions: both('impressions'), lpViews: both('lpViews'), tickets: both('tickets'), regs: both('regs'), contents: ads.length};
   const r = (a, b, k = 1) => (a && b) ? a / b * k : null;
   t.cpm = r(t.spend, t.impressions, 1000); t.cplv = r(t.spend, t.lpViews); t.cpt = r(t.spend, t.tickets); t.lpToTicket = r(t.tickets, t.lpViews, 100);
   t.budgetUsed = r(t.spend, num(m.budget), 100);
@@ -2037,19 +2045,32 @@ VIEWS.participants = () => {
 // Marketing: headline numbers, funnel, budget and cost, then the editable results log.
 let mkPlat = '', mkMon = '';
 const mkOpen = {};
+// Which part of the tab is open (dashboard, social log or ads log), remembered on this device.
+let mkView = 'dash';
+try { mkView = localStorage.getItem('mkView') || 'dash'; } catch (e) {}
+const MK_VIEWS = [['dash', 'Dashboard'], ['social', 'Social media log'], ['ads', 'Ads log']];
+const mkSetView = v => { mkView = v; try { localStorage.setItem('mkView', v); } catch (e) {} };
 const mkNum = v => v === '' || v == null ? '' : esc(v);
 VIEWS.marketing = () => {
   const M = calcMarketing(), m = M.m, t = M.t, bud = num(m.budget), months = mkMonths(m);
   const f2 = v => 'RM' + Number(v).toLocaleString('en-MY', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   const span = `${mkMonthName(months[0], true)} – ${mkMonthName(months[months.length - 1], true)}`;
-  let h = `<div class="card mkper"><b>Campaign period</b><input type="month" data-b="marketing:periodFrom" value="${esc(m.periodFrom || '2026-09')}" aria-label="Campaign starts"><span>to</span><input type="month" data-b="marketing:periodTo" value="${esc(m.periodTo || '2026-12')}" aria-label="Campaign ends"><small>Sets the months in the social media report and the ads report. For another event, change it to that event's months.</small></div>
-  <div class="ck4">
+  let h = `<div class="card mkper"><b>Campaign period</b><input type="month" data-b="marketing:periodFrom" value="${esc(m.periodFrom || '2026-09')}" aria-label="Campaign starts"><span>to</span><input type="month" data-b="marketing:periodTo" value="${esc(m.periodTo || '2026-12')}" aria-label="Campaign ends"><small>Sets the months in the social media log and the ads log. For another event, change it to that event's months.</small></div>
+  <div class="mkviews" role="tablist">${MK_VIEWS.map(([k, l]) => `<button class="mkp" role="tab" data-act="mkView" data-id="${k}" aria-pressed="${mkView === k}">${l}</button>`).join('')}</div>`;
+  // Shared by the dashboard and the ads log
+  const ads = m.ads || [], cur = new Date().toISOString().slice(0, 7);
+  const monAds = mon => ads.filter(a => (a.date || cur).slice(0, 7) === mon), monReps = mon => monAds(mon).flatMap(a => a.reports || []);
+  const extra = (m.platforms || []).filter(p => !MK_PLATFORMS.includes(p)), plats = [...MK_PLATFORMS, ...extra];
+  if (!MK_VIEWS.some(([k]) => k === mkView)) mkView = 'dash';
+
+  if (mkView === 'dash') {
+  h += `<div class="ck4">
     <div class="card ck"><small>Ads spent</small><b>${f2(t.spend)}</b>${bud ? bar(t.budgetUsed, true) + `<p><em>${fmtP(Math.round(t.budgetUsed * 10) / 10)}</em> of ${fmtRM(bud)} budget</p>` : '<p>Set a budget below</p>'}</div>
     <div class="card ck"><small>Reach</small><b>${fmtN(t.reach)}</b><p><em>${fmtN(t.impressions)}</em> impressions</p></div>
     <div class="card ck"><small>Landing page views</small><b>${fmtN(t.lpViews)}</b><p>${t.cplv != null ? `<em>${f2(t.cplv)}</em> per view` : 'cost per view appears once spend is logged'}</p></div>
-    <div class="card ck"><small>Tickets from ads</small><b>${fmtN(t.tickets)}</b><p>${t.cpt != null ? `<em>${f2(t.cpt)}</em> per ticket` : 'log tickets in the ads log below'}</p></div></div>`;
+    <div class="card ck"><small>Tickets bought from ads</small><b>${fmtN(t.tickets)}</b><p>${t.cpt != null ? `<em>${f2(t.cpt)}</em> per ticket` : 'log tickets in the ads log'}${t.regs ? ` · <em>${fmtN(t.regs)}</em> free registrations` : ''}</p></div></div>`;
   // Funnel: each step as a share of the one before
-  const steps = [['Impressions', t.impressions], ['Reach', t.reach], ['LP views', t.lpViews], ['Tickets from ads', t.tickets]];
+  const steps = [['Impressions', t.impressions], ['Reach', t.reach], ['LP views', t.lpViews], ['Tickets bought', t.tickets]];
   const top = Math.max(1, t.impressions || t.reach || t.lpViews);
   let prev = 0;
   const fun = steps.map(([l, n], i) => { const row = n ? `<div class="mfn" style="--o:${1 - i * .14}"><span>${l}</span><div><div class="fb" style="width:${Math.max(8, n / top * 100)}%">${fmtN(n)}</div></div><b>${prev ? pctTxt(n, prev) : '100%'}<small>${prev ? 'of previous step' : 'starting point'}</small></b></div>`
@@ -2058,43 +2079,62 @@ VIEWS.marketing = () => {
     <div class="card dcard"><div class="dch"><h3>Budget &amp; cost</h3></div>
       ${bud ? `<div class="mgauge"><div class="gw"><div class="ring" style="--p:${Math.min(100, t.budgetUsed || 0)}"></div><b>${fmtP(Math.round((t.budgetUsed || 0) * 10) / 10)}</b></div><p><b>${f2(t.spend)}</b>spent of ${fmtRM(bud)} · ${f2(Math.max(0, bud - t.spend))} left</p></div>` : ''}
       <div class="mgrid"><div><small>CPM</small><b>${orDash(t.cpm, f2)}</b></div><div><small>Cost per LP view</small><b>${orDash(t.cplv, f2)}</b></div><div><small>Cost per ticket</small><b>${orDash(t.cpt, f2)}</b></div><div><small>LP view → ticket</small><b>${orDash(t.lpToTicket, v => fmtP(Math.round(v * 10) / 10))}</b></div></div>
-      <div class="cf2"><label class="field">Ads objective${inp('marketing:objective', m.objective, 'placeholder="e.g. Engagement & Traffic"')}</label><label class="field">Total ads budget (RM)${ninp('marketing:budget', m.budget || '', 'placeholder="Optional"')}</label></div></div></div>`;
+      ${bud ? '' : '<p class="help" style="margin:0">Set the total ads budget in the Ads log.</p>'}${m.objective ? `<p class="help" style="margin:0">Objective: ${esc(m.objective)}</p>` : ''}</div></div>`;
 
-  // Social media report: metrics down, months across, one table per platform
-  const extra = (m.platforms || []).filter(p => !MK_PLATFORMS.includes(p)), plats = [...MK_PLATFORMS, ...extra];
+  // Ads by month
+  const rows = months.map(mon => { const rr = monReps(mon), sp = sum(rr, 'spend'), tk = sum(rr, 'tickets'); return {mon, n: monAds(mon).length, sp, reach: sum(rr, 'reach'), imp: sum(rr, 'impressions'), lp: sum(rr, 'lpViews'), rg: sum(rr, 'regs'), tk, cpt: tk ? sp / tk : null}; });
+  const T = k => rows.reduce((a, r) => a + r[k], 0), tsp = T('sp'), ttk = T('tk'), d0 = v => v ? fmtN(v) : '–';
+  h += `<div class="card gpanel"><div class="dch"><h3>Ads by month</h3><span class="more">${esc(span)} · click a month to open it in the Ads log</span></div>
+    <div class="tbl-wrap"><table class="tbl mkov" style="min-width:900px"><thead><tr><th>Month</th><th>Ads</th><th>Ads spent</th><th>Reach</th><th>Impressions</th><th>LP views</th><th>Free registrations</th><th>Tickets bought</th><th>Cost per ticket</th></tr></thead><tbody>
+      ${rows.map(r => `<tr><td><button class="mklinkbtn" data-act="mkMon" data-id="${r.mon}">${esc(mkMonthName(r.mon))}</button></td><td>${r.n || '–'}</td><td>${r.sp ? f2(r.sp) : '–'}</td><td>${d0(r.reach)}</td><td>${d0(r.imp)}</td><td>${d0(r.lp)}</td><td>${d0(r.rg)}</td><td>${d0(r.tk)}</td><td>${r.cpt != null ? f2(r.cpt) : '–'}</td></tr>`).join('')}
+      <tr class="tot"><td>Total</td><td>${T('n')}</td><td>${f2(tsp)}</td><td>${fmtN(T('reach'))}</td><td>${fmtN(T('imp'))}</td><td>${fmtN(T('lp'))}</td><td>${fmtN(T('rg'))}</td><td>${fmtN(ttk)}</td><td>${ttk ? f2(tsp / ttk) : '–'}</td></tr></tbody></table></div></div>`;
+
+  // Social media at a glance: each platform's latest logged month against the month before
+  const KEYF = [['followers', 'Followers'], ['views', 'Views'], ['interactions', 'Interactions'], ['posted', 'Content posted']];
+  const socRow = (p, mon) => (m.social || []).find(x => x.platform === p && x.month === mon);
+  const hasData = r => r && SOCIAL_F.some(([f]) => r[f] !== '' && r[f] != null);
+  h += `<div class="card gpanel"><div class="dch"><h3>Social media</h3><span class="more">latest logged month per platform · change from the month before</span></div><div class="mksum">
+    ${plats.map(p => {
+      const logged = months.filter(mon => hasData(socRow(p, mon))), last = logged[logged.length - 1];
+      if (!last) return `<div class="mksp"><div class="mkst"><b>${esc(p)}</b><span>not logged yet</span></div><button class="mklinkbtn" data-act="mkSoc" data-id="${esc(p)}">Log ${esc(p)} numbers</button></div>`;
+      const r = socRow(p, last), i = months.indexOf(last), pr = i > 0 ? socRow(p, months[i - 1]) : null;
+      return `<div class="mksp"><div class="mkst"><b>${esc(p)}</b><span>${esc(mkMonthName(last))}</span></div><div class="mkkv">${KEYF.map(([f, l]) => {
+        const v = r[f], has = v !== '' && v != null, pv = pr ? pr[f] : null, ch = has && pv !== '' && pv != null && Number(pv) ? (Number(v) - Number(pv)) / Number(pv) * 100 : null;
+        return `<div><small>${l}</small><b>${has ? fmtN(Number(v)) : '–'}</b>${ch != null ? `<i class="${ch >= 0 ? 'up' : 'dn'}">${ch >= 0 ? '▲' : '▼'} ${Math.abs(Math.round(ch * 10) / 10)}%</i>` : ''}</div>`; }).join('')}</div>
+        <button class="mklinkbtn" data-act="mkSoc" data-id="${esc(p)}">Open in Social media log</button></div>`;
+    }).join('')}</div></div>`;
+  }
+
+  // Social media log: metrics down, months across, one table per platform
+  if (mkView === 'social') {
   if (!plats.includes(mkPlat)) mkPlat = plats[0];
   const cell = (mon, f) => { const row = (m.social || []).find(x => x.platform === mkPlat && x.month === mon); return row ? row[f] : ''; };
-  h += `<div class="card gpanel"><div class="dch"><h3>Social media report</h3><span class="more">monthly, per platform · ${esc(span)}</span></div>
+  h += `<div class="card gpanel"><div class="dch"><h3>Social media log</h3><span class="more">monthly, per platform · ${esc(span)}</span></div>
     <div class="mkplats">${plats.map(p => `<button class="mkp" data-act="mkPlat" data-id="${esc(p)}" aria-pressed="${p === mkPlat}">${esc(p)}</button>`).join('')}
       <span class="mkadd"><input id="mk-newplat" placeholder="Add platform, e.g. Facebook" aria-label="New platform"><button class="btn" data-act="addPlatform">Add</button></span>
       ${extra.includes(mkPlat) ? del('delPlatform', esc(mkPlat)).replace('>Remove<', `>Remove ${esc(mkPlat)}<`) : ''}</div>
     <div class="tbl-wrap"><table class="tbl mksoc" style="min-width:${220 + months.length * 140}px"><thead><tr><th>Metric</th>${months.map(mon => `<th>${esc(mkMonthName(mon))}</th>`).join('')}</tr></thead><tbody>
     ${SOCIAL_F.map(([f, l]) => `<tr><td class="mkl">${l}</td>${months.map(mon => `<td><input type="number" step="any" inputmode="decimal" data-sm="${esc(mkPlat)}|${mon}|${f}" value="${mkNum(cell(mon, f))}" aria-label="${l}, ${esc(mkMonthName(mon))}"></td>`).join('')}</tr>`).join('')}
     </tbody></table></div></div>`;
+  }
 
-  // Ads report: one month at a time (or the overview), each ad on one row that opens to its report updates
-  const ads = m.ads || [], cur = new Date().toISOString().slice(0, 7);
-  const monAds = mon => ads.filter(a => (a.date || cur).slice(0, 7) === mon), monReps = mon => monAds(mon).flatMap(a => a.reports || []);
-  if (mkMon !== 'overview' && !months.includes(mkMon)) mkMon = months.includes(cur) ? cur : [...months].reverse().find(x => monAds(x).length) || months[0];
-  h += `<div class="card gpanel"><div class="dch"><h3>Ads report</h3><span class="more">${esc(span)} · each report update holds that period's numbers only, so they add up</span></div>
-    <div class="mkmons" role="tablist"><button class="mkm" role="tab" data-act="mkMon" data-id="overview" aria-pressed="${mkMon === 'overview'}"><b>Overview</b><small>all months</small></button>
+  // Ads log: one month at a time, each ad on one row that opens to its report updates
+  if (mkView === 'ads') {
+  if (!months.includes(mkMon)) mkMon = months.includes(cur) ? cur : [...months].reverse().find(x => monAds(x).length) || months[0];
+  h += `<div class="card gpanel"><div class="dch"><h3>Ads log</h3><span class="more">${esc(span)} · each report update holds that period's numbers only, so they add up</span></div>
+    <div class="cf2 mkbud"><label class="field">Ads objective${inp('marketing:objective', m.objective, 'placeholder="e.g. Engagement & Traffic"')}</label><label class="field">Total ads budget (RM)${ninp('marketing:budget', m.budget || '', 'placeholder="Optional"')}</label></div>
+    <div class="mkmons" role="tablist">
     ${months.map(mon => { const sp = sum(monReps(mon), 'spend'); return `<button class="mkm" role="tab" data-act="mkMon" data-id="${mon}" aria-pressed="${mkMon === mon}"><b>${esc(mkMonthName(mon, true))}</b><small>${sp ? f2(sp) : monAds(mon).length ? 'RM0' : 'no ads'}</small></button>`; }).join('')}</div>`;
-  if (mkMon === 'overview') {
-    const rows = months.map(mon => { const rr = monReps(mon), sp = sum(rr, 'spend'), tk = sum(rr, 'tickets'); return {mon, n: monAds(mon).length, sp, reach: sum(rr, 'reach'), imp: sum(rr, 'impressions'), lp: sum(rr, 'lpViews'), tk, cpt: tk ? sp / tk : null}; });
-    const T = k => rows.reduce((a, r) => a + r[k], 0), tsp = T('sp'), ttk = T('tk');
-    h += `<div class="tbl-wrap"><table class="tbl mkov" style="min-width:820px"><thead><tr><th>Month</th><th>Ads</th><th>Ads spent</th><th>Reach</th><th>Impressions</th><th>LP views</th><th>Tickets from ads</th><th>Cost per ticket</th></tr></thead><tbody>
-      ${rows.map(r => `<tr><td><button class="mklinkbtn" data-act="mkMon" data-id="${r.mon}">${esc(mkMonthName(r.mon))}</button></td><td>${r.n || '–'}</td><td>${r.sp ? f2(r.sp) : '–'}</td><td>${r.reach ? fmtN(r.reach) : '–'}</td><td>${r.imp ? fmtN(r.imp) : '–'}</td><td>${r.lp ? fmtN(r.lp) : '–'}</td><td>${r.tk ? fmtN(r.tk) : '–'}</td><td>${r.cpt != null ? f2(r.cpt) : '–'}</td></tr>`).join('')}
-      <tr class="tot"><td>Total</td><td>${T('n')}</td><td>${f2(tsp)}</td><td>${fmtN(T('reach'))}</td><td>${fmtN(T('imp'))}</td><td>${fmtN(T('lp'))}</td><td>${fmtN(ttk)}</td><td>${ttk ? f2(tsp / ttk) : '–'}</td></tr></tbody></table></div>`;
-  } else {
+  {
     const inMon = monAds(mkMon), rr = monReps(mkMon);
-    h += `<div class="mkhead"><b>${esc(mkMonthName(mkMon))}</b><span>${f2(sum(rr, 'spend'))} spent · ${fmtN(sum(rr, 'tickets'))} tickets · ${fmtN(sum(rr, 'lpViews'))} LP views · ${inMon.length} ${inMon.length === 1 ? 'ad' : 'ads'}</span></div>`;
+    h += `<div class="mkhead"><b>${esc(mkMonthName(mkMon))}</b><span>${f2(sum(rr, 'spend'))} spent · ${fmtN(sum(rr, 'tickets'))} tickets bought${sum(rr, 'regs') ? ` · ${fmtN(sum(rr, 'regs'))} free registrations` : ''} · ${fmtN(sum(rr, 'lpViews'))} LP views · ${inMon.length} ${inMon.length === 1 ? 'ad' : 'ads'}</span></div>`;
     ['Engagement', 'Traffic'].forEach(obj => {
       const list = inMon.filter(a => (a.objective || 'Engagement') === obj).sort((a, b) => String(a.date).localeCompare(String(b.date))), F = AD_F[obj];
       h += `<div class="mkobj"><h4>${obj}</h4>`;
       list.forEach(a => {
-        const rs = a.reports || [], open = !!mkOpen[a.id], sp = sum(rs, 'spend'), tk = sum(rs, 'tickets');
+        const rs = a.reports || [], open = !!mkOpen[a.id], sp = sum(rs, 'spend'), tk = sum(rs, 'tickets'), rg = sum(rs, 'regs');
         const main = obj === 'Traffic' ? `${fmtN(sum(rs, 'lpViews'))} LP views` : `${fmtN(sum(rs, 'views'))} views`;
-        h += `<div class="mkad${open ? ' open' : ''}"><button class="mkrow" data-act="mkOpen" data-id="${a.id}" aria-expanded="${open}"><i>${open ? '▾' : '▸'}</i><span class="d">${a.date ? esc(new Date(a.date + 'T12:00').toLocaleDateString('en-MY', {day: 'numeric', month: 'short'})) : 'No date'}</span><b>${esc(a.content || 'Untitled ad')}</b><span class="mks ${a.status === 'On' ? 'on' : ''}">${esc(a.status || 'On')}</span><span class="v">${f2(sp)}</span><span class="v">${main}</span><span class="v">${fmtN(tk)} ${tk === 1 ? 'ticket' : 'tickets'}</span><small>${rs.length} ${rs.length === 1 ? 'update' : 'updates'}</small></button>`;
+        h += `<div class="mkad${open ? ' open' : ''}"><button class="mkrow" data-act="mkOpen" data-id="${a.id}" aria-expanded="${open}"><i>${open ? '▾' : '▸'}</i><span class="d">${a.date ? esc(new Date(a.date + 'T12:00').toLocaleDateString('en-MY', {day: 'numeric', month: 'short'})) : 'No date'}</span><b>${esc(a.content || 'Untitled ad')}</b><span class="mks ${a.status === 'On' ? 'on' : ''}">${esc(a.status || 'On')}</span><span class="v">${f2(sp)}</span><span class="v">${main}</span><span class="v">${rg && !tk ? `${fmtN(rg)} free regs` : `${fmtN(tk)} ${tk === 1 ? 'ticket' : 'tickets'}`}</span><small>${rs.length} ${rs.length === 1 ? 'update' : 'updates'}</small></button>`;
         if (open) {
           h += `<div class="mkbody"><div class="mkfields"><label class="field">Date<input type="date" data-b="marketing:ads:${a.id}:date" value="${esc(a.date || '')}"></label>
             <label class="field">Content<input data-b="marketing:ads:${a.id}:content" value="${esc(a.content || '')}" placeholder="e.g. En Aiman Shoutout"></label>
@@ -2113,6 +2153,7 @@ VIEWS.marketing = () => {
     });
   }
   h += '</div>';
+  }
 
   return h;
 };
@@ -2706,7 +2747,9 @@ document.addEventListener('click', e => {
     delDay: () => mut('programme', d => { d.days = d.days.filter(x => x.id !== id); d.agenda = d.agenda.filter(a => a.dayId !== id); }),
     delAgenda: () => rm('programme', 'agenda'),
     mkPlat: () => { mkPlat = id; render(); },
-    mkMon: () => { mkMon = id; render(); },
+    mkMon: () => { mkMon = id; mkSetView('ads'); render(); },
+    mkView: () => { mkSetView(id); render(); },
+    mkSoc: () => { mkPlat = id; mkSetView('social'); render(); },
     mkOpen: () => { mkOpen[id] = !mkOpen[id]; render(); },
     addPlatform: () => { const n = (($('#mk-newplat') || {}).value || '').trim(); if (!n) return; const hit = [...MK_PLATFORMS, ...(get('marketing').platforms || [])].find(p => p.toLowerCase() === n.toLowerCase()); mkPlat = hit || n; if (!hit) mut('marketing', d => { d.platforms = (d.platforms || []).filter(p => !MK_PLATFORMS.includes(p)); d.platforms.push(n); }); else render(); },
     delPlatform: () => { mut('marketing', d => { d.platforms = (d.platforms || []).filter(p => p !== id); d.social = (d.social || []).filter(x => x.platform !== id); }); mkPlat = ''; },
