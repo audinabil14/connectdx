@@ -5,6 +5,9 @@
 -- which they can read and edit. Commercial comes without deal values, collections or target (the same as admins without P&L access).
 -- Tracker admins are not affected: they keep every tab, and P&L still needs P&L access.
 
+-- 0. The old department tick, in case this database never got it (then there is nothing to carry over).
+alter table public.dp_departments add column if not exists marketing boolean not null default false;
+
 -- 1. One row per person per extra tab. No policies: only the functions below read or change it.
 do $$
 declare fresh boolean := to_regclass('public.tab_access') is null;
