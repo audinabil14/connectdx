@@ -658,6 +658,25 @@ body.staff [data-mode]{display:none}
 .dpstale{color:var(--amber);font-size:11.5px;white-space:nowrap}
 .dpx{grid-column:1/-1}
 .dpbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+/* marketing performance logs */
+.mkplats{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mkp{font:600 13px Inter,sans-serif;padding:7px 14px;border-radius:99px;border:1px solid var(--line2);background:none;color:var(--muted);cursor:pointer}
+.mkp[aria-pressed="true"]{background:#fff;color:var(--navy);border-color:#fff}
+.mkadd{display:flex;gap:6px;margin-left:auto}.mkadd input{width:200px}
+.mksoc td.mkl{font-weight:600;color:var(--text);white-space:nowrap}
+.mksoc input,.mkads input,.mkads select{text-align:right;font-variant-numeric:tabular-nums}
+.mkads input[type=date],.mkads td:nth-child(2) input,.mkads select{text-align:left}
+.mkads td{vertical-align:top}
+.mkads tr.mkfirst td{border-top:1px solid var(--line2)}
+.mkads .mklink{margin-top:6px;font-size:12px}
+.mkopen{display:inline-block;margin-top:5px;font-size:12px;color:var(--cyan)}
+.mkrep{margin-top:6px;font-size:12px;padding:5px 10px}
+.mkst.on{color:var(--ok);border-color:rgba(61,220,151,.4)}
+.mknone{color:var(--faint);font-size:12.5px;padding:12px}
+.mkobj h4{font:700 12px Inter,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--cyan);margin:4px 0 8px}
+.mkspent{font:800 14px Montserrat,sans-serif;color:var(--navy);background:var(--ok);padding:5px 11px;border-radius:9px}
+.mkleg{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:var(--muted)}.mkleg input{width:auto;margin-top:2px}
+@media (max-width:760px){.mkadd{margin-left:0;width:100%}.mkadd input{flex:1;width:auto}}
 .dpfu{display:flex;gap:8px}.dpfu input{flex:1}
 .dphist{border-left:2px solid var(--line2);margin-left:4px;padding:2px 0 2px 12px;display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:var(--muted)}
 .dphist b{color:var(--text);font-weight:600}.dphc{color:#A9BEFF}
@@ -1327,7 +1346,7 @@ const DEFAULTS = {
   commercial: {target: 0, tiers: [], islands: [], partners: []},
   programme: {targets: [], speakers: [], agenda: []},
   participants: {summary: null, confirmed: 0, target: 0},
-  marketing: {objective: '', budget: 0, entries: []},
+  marketing: {objective: '', budget: 0, entries: [], useLegacy: true, platforms: ['Instagram'], social: [], ads: []},
   ops: {notepad: '', streams: []},
   pnl: {commissionPct: 10, lines: [], ov: {}}
 };
@@ -1345,7 +1364,7 @@ const PNL_GROUPS = {Income: ['Booth & Sponsorship Sales', 'Ticket Sales', 'Other
 const TABS = [['dashboard','Dashboard'],['commercial','Commercial & partnership'],['pnl','P&amp;L'],['programme','Programme & speakers'],['participants','Participant profiling'],['marketing','Marketing performance'],['ops','Operations & workstreams'],['progress','Daily progress'],['admins','Admins'],['settings','Settings']];
 let tab = 'dashboard';
 // Staff (in Daily progress but not tracker admins) see only that tab, plus Settings when they are a director.
-const visTabs = () => TABS.filter(([id]) => isStaff ? id === 'progress' || (id === 'settings' && dp.me && dp.me.director) : isFinance || id !== 'pnl');
+const visTabs = () => TABS.filter(([id]) => isStaff ? id === 'progress' || (id === 'marketing' && dp.me && dp.me.marketer) || (id === 'settings' && dp.me && dp.me.director) : isFinance || id !== 'pnl');
 let mode = 'team';
 try { if (localStorage.getItem('cdx-mode') === 'sales') mode = 'sales'; } catch (e) {}
 if (/sales/i.test(location.hash + location.search)) mode = 'sales';
@@ -1462,15 +1481,29 @@ function calcProgramme() {
   const targets = p.targets.map(t => { const conf = p.speakers.filter(s => s.type === t.id && s.status === 'Confirmed'); return {...t, conf, secured: conf.length, slots: num(t.slots)}; });
   return {p, targets};
 }
+// Ads totals come from the ads log (one row per report update). The earlier summary rows count too while "useLegacy" is on.
+const AD_F = {
+  Engagement: [['viewsNoAds', 'Views (no ads)'], ['reach', 'Reach'], ['impressions', 'Impressions'], ['views', 'Views'], ['cpr', 'Cost per result (RM)'], ['spend', 'Ads spent (RM)'], ['tickets', 'Tickets from ads']],
+  Traffic: [['lpViews', 'LP views'], ['reach', 'Reach'], ['impressions', 'Impressions'], ['cpr', 'Cost per result (RM)'], ['spend', 'Ads spent (RM)'], ['tickets', 'Tickets from ads']]
+};
+const SOCIAL_F = [['posted', 'Content posted'], ['produced', 'Content produced'], ['followers', 'Followers'], ['views', 'Views'], ['viewers', 'Viewers'], ['profileActivity', 'Profile activity'], ['profileVisits', 'Profile visits'], ['linkTaps', 'External link taps'], ['interactions', 'Interactions']];
 function calcMarketing() {
-  const m = get('marketing'), e = m.entries;
-  const t = {contents: sum(e, 'contents'), spend: sum(e, 'spend'), reach: sum(e, 'reach'), impressions: sum(e, 'impressions'), clicks: sum(e, 'clicks'), lpViews: sum(e, 'lpViews'), regs: sum(e, 'regs')};
+  const m = get('marketing'), ads = m.ads || [], reps = ads.flatMap(a => a.reports || []);
+  const old = m.useLegacy !== false ? m.entries : [], both = (k, ok = k) => sum(reps, k) + sum(old, ok);
+  const t = {spend: both('spend'), reach: both('reach'), impressions: both('impressions'), lpViews: both('lpViews'), tickets: both('tickets', 'regs'), contents: ads.length + sum(old, 'contents')};
   const r = (a, b, k = 1) => (a && b) ? a / b * k : null;
-  t.cpm = r(t.spend, t.impressions, 1000); t.ctr = r(t.clicks, t.impressions, 100); t.cplv = r(t.spend, t.lpViews);
-  t.lpRate = r(t.lpViews, t.clicks, 100); t.conv = r(t.regs, t.lpViews, 100); t.cpr = r(t.spend, t.regs);
+  t.cpm = r(t.spend, t.impressions, 1000); t.cplv = r(t.spend, t.lpViews); t.cpt = r(t.spend, t.tickets); t.lpToTicket = r(t.tickets, t.lpViews, 100);
   t.budgetUsed = r(t.spend, num(m.budget), 100);
   return {m, t};
 }
+// Months shown in the social and ads logs: September 2026 to at least December, plus any month that has data.
+function mkMonths(m) {
+  const set = new Set(['2026-09', '2026-10', '2026-11', '2026-12', new Date().toISOString().slice(0, 7)]);
+  (m.social || []).forEach(x => x.month && set.add(x.month));
+  (m.ads || []).forEach(a => a.date && set.add(a.date.slice(0, 7)));
+  return [...set].filter(x => x >= '2026-01').sort();
+}
+const mkMonthName = (ym, short) => new Date(ym + '-15').toLocaleDateString('en-MY', {month: short ? 'short' : 'long', year: 'numeric'});
 
 /* ---------- shared bits ---------- */
 const bar = (p, min) => `<div class="track"><div class="fill ${min && p > 0 ? 'min' : ''}" style="width:${Math.min(100, Math.max(0, p))}%"></div></div>`;
@@ -1985,46 +2018,81 @@ VIEWS.participants = () => {
 };
 
 // Marketing: headline numbers, funnel, budget and cost, then the editable results log.
+let mkPlat = '';
+const mkNum = v => v === '' || v == null ? '' : esc(v);
 VIEWS.marketing = () => {
-  const M = calcMarketing(), m = M.m, t = M.t, bud = num(m.budget);
+  const M = calcMarketing(), m = M.m, t = M.t, bud = num(m.budget), months = mkMonths(m);
   const f2 = v => 'RM' + Number(v).toLocaleString('en-MY', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   let h = `<div class="ck4">
     <div class="card ck"><small>Ads spent</small><b>${f2(t.spend)}</b>${bud ? bar(t.budgetUsed, true) + `<p><em>${fmtP(Math.round(t.budgetUsed * 10) / 10)}</em> of ${fmtRM(bud)} budget</p>` : '<p>Set a budget below</p>'}</div>
-    <div class="card ck"><small>Reach</small><b>${fmtN(t.reach)}</b><p>people reached</p></div>
-    <div class="card ck"><small>Impressions</small><b>${fmtN(t.impressions)}</b><p><em>${fmtN(t.contents)}</em> ad contents deployed</p></div>
-    <div class="card ck"><small>Landing page views</small><b>${fmtN(t.lpViews)}</b><p>${t.cplv != null ? `<em>${f2(t.cplv)}</em> per view` : 'cost per view appears once spend is logged'}</p></div></div>`;
+    <div class="card ck"><small>Reach</small><b>${fmtN(t.reach)}</b><p><em>${fmtN(t.impressions)}</em> impressions</p></div>
+    <div class="card ck"><small>Landing page views</small><b>${fmtN(t.lpViews)}</b><p>${t.cplv != null ? `<em>${f2(t.cplv)}</em> per view` : 'cost per view appears once spend is logged'}</p></div>
+    <div class="card ck"><small>Tickets from ads</small><b>${fmtN(t.tickets)}</b><p>${t.cpt != null ? `<em>${f2(t.cpt)}</em> per ticket` : 'log tickets in the ads log below'}</p></div></div>`;
   // Funnel: each step as a share of the one before
-  const steps = [['Impressions', t.impressions], ['Reach', t.reach], ['Link clicks', t.clicks], ['LP views', t.lpViews], ['Registrations', t.regs]];
+  const steps = [['Impressions', t.impressions], ['Reach', t.reach], ['LP views', t.lpViews], ['Tickets from ads', t.tickets]];
   const top = Math.max(1, t.impressions || t.reach || t.lpViews);
   let prev = 0;
   const fun = steps.map(([l, n], i) => { const row = n ? `<div class="mfn" style="--o:${1 - i * .14}"><span>${l}</span><div><div class="fb" style="width:${Math.max(8, n / top * 100)}%">${fmtN(n)}</div></div><b>${prev ? pctTxt(n, prev) : '100%'}<small>${prev ? 'of previous step' : 'starting point'}</small></b></div>`
-      : `<div class="mfn miss"><span>${l}</span><div><div class="fb" style="width:40%">Not logged yet</div></div><b>–<small>add in results log</small></b></div>`; if (n) prev = n; return row; }).join('');
-  const miss = [!t.clicks && 'link clicks', !t.regs && 'registrations'].filter(Boolean);
-  h += `<div class="u2"><div class="card dcard"><div class="dch"><h3>Funnel</h3><span class="more">all periods combined</span></div><div class="mfun">${fun}</div></div>
+      : `<div class="mfn miss"><span>${l}</span><div><div class="fb" style="width:40%">Not logged yet</div></div><b>–<small>add in the ads log</small></b></div>`; if (n) prev = n; return row; }).join('');
+  h += `<div class="u2"><div class="card dcard"><div class="dch"><h3>Funnel</h3><span class="more">all ads combined</span></div><div class="mfun">${fun}</div></div>
     <div class="card dcard"><div class="dch"><h3>Budget &amp; cost</h3></div>
       ${bud ? `<div class="mgauge"><div class="gw"><div class="ring" style="--p:${Math.min(100, t.budgetUsed || 0)}"></div><b>${fmtP(Math.round((t.budgetUsed || 0) * 10) / 10)}</b></div><p><b>${f2(t.spend)}</b>spent of ${fmtRM(bud)} · ${f2(Math.max(0, bud - t.spend))} left</p></div>` : ''}
-      <div class="mgrid"><div><small>CPM</small><b>${orDash(t.cpm, f2)}</b></div><div><small>Cost per LP view</small><b>${orDash(t.cplv, f2)}</b></div><div><small>Click-through rate</small><b>${orDash(t.ctr, v => fmtP(Math.round(v * 100) / 100))}</b></div><div><small>Cost per registration</small><b>${orDash(t.cpr, f2)}</b></div></div>
-      ${miss.length ? `<div class="mtip">Log ${miss.join(' and ')} for each period to unlock ${!t.regs ? 'cost per registration' : ''}${!t.regs && !t.clicks ? ' and ' : ''}${!t.clicks ? 'CTR' : ''}.</div>` : ''}
+      <div class="mgrid"><div><small>CPM</small><b>${orDash(t.cpm, f2)}</b></div><div><small>Cost per LP view</small><b>${orDash(t.cplv, f2)}</b></div><div><small>Cost per ticket</small><b>${orDash(t.cpt, f2)}</b></div><div><small>LP view → ticket</small><b>${orDash(t.lpToTicket, v => fmtP(Math.round(v * 10) / 10))}</b></div></div>
       <div class="cf2"><label class="field">Ads objective${inp('marketing:objective', m.objective, 'placeholder="e.g. Engagement & Traffic"')}</label><label class="field">Total ads budget (RM)${ninp('marketing:budget', m.budget || '', 'placeholder="Optional"')}</label></div></div></div>`;
-  // Results log
-  const F = ['contents', 'spend', 'reach', 'impressions', 'clicks', 'lpViews', 'regs'];
-  h += `<div class="card gpanel"><div class="dch"><h3>Results log</h3><span class="more">one row per channel per period · numbers add up across rows</span></div>
+
+  // Social media report: metrics down, months across, one table per platform
+  const plats = m.platforms && m.platforms.length ? m.platforms : ['Instagram'];
+  if (!plats.includes(mkPlat)) mkPlat = plats[0];
+  const cell = (mon, f) => { const row = (m.social || []).find(x => x.platform === mkPlat && x.month === mon); return row ? row[f] : ''; };
+  h += `<div class="card gpanel"><div class="dch"><h3>Social media report</h3><span class="more">monthly, per platform</span></div>
+    <div class="mkplats">${plats.map(p => `<button class="mkp" data-act="mkPlat" data-id="${esc(p)}" aria-pressed="${p === mkPlat}">${esc(p)}</button>`).join('')}
+      <span class="mkadd"><input id="mk-newplat" placeholder="Add platform, e.g. TikTok" aria-label="New platform"><button class="btn" data-act="addPlatform">Add</button></span>
+      ${plats.length > 1 ? del('delPlatform', esc(mkPlat)).replace('>Remove<', `>Remove ${esc(mkPlat)}<`) : ''}</div>
+    <div class="tbl-wrap"><table class="tbl mksoc" style="min-width:${220 + months.length * 140}px"><thead><tr><th>Metric</th>${months.map(mon => `<th>${esc(mkMonthName(mon))}</th>`).join('')}</tr></thead><tbody>
+    ${SOCIAL_F.map(([f, l]) => `<tr><td class="mkl">${l}</td>${months.map(mon => `<td><input type="number" step="any" inputmode="decimal" data-sm="${esc(mkPlat)}|${mon}|${f}" value="${mkNum(cell(mon, f))}" aria-label="${l}, ${esc(mkMonthName(mon))}"></td>`).join('')}</tr>`).join('')}
+    </tbody></table></div></div>`;
+
+  // Ads report: grouped by month, then Engagement and Traffic, one row per report update
+  const ads = m.ads || [], cur = new Date().toISOString().slice(0, 7);
+  h += `<div class="section"><h2>Ads report</h2><p class="help" style="margin-top:6px">One row per report update. Each update holds the numbers for that period only, so they add up. Add <b>Tickets from ads</b> from the ticket sales the ads brought in.</p></div>`;
+  months.filter(mon => mon <= cur || ads.some(a => (a.date || '').startsWith(mon))).forEach(mon => {
+    const inMon = ads.filter(a => (a.date || cur).slice(0, 7) === mon), reps = inMon.flatMap(a => a.reports || []);
+    h += `<div class="card gpanel mkmon"><div class="dch"><h3>${esc(mkMonthName(mon))}</h3><span class="more">${inMon.length} ${inMon.length === 1 ? 'ad' : 'ads'} · ${fmtN(sum(reps, 'tickets'))} tickets</span><span class="mkspent">${f2(sum(reps, 'spend'))}</span></div>`;
+    ['Engagement', 'Traffic'].forEach(obj => {
+      const list = inMon.filter(a => (a.objective || 'Engagement') === obj).sort((a, b) => String(a.date).localeCompare(String(b.date)));
+      const F = AD_F[obj], rr = list.flatMap(a => a.reports || []);
+      h += `<div class="mkobj"><h4>${obj}</h4>`;
+      if (list.length) h += `<div class="tbl-wrap"><table class="tbl mkads" style="min-width:${640 + F.length * 112}px"><thead><tr><th style="width:130px">Date</th><th style="width:190px">Content</th><th style="width:88px">Status</th><th style="width:130px">Report update</th>${F.map(([, l]) => `<th>${l}</th>`).join('')}<th></th></tr></thead><tbody>`;
+      list.forEach(a => {
+        const rs = a.reports && a.reports.length ? a.reports : [null], n = rs.length;
+        rs.forEach((r, i) => {
+          h += `<tr${i === 0 ? ' class="mkfirst"' : ''}>`;
+          if (i === 0) h += `<td rowspan="${n}"><input type="date" data-b="marketing:ads:${a.id}:date" value="${esc(a.date || '')}" aria-label="Ad date"></td>
+            <td rowspan="${n}"><input data-b="marketing:ads:${a.id}:content" value="${esc(a.content || '')}" placeholder="e.g. En Aiman Shoutout" aria-label="Content"><input class="mklink" data-b="marketing:ads:${a.id}:link" value="${esc(a.link || '')}" placeholder="Link to the post (optional)" aria-label="Link">${/^https?:\/\//.test(a.link || '') ? `<a class="mkopen" href="${esc(a.link)}" target="_blank" rel="noopener">Open post ↗</a>` : ''}
+              <button class="btn mkrep" data-act="addRep" data-id="${a.id}">＋ Report update</button></td>
+            <td rowspan="${n}"><select data-b="marketing:ads:${a.id}:status" class="mkst ${a.status === 'On' ? 'on' : ''}" aria-label="Status">${opts(['On', 'Off'], a.status || 'On')}</select></td>`;
+          h += r ? `<td><input type="date" data-ar="${a.id}|${r.id}|date" value="${esc(r.date || '')}" aria-label="Report date"></td>${F.map(([f, l]) => `<td><input type="number" step="any" inputmode="decimal" data-ar="${a.id}|${r.id}|${f}" value="${mkNum(r[f])}" aria-label="${l}"></td>`).join('')}`
+            : `<td colspan="${F.length + 1}" class="mknone">No report yet. Use ＋ Report update.</td>`;
+          h += `<td>${i === 0 ? del('delAd', a.id).replace('>Remove<', '>Remove ad<') : ''}${r && n > 1 ? del('delRep', a.id + '~' + r.id) : ''}</td></tr>`;
+        });
+      });
+      if (list.length) h += `<tr class="tot"><td colspan="4">Total ${obj.toLowerCase()}</td>${F.map(([f]) => `<td style="text-align:right;padding-right:16px">${f === 'cpr' ? '' : f === 'spend' ? f2(sum(rr, f)) : fmtN(sum(rr, f))}</td>`).join('')}<td></td></tr>`;
+      h += `${list.length ? '</tbody></table></div>' : `<div class="empty">No ${obj.toLowerCase()} ads logged for ${esc(mkMonthName(mon))}.</div>`}<div class="row-actions"><button class="btn" data-act="addAd" data-id="${mon}|${obj}">＋ Add ${obj.toLowerCase()} ad</button></div></div>`;
+    });
+    h += '</div>';
+  });
+
+  // The earlier summary log, kept as it was
+  const E = ['contents', 'spend', 'reach', 'impressions', 'clicks', 'lpViews', 'regs'], et = Object.fromEntries(E.map(f => [f, sum(m.entries, f)]));
+  h += `<div class="card gpanel"><div class="dch"><h3>Earlier summary</h3><span class="more">the log used before the ads report · one row per channel per period</span></div>
+  <label class="mkleg"><input type="checkbox" data-mkleg${m.useLegacy !== false ? ' checked' : ''}> Count these rows in the totals at the top. Untick once the same periods are in the ads report, so nothing is counted twice.</label>
   <div class="tbl-wrap"><table class="tbl" style="min-width:1100px"><thead><tr><th style="width:130px">Period</th><th style="width:150px">Channel</th><th>Contents</th><th>Spend (RM)</th><th>Reach</th><th>Impressions</th><th>Link clicks</th><th>LP views</th><th>Registrations</th><th></th></tr></thead><tbody>
   ${m.entries.map(e => `<tr><td>${inp(`marketing:entries:${e.id}:period`, e.period, 'placeholder="Week 1 / Sep"')}</td><td>${inp(`marketing:entries:${e.id}:channel`, e.channel, 'list="ch" placeholder="Meta Ads"')}</td>
-    ${F.map(f => `<td>${ninp(`marketing:entries:${e.id}:${f}`, e[f])}</td>`).join('')}<td>${del('delEntry', e.id)}</td></tr>`).join('')}
-  ${m.entries.length ? `<tr class="tot"><td colspan="2">Total</td>${F.map(f => `<td style="text-align:right;padding-right:16px">${f === 'spend' ? f2(t[f]) : fmtN(t[f])}</td>`).join('')}<td></td></tr>` : ''}
+    ${E.map(f => `<td>${ninp(`marketing:entries:${e.id}:${f}`, e[f])}</td>`).join('')}<td>${del('delEntry', e.id)}</td></tr>`).join('')}
+  ${m.entries.length ? `<tr class="tot"><td colspan="2">Total</td>${E.map(f => `<td style="text-align:right;padding-right:16px">${f === 'spend' ? f2(et[f]) : fmtN(et[f])}</td>`).join('')}<td></td></tr>` : ''}
   </tbody></table></div><datalist id="ch"><option value="Meta Ads"><option value="TikTok Ads"><option value="Google Ads"><option value="LinkedIn Ads"><option value="Organic social"><option value="Email / WhatsApp blast"><option value="Marketing partner"></datalist>
-  ${m.entries.length ? '' : '<div class="empty">No results logged yet.</div>'}
-  <div class="row-actions"><button class="btn primary" data-act="addEntry">＋ Add row</button></div></div>
-
-  <div class="section"><h2>What to track</h2><div class="card guide"><dl>
-    <dt>Registrations and cost per registration</dt><dd>The number that matters most. Tag your registration link with UTMs per channel so each row can carry its own registrations.</dd>
-    <dt>Link clicks, CTR and LP views</dt><dd>CTR shows whether the creative earns attention; the gap between clicks and LP views shows page load or tracking problems.</dd>
-    <dt>LP view to registration rate</dt><dd>If this is low while CTR is healthy, fix the landing page or form, not the ads.</dd>
-    <dt>Spend, CPM and budget used</dt><dd>Keeps pacing honest against the approved budget and flags when an audience is getting expensive.</dd>
-    <dt>Reach and impressions</dt><dd>Frequency (impressions ÷ reach) above about 3–4 usually means it's time for fresh creative.</dd>
-    <dt>Contents deployed</dt><dd>Log creatives per period so you can see which bursts of content moved registrations.</dd>
-  </dl></div></div>`;
+  ${m.entries.length ? '' : '<div class="empty">No rows.</div>'}
+  <div class="row-actions"><button class="btn" data-act="addEntry">＋ Add row</button></div></div>`;
   return h;
 };
 
@@ -2429,7 +2497,7 @@ function dpSetPerson(email, f, v) {
 function dpSetDept(id, f, v) {
   const x = dp.me.departments.find(d => d.id === id); if (!x) return;
   const n = {...x, [f]: v};
-  dpSet('dp_set_department', {p_id: n.id, p_name: n.name, p_sort: n.sort, p_active: n.active});
+  dpSet('dp_set_department', {p_id: n.id, p_name: n.name, p_sort: n.sort, p_active: n.active, p_marketing: !!n.marketing});
 }
 function dpSetProj(id, f, v) {
   const x = dp.me.projects.find(j => j.id === id); if (!x) return;
@@ -2450,8 +2518,8 @@ function dpSettings() {
     <div class="dpp head"><span>Name</span><span>Email</span><span>Department</span><span>Role</span><span></span></div>
     ${me.people.map(x => { const e = esc(x.email); return `<div class="dpp"><input data-dpp="${e}:name" value="${esc(x.name)}" placeholder="Name" aria-label="Name"><span class="dpe">${e}</span><select data-dpp="${e}:dept_id" aria-label="Department">${opts(D, x.dept_id || '', 'No department')}</select><select data-dpp="${e}:role" aria-label="Role">${opts(DP_ROLE, x.role)}</select>${chk(`data-dpp="${e}:active"`, x.active)}</div>`; }).join('')}
     <div class="dpp new"><input id="dpn-name" placeholder="Name" aria-label="New person's name"><input id="dpn-email" type="email" placeholder="Email" aria-label="New person's email"><select id="dpn-dept" aria-label="Department">${opts(D, '', 'Department')}</select><select id="dpn-role" aria-label="Role">${opts(DP_ROLE, 'member')}</select><button class="btn primary" data-act="dpAddPerson">Add person</button></div></div>
-  <div class="dgrid"><div class="card dcard"><div class="dch"><h3>Departments</h3></div>
-      ${me.departments.map(d => `<div class="dpq"><input data-dpdep="${esc(d.id)}:name" value="${esc(d.name)}" aria-label="Department name">${chk(`data-dpdep="${esc(d.id)}:active"`, d.active)}</div>`).join('')}
+  <div class="dgrid"><div class="card dcard"><div class="dch"><h3>Departments</h3><span class="more">“Marketing tab” lets its staff open Marketing performance</span></div>
+      ${me.departments.map(d => `<div class="dpq"><input data-dpdep="${esc(d.id)}:name" value="${esc(d.name)}" aria-label="Department name"><label class="dpchk" title="Its staff can open and edit Marketing performance"><input type="checkbox" data-dpdep="${esc(d.id)}:marketing"${d.marketing ? ' checked' : ''}> Marketing tab</label>${chk(`data-dpdep="${esc(d.id)}:active"`, d.active)}</div>`).join('')}
       <div class="dpq"><input id="dpn-deptname" placeholder="New department" aria-label="New department"><button class="btn" data-act="dpAddDept">Add</button></div></div>
     <div class="card dcard"><div class="dch"><h3>Projects</h3><span class="more">the PM sees and follows up its tasks</span></div>
       ${me.projects.map(j => `<div class="dpq"><input data-dpj="${esc(j.id)}:name" value="${esc(j.name)}" aria-label="Project name"><select data-dpj="${esc(j.id)}:pm_email" aria-label="Project manager">${opts(pmList, j.pm_email || '', 'No PM')}</select>${chk(`data-dpj="${esc(j.id)}:active"`, j.active)}</div>`).join('')}
@@ -2616,6 +2684,13 @@ document.addEventListener('click', e => {
     addAgenda: () => mut('programme', d => { const day = d.days.find(x => x.id === id) || d.days[0]; const last = d.agenda.filter(a => a.dayId === day.id).sort(byStart).slice(-1)[0]; d.agenda.push({id: uid(), dayId: day.id, day: day.date, start: last ? last.end || '' : '', end: '', title: '', format: '', speaker: '', stage: last ? last.stage || '' : ''}); }),
     delDay: () => mut('programme', d => { d.days = d.days.filter(x => x.id !== id); d.agenda = d.agenda.filter(a => a.dayId !== id); }),
     delAgenda: () => rm('programme', 'agenda'),
+    mkPlat: () => { mkPlat = id; render(); },
+    addPlatform: () => { const n = (($('#mk-newplat') || {}).value || '').trim(); if (!n) return; mkPlat = n; mut('marketing', d => { d.platforms = d.platforms && d.platforms.length ? d.platforms : ['Instagram']; if (!d.platforms.includes(n)) d.platforms.push(n); }); },
+    delPlatform: () => { mut('marketing', d => { d.platforms = (d.platforms || []).filter(p => p !== id); d.social = (d.social || []).filter(x => x.platform !== id); }); mkPlat = ''; },
+    addAd: () => { const [mon, obj] = id.split('|'), today = new Date().toISOString().slice(0, 10); mut('marketing', d => { d.ads = d.ads || []; d.ads.push({id: uid(), date: today.startsWith(mon) ? today : mon + '-01', content: '', link: '', objective: obj, status: 'On', reports: [{id: uid(), date: today}]}); }); },
+    addRep: () => mut('marketing', d => { const a = (d.ads || []).find(x => x.id === id); if (a) (a.reports = a.reports || []).push({id: uid(), date: new Date().toISOString().slice(0, 10)}); }),
+    delAd: () => mut('marketing', d => { d.ads = (d.ads || []).filter(x => x.id !== id); }),
+    delRep: () => { const [aid, rid] = id.split('~'); mut('marketing', d => { const a = (d.ads || []).find(x => x.id === aid); if (a) a.reports = (a.reports || []).filter(r => r.id !== rid); }); },
     addEntry: () => mut('marketing', d => d.entries.push({id: uid(), period: '', channel: '', contents: 0, spend: 0, reach: 0, impressions: 0, clicks: 0, lpViews: 0, regs: 0})),
     delEntry: () => rm('marketing', 'entries'),
     addStream: () => mut('ops', d => { const w = {id: uid(), name: '', status: STREAM_STATUS.includes(id) ? id : 'Not started', owner: '', due: '', note: '', next: '', updatedAt: new Date().toISOString()}; d.streams.push(w); wsOpen = w.id; }),
@@ -2641,6 +2716,17 @@ document.addEventListener('change', e => {
   if (el.id === 'file') { if (el.files[0]) handleFile(el.files[0]); return; }
   if (el.dataset.logo) { if (el.files[0]) uploadLogo(el.dataset.logo, el.files[0]); return; }
   if (el.dataset.actf) { actState[el.dataset.actf] = el.value; if (el.dataset.actf === 'from') loadActivity(); render(); return; }
+  if (el.dataset.sm) {
+    const [plat, mon, f] = el.dataset.sm.split('|'), v = el.value.trim() === '' ? '' : num(el.value);
+    mut('marketing', d => { d.social = d.social || []; let row = d.social.find(x => x.platform === plat && x.month === mon); if (!row) { row = {id: uid(), platform: plat, month: mon}; d.social.push(row); } row[f] = v; });
+    return;
+  }
+  if (el.dataset.ar) {
+    const [aid, rid, f] = el.dataset.ar.split('|'), v = f === 'date' ? el.value : el.value.trim() === '' ? '' : num(el.value);
+    mut('marketing', d => { const a = (d.ads || []).find(x => x.id === aid), r = a && (a.reports || []).find(x => x.id === rid); if (r) r[f] = v; });
+    return;
+  }
+  if (el.dataset.mkleg !== undefined) { mut('marketing', d => { d.useLegacy = el.checked; }); return; }
   if (el.dataset.dpf) { dp[el.dataset.dpf] = el.value; if (el.dataset.dpf === 'day') { if (!el.value) dp.day = ''; dp.board = null; dp.hist = {}; dp.open = {}; loadDp(); } render(); return; }
   for (const [k, fn] of [['dpp', dpSetPerson], ['dpdep', dpSetDept], ['dpj', dpSetProj]]) if (el.dataset[k]) { const i = el.dataset[k].lastIndexOf(':'); fn(el.dataset[k].slice(0, i), el.dataset[k].slice(i + 1), el.type === 'checkbox' ? el.checked : el.value); return; }
   if (el.id === 'sheet') { upload.sheet = el.value; loadSheet(); render(); return; }
@@ -2998,8 +3084,8 @@ async function loadPublic() {
   KEYS.forEach(k => { state[k] = data[k] ? withDefaults(k, data[k]) : null; loaded[k] = true; });
   remoteRender();
 }
-function subscribeAll() {
-  KEYS.forEach(k => {
+function subscribeAll(keys = KEYS) {
+  keys.forEach(k => {
     db.doc('tracker/' + k).onSnapshot(snap => {
       if (snap.metadata.hasPendingWrites) return;
       server[k] = snap.exists ? withDefaults(k, snap.data()) : null;
@@ -3023,6 +3109,8 @@ async function start(recheck) {
     if (me && me.person) {
       isStaff = true; isFinance = false; mode = 'team'; tab = 'progress'; dp.me = me; adminState.me = me.email;
       document.body.classList.add('staff'); KEYS.forEach(k => { loaded[k] = true; });
+      // Marketing staff also read and save the Marketing performance section (the database allows only that row).
+      if (me.marketer) { loaded.marketing = false; db = makeDb(); subscribeAll(['marketing']); }
       gate = 'ready'; setSync('ok', 'Live'); render(); setInterval(() => { if (tab === 'progress') loadDp(); }, 60000);
       return;
     }
