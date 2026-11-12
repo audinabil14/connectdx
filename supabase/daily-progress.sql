@@ -5,8 +5,8 @@
 --   Dept PIC    also submits the department's daily update.
 --   Project Mgr also sees and comments on tasks in the projects they manage.
 --   Director    sees everything, comments, and manages departments, projects and people. Tracker admins count as directors here.
--- People who are not tracker admins are "staff": once added here, they sign in and see only the Daily progress tab,
--- plus Marketing performance when their department has "Marketing tab" ticked.
+-- People who are not tracker admins are "staff": once added here, they sign in and see the Daily progress tab,
+-- plus any tabs ticked for them in Settings -> Tab access (supabase/tab-access.sql; run it after this file).
 
 -- 1. Set-up lists, managed from Settings -> Team & departments.
 create table if not exists public.dp_departments (

@@ -712,6 +712,10 @@ body.staff [data-mode]{display:none}
 .dpp.new{padding-top:10px;border-top:1px solid var(--line)}
 .dpe{font-size:12.5px;color:var(--muted);word-break:break-all}
 .dpq{display:flex;gap:8px;align-items:center}.dpq input:not([type=checkbox]){flex:1}.dpq select{flex:0 1 180px}
+.tagrid td,.tagrid th{text-align:center}.tagrid td:first-child,.tagrid th:first-child{text-align:left}
+.tagrid td:first-child b{display:block;font-weight:600}.tagrid td:first-child small{color:var(--muted);font-size:11.5px}
+.tagrid input[type=checkbox]{width:18px;height:18px;accent-color:var(--cyan);cursor:pointer}.tagrid input:disabled{cursor:default;opacity:.55}
+.tagrid .taall{color:var(--muted);font-size:12.5px}
 .dpchk{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);white-space:nowrap}.dpchk input{width:auto}
 @media (max-width:760px){.dpk{grid-template-columns:1fr 1fr}.dpk>div:first-child{grid-column:1/-1}.dpr{grid-template-columns:1fr auto}.dpu{grid-column:1/-1}.dpp{grid-template-columns:1fr 1fr}.dpp.head{display:none}.dpp .dpe{grid-column:1/-1;order:-1}}
 
@@ -1382,10 +1386,11 @@ const STREAM_STATUS = ['Not started', 'In progress', 'Waiting', 'Blocked', 'Comp
 const PNL_STATUS = ['Paid', 'Part paid', 'Due', 'Quoted', 'Requested', 'Estimate', 'TBC', 'Free'];
 const PNL_GROUPS = {Income: ['Booth & Sponsorship Sales', 'Ticket Sales', 'Other Income'], Cost: ['Venue', 'Logistics & Production', 'Marketing & Promotion', 'Manpower & Commission', 'Programme & Speakers', 'F&B', 'Others']};
 
-const TABS = [['dashboard','Dashboard'],['commercial','Commercial & partnership'],['pnl','P&amp;L'],['programme','Programme & speakers'],['participants','Participant profiling'],['marketing','Marketing performance'],['ops','Operations & workstreams'],['progress','Daily progress'],['admins','Admins'],['settings','Settings']];
+const TABS = [['dashboard','Dashboard'],['commercial','Commercial & partnership'],['pnl','P&amp;L'],['programme','Programme & speakers'],['participants','Participant profiling'],['marketing','Marketing performance'],['ops','Operations & workstreams'],['progress','Daily progress'],['settings','Settings']];
 let tab = 'dashboard';
-// Staff (in Daily progress but not tracker admins) see only that tab, plus Settings when they are a director.
-const visTabs = () => TABS.filter(([id]) => isStaff ? id === 'progress' || (id === 'marketing' && dp.me && dp.me.marketer) || (id === 'settings' && dp.me && dp.me.director) : isFinance || id !== 'pnl');
+// Staff (in Daily progress but not tracker admins) see that tab, the tabs ticked for them in Settings -> Tab access, and Settings when they are a director.
+let staffTabs = [];
+const visTabs = () => TABS.filter(([id]) => isStaff ? id === 'progress' || staffTabs.includes(id) || (id === 'settings' && dp.me && dp.me.director) : isFinance || id !== 'pnl');
 let mode = 'team';
 try { if (localStorage.getItem('cdx-mode') === 'sales') mode = 'sales'; } catch (e) {}
 if (/sales/i.test(location.hash + location.search)) mode = 'sales';
@@ -1468,7 +1473,7 @@ function render() {
   if ($('#gate-bg')) { $('#gate-bg').remove(); document.body.classList.remove('gating'); }
   const a = document.activeElement; const f = a && a.dataset && a.dataset.b ? a.dataset.b : null;
   if (!visTabs().some(([id]) => id === tab)) tab = isStaff ? 'progress' : 'dashboard';
-  $('#tabs').innerHTML = visTabs().map(([id, label]) => `<button class="tab" data-tab="${id}" aria-current="${tab === id}">${label}${id === 'admins' && adminState.requests.length ? ` <span class="pill" style="margin:0 0 0 4px;background:var(--danger);color:#fff">${adminState.requests.length}</span>` : ''}</button>`).join('');
+  $('#tabs').innerHTML = visTabs().map(([id, label]) => `<button class="tab" data-tab="${id}" aria-current="${tab === id}">${label}${id === 'settings' && !isStaff && adminState.requests.length ? ` <span class="pill" style="margin:0 0 0 4px;background:var(--danger);color:#fff">${adminState.requests.length}</span>` : ''}</button>`).join('');
   const times = KEYS.map(k => state[k] && state[k].updatedAt).filter(Boolean).sort();
   const allLoaded = KEYS.every(k => loaded[k]) || offline;
   $('#asof').textContent = isStaff ? '' : !allLoaded ? 'Loading…' : times.length ? 'Last updated ' + fmtDate(times[times.length - 1]) : 'No updates yet';
@@ -2343,8 +2348,62 @@ function downloadActivity() {
   a.download = 'connectd-activity-' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
+// Settings in sections, one at a time. Staff directors get the team sections only.
+let setView = 'team';
+try { setView = localStorage.getItem('setView') || 'team'; } catch (e) {}
+const setViews = () => isStaff ? [['team', 'Team & departments'], ['access', 'Tab access']] : [['team', 'Team & departments'], ['access', 'Tab access'], ['admins', 'Admins'], ['activity', 'Activity report']];
 VIEWS.settings = () => {
-  if (isStaff) return dpSettings();
+  const views = setViews();
+  if (!views.some(([k]) => k === setView)) setView = 'team';
+  const n = !isStaff ? adminState.requests.length : 0;
+  const h = `<div class="mkviews" role="tablist">${views.map(([k, l]) => `<button class="mkp" role="tab" data-act="setView" data-id="${k}" aria-pressed="${setView === k}">${l}${k === 'admins' && n ? ` <span class="pill" style="margin:0 0 0 4px;background:var(--danger);color:#fff">${n}</span>` : ''}</button>`).join('')}</div>`;
+  if (setView === 'access') return h + tabAccessView();
+  if (setView === 'admins') return h + VIEWS.admins();
+  if (setView === 'activity') return h + activityView();
+  return h + (dpSettings() || '<div class="empty" style="margin-top:14px">Loading…</div>');
+};
+
+/* ---------- settings: tab access ---------- */
+// Which extra tabs each staff member can open (supabase/tab-access.sql). Admins have every tab.
+const TA_TABS = [['commercial', 'Commercial'], ['programme', 'Programme & speakers'], ['participants', 'Participant profiling'], ['marketing', 'Marketing performance'], ['ops', 'Operations']];
+const ta = {list: null, loading: false, msg: '', missing: false};
+async function loadTabAccess() {
+  if (!sb || !sb.rpc || ta.loading) return;
+  ta.loading = true;
+  const {data, error} = await sb.rpc('tab_access_list');
+  ta.loading = false;
+  if (error) { ta.missing = /tab_access_list/.test(error.message); ta.msg = ta.missing ? '' : 'Could not load tab access: ' + error.message; ta.list = {access: {}, admins: []}; }
+  else { ta.list = data || {access: {}, admins: []}; ta.msg = ''; ta.missing = false; }
+  remoteRender();
+}
+async function setTabAccess(email, tabId, allow) {
+  ta.msg = '';
+  const {error} = await sb.rpc('set_tab_access', {p_email: email, p_tab: tabId, p_allow: allow});
+  if (error) ta.msg = error.message;
+  await loadTabAccess();
+}
+function tabAccessView() {
+  if (!dp.me && !dp.missing) loadDp();
+  if (ta.list === null) loadTabAccess();
+  if (dp.missing || ta.missing) return `<div class="card dcard" style="margin-top:14px"><div class="dch"><h3>Tab access</h3></div><p class="help" style="margin:0">Tab access is not switched on yet: run ${dp.missing ? 'supabase/daily-progress.sql, then ' : ''}supabase/tab-access.sql in the Supabase SQL Editor.</p></div>`;
+  const me = dp.me;
+  if (!me || ta.list === null) return '<div class="empty" style="margin-top:14px">Loading…</div>';
+  if (!me.director) return '';
+  const admins = new Set((ta.list.admins || []).map(e => e.toLowerCase())), acc = ta.list.access || {};
+  const people = me.people.filter(x => x.active), dname = id => (me.departments.find(d => d.id === id) || {}).name || '';
+  const rows = people.map(x => {
+    const e = x.email, isAdm = admins.has(e), own = e === me.email && !me.admin, has = acc[e] || [];
+    const cells = isAdm ? `<td colspan="${TA_TABS.length}" class="taall">All tabs (admin)</td>`
+      : TA_TABS.map(([k, l]) => `<td><input type="checkbox" data-ta="${esc(e)}|${k}"${has.includes(k) ? ' checked' : ''}${own ? ' disabled title="You cannot change your own access"' : ''} aria-label="${esc(l)} for ${esc(x.name || e)}"></td>`).join('');
+    return `<tr><td><b>${esc(x.name || e)}</b><small>${esc(e)}${dname(x.dept_id) ? ' · ' + esc(dname(x.dept_id)) : ''}</small></td><td><input type="checkbox" checked disabled aria-label="Daily progress, always on"></td>${cells}</tr>`;
+  }).join('');
+  return `${ta.msg ? `<div class="banner err" style="margin-top:14px">${esc(ta.msg)}</div>` : ''}
+  <div class="card dcard" style="margin-top:14px"><div class="dch"><h3>Tab access</h3><span class="more">${people.length} active ${people.length === 1 ? 'person' : 'people'}</span></div>
+    <p class="help" style="margin:0">Tick the tabs each person can open. They can view and edit a ticked tab; Commercial shows without deal values, collections or target. Everyone always has Daily progress. Admins have every tab (P&amp;L needs P&amp;L access, under Admins). Changes save as you tick.</p>
+    <div class="tbl-wrap"><table class="tbl tagrid" style="min-width:860px"><thead><tr><th>Person</th><th>Daily progress</th>${TA_TABS.map(([, l]) => `<th>${l}</th>`).join('')}</tr></thead><tbody>
+    ${rows || `<tr><td colspan="${TA_TABS.length + 2}"><div class="empty">Add people under Team &amp; departments first.</div></td></tr>`}</tbody></table></div></div>`;
+}
+function activityView() {
   if (actState.rows === null) loadActivity();
   const rows = actFiltered(), all = actState.rows || [];
   const people = [...new Set(all.map(r => r.email))].sort();
@@ -2359,7 +2418,7 @@ VIEWS.settings = () => {
     const list = ch.length > 4 ? `<ul>${ch.slice(0, 3).map(t => `<li>${esc(t)}</li>`).join('')}</ul><details><summary>${ch.length - 3} more changes</summary><ul>${ch.slice(3).map(t => `<li>${esc(t)}</li>`).join('')}</ul></details>` : `<ul>${ch.map(t => `<li>${esc(t)}</li>`).join('')}</ul>`;
     body += `<div class="arow act"><span class="when">${esc(time(r.at))}</span><div class="av" style="background:${r.email === 'system' ? 'var(--faint)' : AV_COLS[Math.max(i, 0) % AV_COLS.length]}">${esc(initials(r.email))}</div><div class="who"><b>${esc(r.email)} <span class="cst">${esc(ACT_SEC[r.section] || r.section)}</span></b>${list}</div></div>`;
   });
-  return `${dpSettings()}${actState.msg ? `<div class="banner err" style="margin-top:14px">${esc(actState.msg)}</div>` : ''}
+  return `${actState.msg ? `<div class="banner err" style="margin-top:14px">${esc(actState.msg)}</div>` : ''}
   <div class="card dcard" style="margin-top:14px"><div class="dch"><h3>Activity report</h3><span class="more">${actState.rows === null ? 'Loading…' : `${rows.length} ${rows.length === 1 ? 'save' : 'saves'}${all.length >= 5000 ? ' · latest 5,000 only, pick a From date to go further back' : ''}`}</span></div>
     <p class="help" style="margin:0">Every save in the tracker and every admin change, newest first, with who made it. It shows which fields changed, not the amounts. P&amp;L entries are visible only to admins with P&amp;L access.</p>
     <div class="actf">${sel('who', 'Person', people)}${sel('sec', 'Section', secs, ACT_SEC)}
@@ -2367,7 +2426,7 @@ VIEWS.settings = () => {
       <label class="field">To<input type="date" data-actf="to" value="${esc(actState.to)}"></label>
       <div class="btns"><button class="btn" data-act="refreshActivity">Refresh</button><button class="btn" data-act="csvActivity"${rows.length ? '' : ' disabled'}>Download CSV</button></div></div>
     <div>${actState.rows === null ? '<div class="empty">Loading…</div>' : body || `<div class="empty">${all.length ? 'Nothing matches these filters.' : 'No changes recorded yet. Changes made from now on appear here.'}</div>`}</div></div>`;
-};
+}
 
 /* ---------- daily progress ---------- */
 // Its own tables (supabase/daily-progress.sql), read and written only through those functions, which also check who may do what.
@@ -2559,7 +2618,7 @@ function dpSetPerson(email, f, v) {
 function dpSetDept(id, f, v) {
   const x = dp.me.departments.find(d => d.id === id); if (!x) return;
   const n = {...x, [f]: v};
-  dpSet('dp_set_department', {p_id: n.id, p_name: n.name, p_sort: n.sort, p_active: n.active, p_marketing: !!n.marketing});
+  dpSet('dp_set_department', {p_id: n.id, p_name: n.name, p_sort: n.sort, p_active: n.active});
 }
 function dpSetProj(id, f, v) {
   const x = dp.me.projects.find(j => j.id === id); if (!x) return;
@@ -2576,12 +2635,12 @@ function dpSettings() {
   const pmList = [...new Map(me.people.map(x => [x.email, x.name || x.email]).concat((adminState.admins || []).map(e => [e.toLowerCase(), e]))).entries()];
   return `${dp.setMsg ? `<div class="banner err" style="margin-top:14px">${esc(dp.setMsg)}</div>` : ''}
   <div class="card dcard" style="margin-top:14px"><div class="dch"><h3>Team &amp; departments</h3><span class="more">${me.people.filter(x => x.active).length} active</span></div>
-    <p class="help" style="margin:0">Everyone who files daily progress. People who aren't tracker admins sign in with Register on the sign-in page and see only Daily progress. Tracker admins count as directors. Changes save as you make them.</p>
+    <p class="help" style="margin:0">Everyone who files daily progress. People who aren't tracker admins sign in with Register on the sign-in page and see Daily progress, plus the tabs ticked for them under Tab access. Tracker admins count as directors. Changes save as you make them.</p>
     <div class="dpp head"><span>Name</span><span>Email</span><span>Department</span><span>Role</span><span></span></div>
     ${me.people.map(x => { const e = esc(x.email); return `<div class="dpp"><input data-dpp="${e}:name" value="${esc(x.name)}" placeholder="Name" aria-label="Name"><span class="dpe">${e}</span><select data-dpp="${e}:dept_id" aria-label="Department">${opts(D, x.dept_id || '', 'No department')}</select><select data-dpp="${e}:role" aria-label="Role">${opts(DP_ROLE, x.role)}</select>${chk(`data-dpp="${e}:active"`, x.active)}</div>`; }).join('')}
     <div class="dpp new"><input id="dpn-name" placeholder="Name" aria-label="New person's name"><input id="dpn-email" type="email" placeholder="Email" aria-label="New person's email"><select id="dpn-dept" aria-label="Department">${opts(D, '', 'Department')}</select><select id="dpn-role" aria-label="Role">${opts(DP_ROLE, 'member')}</select><button class="btn primary" data-act="dpAddPerson">Add person</button></div></div>
-  <div class="dgrid"><div class="card dcard"><div class="dch"><h3>Departments</h3><span class="more">“Marketing tab” lets its staff open Marketing performance</span></div>
-      ${me.departments.map(d => `<div class="dpq"><input data-dpdep="${esc(d.id)}:name" value="${esc(d.name)}" aria-label="Department name"><label class="dpchk" title="Its staff can open and edit Marketing performance"><input type="checkbox" data-dpdep="${esc(d.id)}:marketing"${d.marketing ? ' checked' : ''}> Marketing tab</label>${chk(`data-dpdep="${esc(d.id)}:active"`, d.active)}</div>`).join('')}
+  <div class="dgrid"><div class="card dcard"><div class="dch"><h3>Departments</h3></div>
+      ${me.departments.map(d => `<div class="dpq"><input data-dpdep="${esc(d.id)}:name" value="${esc(d.name)}" aria-label="Department name">${chk(`data-dpdep="${esc(d.id)}:active"`, d.active)}</div>`).join('')}
       <div class="dpq"><input id="dpn-deptname" placeholder="New department" aria-label="New department"><button class="btn" data-act="dpAddDept">Add</button></div></div>
     <div class="card dcard"><div class="dch"><h3>Projects</h3><span class="more">the PM sees and follows up its tasks</span></div>
       ${me.projects.map(j => `<div class="dpq"><input data-dpj="${esc(j.id)}:name" value="${esc(j.name)}" aria-label="Project name"><select data-dpj="${esc(j.id)}:pm_email" aria-label="Project manager">${opts(pmList, j.pm_email || '', 'No PM')}</select>${chk(`data-dpj="${esc(j.id)}:active"`, j.active)}</div>`).join('')}
@@ -2749,6 +2808,7 @@ document.addEventListener('click', e => {
     mkPlat: () => { mkPlat = id; render(); },
     mkMon: () => { mkMon = id; mkSetView('ads'); render(); },
     mkView: () => { mkSetView(id); render(); },
+    setView: () => { setView = id; try { localStorage.setItem('setView', id); } catch (e) {} render(); },
     mkSoc: () => { mkPlat = id; mkSetView('social'); render(); },
     mkOpen: () => { mkOpen[id] = !mkOpen[id]; render(); },
     addPlatform: () => { const n = (($('#mk-newplat') || {}).value || '').trim(); if (!n) return; const hit = [...MK_PLATFORMS, ...(get('marketing').platforms || [])].find(p => p.toLowerCase() === n.toLowerCase()); mkPlat = hit || n; if (!hit) mut('marketing', d => { d.platforms = (d.platforms || []).filter(p => !MK_PLATFORMS.includes(p)); d.platforms.push(n); }); else render(); },
@@ -2790,6 +2850,7 @@ document.addEventListener('change', e => {
     mut('marketing', d => { const a = (d.ads || []).find(x => x.id === aid), r = a && (a.reports || []).find(x => x.id === rid); if (r) r[f] = v; });
     return;
   }
+  if (el.dataset.ta) { const [e, t] = el.dataset.ta.split('|'); setTabAccess(e, t, el.checked); return; }
   if (el.dataset.dpf) { dp[el.dataset.dpf] = el.value; if (el.dataset.dpf === 'day') { if (!el.value) dp.day = ''; dp.board = null; dp.hist = {}; dp.open = {}; loadDp(); } render(); return; }
   for (const [k, fn] of [['dpp', dpSetPerson], ['dpdep', dpSetDept], ['dpj', dpSetProj]]) if (el.dataset[k]) { const i = el.dataset[k].lastIndexOf(':'); fn(el.dataset[k].slice(0, i), el.dataset[k].slice(i + 1), el.type === 'checkbox' ? el.checked : el.value); return; }
   if (el.id === 'sheet') { upload.sheet = el.value; loadSheet(); render(); return; }
@@ -3167,13 +3228,14 @@ async function start(recheck) {
   starting = false;
   isEditor = data === true;
   if (!isEditor) {
-    // Staff: in Daily progress but not a tracker admin. Only that tab, read through its own functions.
+    // Staff: in Daily progress but not a tracker admin. Daily progress through its own functions, plus any tabs ticked for them.
     const {data: me} = await sb.rpc('dp_me');
     if (me && me.person) {
       isStaff = true; isFinance = false; mode = 'team'; tab = 'progress'; dp.me = me; adminState.me = me.email;
       document.body.classList.add('staff'); KEYS.forEach(k => { loaded[k] = true; });
-      // Marketing staff also read and save the Marketing performance section (the database allows only that row).
-      if (me.marketer) { loaded.marketing = false; db = makeDb(); subscribeAll(['marketing']); }
+      // Their ticked tabs (supabase/tab-access.sql); before that script is run, the old marketing-department access still applies.
+      { const {data: t, error} = await sb.rpc('my_tabs'); staffTabs = error ? (me.marketer ? ['marketing'] : []) : (t || []).filter(k => KEYS.includes(k)); }
+      if (staffTabs.length) { staffTabs.forEach(k => { loaded[k] = false; }); db = makeDb(); subscribeAll(staffTabs); }
       gate = 'ready'; setSync('ok', 'Live'); render(); setInterval(() => { if (tab === 'progress') loadDp(); }, 60000);
       return;
     }
