@@ -665,18 +665,32 @@ body.staff [data-mode]{display:none}
 .mkadd{display:flex;gap:6px;margin-left:auto}.mkadd input{width:200px}
 .mksoc td.mkl{font-weight:600;color:var(--text);white-space:nowrap}
 .mksoc input,.mkads input,.mkads select{text-align:right;font-variant-numeric:tabular-nums}
-.mkads input[type=date],.mkads td:nth-child(2) input,.mkads select{text-align:left}
+.mkads input[type=date]{text-align:left}
 .mkads td{vertical-align:top}
-.mkads tr.mkfirst td{border-top:1px solid var(--line2)}
-.mkads .mklink{margin-top:6px;font-size:12px}
 .mkopen{display:inline-block;margin-top:5px;font-size:12px;color:var(--cyan)}
-.mkrep{margin-top:6px;font-size:12px;padding:5px 10px}
-.mkst.on{color:var(--ok);border-color:rgba(61,220,151,.4)}
-.mknone{color:var(--faint);font-size:12.5px;padding:12px}
 .mkobj h4{font:700 12px Inter,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--cyan);margin:4px 0 8px}
-.mkspent{font:800 14px Montserrat,sans-serif;color:var(--navy);background:var(--ok);padding:5px 11px;border-radius:9px}
 .mkleg{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:var(--muted)}.mkleg input{width:auto;margin-top:2px}
-@media (max-width:760px){.mkadd{margin-left:0;width:100%}.mkadd input{flex:1;width:auto}}
+.mkper{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);padding:14px 18px!important;margin-top:14px}
+.mkper b{color:var(--text);font:700 14px Montserrat,sans-serif;margin-right:4px}
+.mkper input{width:185px}.mkper small{color:var(--faint);font-size:11.5px;flex:1 1 260px}
+.mkmons{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.mkm{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:8px 14px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.03);color:var(--text);cursor:pointer;font:inherit}
+.mkm b{font:700 13px Montserrat,sans-serif}.mkm small{font-size:11px;color:var(--faint)}
+.mkm[aria-pressed="true"]{background:#fff;border-color:#fff;color:var(--navy)}.mkm[aria-pressed="true"] small{color:#4a5270}
+.mkhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.mkhead b{font:800 17px Montserrat,sans-serif}.mkhead span{color:var(--muted);font-size:12.5px}
+.mkad{border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:rgba(255,255,255,.02)}
+.mkad.open{border-color:var(--line2)}
+.mkrow{width:100%;display:grid;grid-template-columns:16px 70px minmax(0,1fr) 48px 96px 120px 90px 70px;gap:10px;align-items:center;padding:11px 14px;background:none;border:0;color:var(--text);font:inherit;font-size:13px;text-align:left;cursor:pointer}
+.mkrow i{font-style:normal;color:var(--cyan);font-size:15px}.mkrow .d{color:var(--muted);font-size:12px}.mkrow b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mkrow .v{text-align:right;font-variant-numeric:tabular-nums}.mkrow small{color:var(--faint);font-size:11.5px;text-align:right}
+.mks{font:600 11px Inter,sans-serif;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.07);color:var(--muted);justify-self:start}.mks.on{background:rgba(61,220,151,.14);color:var(--ok)}
+.mkbody{padding:4px 14px 14px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line)}
+.mkfields{display:grid;grid-template-columns:150px minmax(0,1.3fr) minmax(0,1.3fr) 130px 100px;gap:10px;margin-top:10px}
+.mklinkbtn{background:none;border:0;color:var(--cyan);font:inherit;font-weight:600;cursor:pointer;padding:0}
+.mkov td{font-variant-numeric:tabular-nums}
+@media (max-width:760px){.mkadd{margin-left:0;width:100%}.mkadd input{flex:1;width:auto}
+  .mkrow{grid-template-columns:16px 60px minmax(0,1fr) 44px;row-gap:4px}.mkrow .v,.mkrow small{grid-column:span 1;text-align:left}.mkrow .v:first-of-type{grid-column:2 / 3}
+  .mkfields{grid-template-columns:1fr 1fr}}
 .dpfu{display:flex;gap:8px}.dpfu input{flex:1}
 .dphist{border-left:2px solid var(--line2);margin-left:4px;padding:2px 0 2px 12px;display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:var(--muted)}
 .dphist b{color:var(--text);font-weight:600}.dphc{color:#A9BEFF}
@@ -1346,7 +1360,7 @@ const DEFAULTS = {
   commercial: {target: 0, tiers: [], islands: [], partners: []},
   programme: {targets: [], speakers: [], agenda: []},
   participants: {summary: null, confirmed: 0, target: 0},
-  marketing: {objective: '', budget: 0, entries: [], useLegacy: true, platforms: ['Instagram'], social: [], ads: []},
+  marketing: {objective: '', budget: 0, entries: [], useLegacy: true, periodFrom: '2026-09', periodTo: '2026-12', platforms: [], social: [], ads: []},
   ops: {notepad: '', streams: []},
   pnl: {commissionPct: 10, lines: [], ov: {}}
 };
@@ -1496,13 +1510,17 @@ function calcMarketing() {
   t.budgetUsed = r(t.spend, num(m.budget), 100);
   return {m, t};
 }
-// Months shown in the social and ads logs: September 2026 to at least December, plus any month that has data.
+// Months shown in the social and ads logs: the campaign period set at the top of the tab, plus any other month that has data.
 function mkMonths(m) {
-  const set = new Set(['2026-09', '2026-10', '2026-11', '2026-12', new Date().toISOString().slice(0, 7)]);
+  const set = new Set(), from = /^\d{4}-\d{2}$/.test(m.periodFrom || '') ? m.periodFrom : '2026-09';
+  let to = /^\d{4}-\d{2}$/.test(m.periodTo || '') ? m.periodTo : from;
+  if (to < from) to = from;
+  for (let d = new Date(from + '-15'), n = 0; d.toISOString().slice(0, 7) <= to && n < 36; d.setMonth(d.getMonth() + 1), n++) set.add(d.toISOString().slice(0, 7));
   (m.social || []).forEach(x => x.month && set.add(x.month));
   (m.ads || []).forEach(a => a.date && set.add(a.date.slice(0, 7)));
-  return [...set].filter(x => x >= '2026-01').sort();
+  return [...set].sort();
 }
+const MK_PLATFORMS = ['Instagram', 'TikTok', 'Threads'];
 const mkMonthName = (ym, short) => new Date(ym + '-15').toLocaleDateString('en-MY', {month: short ? 'short' : 'long', year: 'numeric'});
 
 /* ---------- shared bits ---------- */
@@ -2018,12 +2036,15 @@ VIEWS.participants = () => {
 };
 
 // Marketing: headline numbers, funnel, budget and cost, then the editable results log.
-let mkPlat = '';
+let mkPlat = '', mkMon = '';
+const mkOpen = {};
 const mkNum = v => v === '' || v == null ? '' : esc(v);
 VIEWS.marketing = () => {
   const M = calcMarketing(), m = M.m, t = M.t, bud = num(m.budget), months = mkMonths(m);
   const f2 = v => 'RM' + Number(v).toLocaleString('en-MY', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-  let h = `<div class="ck4">
+  const span = `${mkMonthName(months[0], true)} – ${mkMonthName(months[months.length - 1], true)}`;
+  let h = `<div class="card mkper"><b>Campaign period</b><input type="month" data-b="marketing:periodFrom" value="${esc(m.periodFrom || '2026-09')}" aria-label="Campaign starts"><span>to</span><input type="month" data-b="marketing:periodTo" value="${esc(m.periodTo || '2026-12')}" aria-label="Campaign ends"><small>Sets the months in the social media report and the ads report. For another event, change it to that event's months.</small></div>
+  <div class="ck4">
     <div class="card ck"><small>Ads spent</small><b>${f2(t.spend)}</b>${bud ? bar(t.budgetUsed, true) + `<p><em>${fmtP(Math.round(t.budgetUsed * 10) / 10)}</em> of ${fmtRM(bud)} budget</p>` : '<p>Set a budget below</p>'}</div>
     <div class="card ck"><small>Reach</small><b>${fmtN(t.reach)}</b><p><em>${fmtN(t.impressions)}</em> impressions</p></div>
     <div class="card ck"><small>Landing page views</small><b>${fmtN(t.lpViews)}</b><p>${t.cplv != null ? `<em>${f2(t.cplv)}</em> per view` : 'cost per view appears once spend is logged'}</p></div>
@@ -2041,46 +2062,58 @@ VIEWS.marketing = () => {
       <div class="cf2"><label class="field">Ads objective${inp('marketing:objective', m.objective, 'placeholder="e.g. Engagement & Traffic"')}</label><label class="field">Total ads budget (RM)${ninp('marketing:budget', m.budget || '', 'placeholder="Optional"')}</label></div></div></div>`;
 
   // Social media report: metrics down, months across, one table per platform
-  const plats = m.platforms && m.platforms.length ? m.platforms : ['Instagram'];
+  const extra = (m.platforms || []).filter(p => !MK_PLATFORMS.includes(p)), plats = [...MK_PLATFORMS, ...extra];
   if (!plats.includes(mkPlat)) mkPlat = plats[0];
   const cell = (mon, f) => { const row = (m.social || []).find(x => x.platform === mkPlat && x.month === mon); return row ? row[f] : ''; };
-  h += `<div class="card gpanel"><div class="dch"><h3>Social media report</h3><span class="more">monthly, per platform</span></div>
+  h += `<div class="card gpanel"><div class="dch"><h3>Social media report</h3><span class="more">monthly, per platform · ${esc(span)}</span></div>
     <div class="mkplats">${plats.map(p => `<button class="mkp" data-act="mkPlat" data-id="${esc(p)}" aria-pressed="${p === mkPlat}">${esc(p)}</button>`).join('')}
-      <span class="mkadd"><input id="mk-newplat" placeholder="Add platform, e.g. TikTok" aria-label="New platform"><button class="btn" data-act="addPlatform">Add</button></span>
-      ${plats.length > 1 ? del('delPlatform', esc(mkPlat)).replace('>Remove<', `>Remove ${esc(mkPlat)}<`) : ''}</div>
+      <span class="mkadd"><input id="mk-newplat" placeholder="Add platform, e.g. Facebook" aria-label="New platform"><button class="btn" data-act="addPlatform">Add</button></span>
+      ${extra.includes(mkPlat) ? del('delPlatform', esc(mkPlat)).replace('>Remove<', `>Remove ${esc(mkPlat)}<`) : ''}</div>
     <div class="tbl-wrap"><table class="tbl mksoc" style="min-width:${220 + months.length * 140}px"><thead><tr><th>Metric</th>${months.map(mon => `<th>${esc(mkMonthName(mon))}</th>`).join('')}</tr></thead><tbody>
     ${SOCIAL_F.map(([f, l]) => `<tr><td class="mkl">${l}</td>${months.map(mon => `<td><input type="number" step="any" inputmode="decimal" data-sm="${esc(mkPlat)}|${mon}|${f}" value="${mkNum(cell(mon, f))}" aria-label="${l}, ${esc(mkMonthName(mon))}"></td>`).join('')}</tr>`).join('')}
     </tbody></table></div></div>`;
 
-  // Ads report: grouped by month, then Engagement and Traffic, one row per report update
+  // Ads report: one month at a time (or the overview), each ad on one row that opens to its report updates
   const ads = m.ads || [], cur = new Date().toISOString().slice(0, 7);
-  h += `<div class="section"><h2>Ads report</h2><p class="help" style="margin-top:6px">One row per report update. Each update holds the numbers for that period only, so they add up. Add <b>Tickets from ads</b> from the ticket sales the ads brought in.</p></div>`;
-  months.filter(mon => mon <= cur || ads.some(a => (a.date || '').startsWith(mon))).forEach(mon => {
-    const inMon = ads.filter(a => (a.date || cur).slice(0, 7) === mon), reps = inMon.flatMap(a => a.reports || []);
-    h += `<div class="card gpanel mkmon"><div class="dch"><h3>${esc(mkMonthName(mon))}</h3><span class="more">${inMon.length} ${inMon.length === 1 ? 'ad' : 'ads'} · ${fmtN(sum(reps, 'tickets'))} tickets</span><span class="mkspent">${f2(sum(reps, 'spend'))}</span></div>`;
+  const monAds = mon => ads.filter(a => (a.date || cur).slice(0, 7) === mon), monReps = mon => monAds(mon).flatMap(a => a.reports || []);
+  if (mkMon !== 'overview' && !months.includes(mkMon)) mkMon = months.includes(cur) ? cur : [...months].reverse().find(x => monAds(x).length) || months[0];
+  h += `<div class="card gpanel"><div class="dch"><h3>Ads report</h3><span class="more">${esc(span)} · each report update holds that period's numbers only, so they add up</span></div>
+    <div class="mkmons" role="tablist"><button class="mkm" role="tab" data-act="mkMon" data-id="overview" aria-pressed="${mkMon === 'overview'}"><b>Overview</b><small>all months</small></button>
+    ${months.map(mon => { const sp = sum(monReps(mon), 'spend'); return `<button class="mkm" role="tab" data-act="mkMon" data-id="${mon}" aria-pressed="${mkMon === mon}"><b>${esc(mkMonthName(mon, true))}</b><small>${sp ? f2(sp) : monAds(mon).length ? 'RM0' : 'no ads'}</small></button>`; }).join('')}</div>`;
+  if (mkMon === 'overview') {
+    const rows = months.map(mon => { const rr = monReps(mon), sp = sum(rr, 'spend'), tk = sum(rr, 'tickets'); return {mon, n: monAds(mon).length, sp, reach: sum(rr, 'reach'), imp: sum(rr, 'impressions'), lp: sum(rr, 'lpViews'), tk, cpt: tk ? sp / tk : null}; });
+    const T = k => rows.reduce((a, r) => a + r[k], 0), tsp = T('sp'), ttk = T('tk');
+    h += `<div class="tbl-wrap"><table class="tbl mkov" style="min-width:820px"><thead><tr><th>Month</th><th>Ads</th><th>Ads spent</th><th>Reach</th><th>Impressions</th><th>LP views</th><th>Tickets from ads</th><th>Cost per ticket</th></tr></thead><tbody>
+      ${rows.map(r => `<tr><td><button class="mklinkbtn" data-act="mkMon" data-id="${r.mon}">${esc(mkMonthName(r.mon))}</button></td><td>${r.n || '–'}</td><td>${r.sp ? f2(r.sp) : '–'}</td><td>${r.reach ? fmtN(r.reach) : '–'}</td><td>${r.imp ? fmtN(r.imp) : '–'}</td><td>${r.lp ? fmtN(r.lp) : '–'}</td><td>${r.tk ? fmtN(r.tk) : '–'}</td><td>${r.cpt != null ? f2(r.cpt) : '–'}</td></tr>`).join('')}
+      <tr class="tot"><td>Total</td><td>${T('n')}</td><td>${f2(tsp)}</td><td>${fmtN(T('reach'))}</td><td>${fmtN(T('imp'))}</td><td>${fmtN(T('lp'))}</td><td>${fmtN(ttk)}</td><td>${ttk ? f2(tsp / ttk) : '–'}</td></tr></tbody></table></div>`;
+  } else {
+    const inMon = monAds(mkMon), rr = monReps(mkMon);
+    h += `<div class="mkhead"><b>${esc(mkMonthName(mkMon))}</b><span>${f2(sum(rr, 'spend'))} spent · ${fmtN(sum(rr, 'tickets'))} tickets · ${fmtN(sum(rr, 'lpViews'))} LP views · ${inMon.length} ${inMon.length === 1 ? 'ad' : 'ads'}</span></div>`;
     ['Engagement', 'Traffic'].forEach(obj => {
-      const list = inMon.filter(a => (a.objective || 'Engagement') === obj).sort((a, b) => String(a.date).localeCompare(String(b.date)));
-      const F = AD_F[obj], rr = list.flatMap(a => a.reports || []);
+      const list = inMon.filter(a => (a.objective || 'Engagement') === obj).sort((a, b) => String(a.date).localeCompare(String(b.date))), F = AD_F[obj];
       h += `<div class="mkobj"><h4>${obj}</h4>`;
-      if (list.length) h += `<div class="tbl-wrap"><table class="tbl mkads" style="min-width:${640 + F.length * 112}px"><thead><tr><th style="width:130px">Date</th><th style="width:190px">Content</th><th style="width:88px">Status</th><th style="width:130px">Report update</th>${F.map(([, l]) => `<th>${l}</th>`).join('')}<th></th></tr></thead><tbody>`;
       list.forEach(a => {
-        const rs = a.reports && a.reports.length ? a.reports : [null], n = rs.length;
-        rs.forEach((r, i) => {
-          h += `<tr${i === 0 ? ' class="mkfirst"' : ''}>`;
-          if (i === 0) h += `<td rowspan="${n}"><input type="date" data-b="marketing:ads:${a.id}:date" value="${esc(a.date || '')}" aria-label="Ad date"></td>
-            <td rowspan="${n}"><input data-b="marketing:ads:${a.id}:content" value="${esc(a.content || '')}" placeholder="e.g. En Aiman Shoutout" aria-label="Content"><input class="mklink" data-b="marketing:ads:${a.id}:link" value="${esc(a.link || '')}" placeholder="Link to the post (optional)" aria-label="Link">${/^https?:\/\//.test(a.link || '') ? `<a class="mkopen" href="${esc(a.link)}" target="_blank" rel="noopener">Open post ↗</a>` : ''}
-              <button class="btn mkrep" data-act="addRep" data-id="${a.id}">＋ Report update</button></td>
-            <td rowspan="${n}"><select data-b="marketing:ads:${a.id}:status" class="mkst ${a.status === 'On' ? 'on' : ''}" aria-label="Status">${opts(['On', 'Off'], a.status || 'On')}</select></td>`;
-          h += r ? `<td><input type="date" data-ar="${a.id}|${r.id}|date" value="${esc(r.date || '')}" aria-label="Report date"></td>${F.map(([f, l]) => `<td><input type="number" step="any" inputmode="decimal" data-ar="${a.id}|${r.id}|${f}" value="${mkNum(r[f])}" aria-label="${l}"></td>`).join('')}`
-            : `<td colspan="${F.length + 1}" class="mknone">No report yet. Use ＋ Report update.</td>`;
-          h += `<td>${i === 0 ? del('delAd', a.id).replace('>Remove<', '>Remove ad<') : ''}${r && n > 1 ? del('delRep', a.id + '~' + r.id) : ''}</td></tr>`;
-        });
+        const rs = a.reports || [], open = !!mkOpen[a.id], sp = sum(rs, 'spend'), tk = sum(rs, 'tickets');
+        const main = obj === 'Traffic' ? `${fmtN(sum(rs, 'lpViews'))} LP views` : `${fmtN(sum(rs, 'views'))} views`;
+        h += `<div class="mkad${open ? ' open' : ''}"><button class="mkrow" data-act="mkOpen" data-id="${a.id}" aria-expanded="${open}"><i>${open ? '▾' : '▸'}</i><span class="d">${a.date ? esc(new Date(a.date + 'T12:00').toLocaleDateString('en-MY', {day: 'numeric', month: 'short'})) : 'No date'}</span><b>${esc(a.content || 'Untitled ad')}</b><span class="mks ${a.status === 'On' ? 'on' : ''}">${esc(a.status || 'On')}</span><span class="v">${f2(sp)}</span><span class="v">${main}</span><span class="v">${fmtN(tk)} ${tk === 1 ? 'ticket' : 'tickets'}</span><small>${rs.length} ${rs.length === 1 ? 'update' : 'updates'}</small></button>`;
+        if (open) {
+          h += `<div class="mkbody"><div class="mkfields"><label class="field">Date<input type="date" data-b="marketing:ads:${a.id}:date" value="${esc(a.date || '')}"></label>
+            <label class="field">Content<input data-b="marketing:ads:${a.id}:content" value="${esc(a.content || '')}" placeholder="e.g. En Aiman Shoutout"></label>
+            <label class="field">Link to the post<input data-b="marketing:ads:${a.id}:link" value="${esc(a.link || '')}" placeholder="Optional"></label>
+            <label class="field">Objective<select data-b="marketing:ads:${a.id}:objective">${opts(['Engagement', 'Traffic'], obj)}</select></label>
+            <label class="field">Status<select data-b="marketing:ads:${a.id}:status">${opts(['On', 'Off'], a.status || 'On')}</select></label></div>
+            ${/^https?:\/\//.test(a.link || '') ? `<a class="mkopen" href="${esc(a.link)}" target="_blank" rel="noopener">Open post ↗</a>` : ''}
+            <div class="tbl-wrap"><table class="tbl mkads" style="min-width:${180 + F.length * 118}px"><thead><tr><th style="width:150px">Report update</th>${F.map(([, l]) => `<th>${l}</th>`).join('')}<th></th></tr></thead><tbody>
+            ${rs.map(r => `<tr><td><input type="date" data-ar="${a.id}|${r.id}|date" value="${esc(r.date || '')}" aria-label="Report date"></td>${F.map(([f, l]) => `<td><input type="number" step="any" inputmode="decimal" data-ar="${a.id}|${r.id}|${f}" value="${mkNum(r[f])}" aria-label="${l}"></td>`).join('')}<td>${del('delRep', a.id + '~' + r.id)}</td></tr>`).join('')}
+            </tbody></table></div>${rs.length ? '' : '<div class="empty">No report updates yet.</div>'}
+            <div class="row-actions"><button class="btn" data-act="addRep" data-id="${a.id}">＋ Report update</button>${del('delAd', a.id).replace('>Remove<', '>Remove ad<')}</div></div>`;
+        }
+        h += '</div>';
       });
-      if (list.length) h += `<tr class="tot"><td colspan="4">Total ${obj.toLowerCase()}</td>${F.map(([f]) => `<td style="text-align:right;padding-right:16px">${f === 'cpr' ? '' : f === 'spend' ? f2(sum(rr, f)) : fmtN(sum(rr, f))}</td>`).join('')}<td></td></tr>`;
-      h += `${list.length ? '</tbody></table></div>' : `<div class="empty">No ${obj.toLowerCase()} ads logged for ${esc(mkMonthName(mon))}.</div>`}<div class="row-actions"><button class="btn" data-act="addAd" data-id="${mon}|${obj}">＋ Add ${obj.toLowerCase()} ad</button></div></div>`;
+      h += `${list.length ? '' : `<div class="empty">No ${obj.toLowerCase()} ads in ${esc(mkMonthName(mkMon))}.</div>`}<div class="row-actions"><button class="btn" data-act="addAd" data-id="${mkMon}|${obj}">＋ Add ${obj.toLowerCase()} ad</button></div></div>`;
     });
-    h += '</div>';
-  });
+  }
+  h += '</div>';
 
   // The earlier summary log, kept as it was
   const E = ['contents', 'spend', 'reach', 'impressions', 'clicks', 'lpViews', 'regs'], et = Object.fromEntries(E.map(f => [f, sum(m.entries, f)]));
@@ -2685,9 +2718,11 @@ document.addEventListener('click', e => {
     delDay: () => mut('programme', d => { d.days = d.days.filter(x => x.id !== id); d.agenda = d.agenda.filter(a => a.dayId !== id); }),
     delAgenda: () => rm('programme', 'agenda'),
     mkPlat: () => { mkPlat = id; render(); },
-    addPlatform: () => { const n = (($('#mk-newplat') || {}).value || '').trim(); if (!n) return; mkPlat = n; mut('marketing', d => { d.platforms = d.platforms && d.platforms.length ? d.platforms : ['Instagram']; if (!d.platforms.includes(n)) d.platforms.push(n); }); },
+    mkMon: () => { mkMon = id; render(); },
+    mkOpen: () => { mkOpen[id] = !mkOpen[id]; render(); },
+    addPlatform: () => { const n = (($('#mk-newplat') || {}).value || '').trim(); if (!n) return; const hit = [...MK_PLATFORMS, ...(get('marketing').platforms || [])].find(p => p.toLowerCase() === n.toLowerCase()); mkPlat = hit || n; if (!hit) mut('marketing', d => { d.platforms = (d.platforms || []).filter(p => !MK_PLATFORMS.includes(p)); d.platforms.push(n); }); else render(); },
     delPlatform: () => { mut('marketing', d => { d.platforms = (d.platforms || []).filter(p => p !== id); d.social = (d.social || []).filter(x => x.platform !== id); }); mkPlat = ''; },
-    addAd: () => { const [mon, obj] = id.split('|'), today = new Date().toISOString().slice(0, 10); mut('marketing', d => { d.ads = d.ads || []; d.ads.push({id: uid(), date: today.startsWith(mon) ? today : mon + '-01', content: '', link: '', objective: obj, status: 'On', reports: [{id: uid(), date: today}]}); }); },
+    addAd: () => { const [mon, obj] = id.split('|'), today = new Date().toISOString().slice(0, 10); mut('marketing', d => { d.ads = d.ads || []; d.ads.push({id: uid(), date: today.startsWith(mon) ? today : mon + '-01', content: '', link: '', objective: obj, status: 'On', reports: [{id: uid(), date: today}]}); }); const n = get('marketing').ads.slice(-1)[0]; if (n) { mkOpen[n.id] = true; render(); } },
     addRep: () => mut('marketing', d => { const a = (d.ads || []).find(x => x.id === id); if (a) (a.reports = a.reports || []).push({id: uid(), date: new Date().toISOString().slice(0, 10)}); }),
     delAd: () => mut('marketing', d => { d.ads = (d.ads || []).filter(x => x.id !== id); }),
     delRep: () => { const [aid, rid] = id.split('~'); mut('marketing', d => { const a = (d.ads || []).find(x => x.id === aid); if (a) a.reports = (a.reports || []).filter(r => r.id !== rid); }); },
