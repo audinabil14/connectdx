@@ -5,7 +5,8 @@
 --   Dept PIC    also submits the department's daily update.
 --   Project Mgr also sees and comments on tasks in the projects they manage.
 --   Director    sees everything, comments, and manages departments, projects and people. Tracker admins count as directors here.
--- People who are not tracker admins are "staff": once added here, they sign in and see only the Daily progress tab.
+-- People who are not tracker admins are "staff": once added here, they sign in and see only the Daily progress tab,
+-- plus Marketing performance when their department has "Marketing tab" ticked.
 
 -- 1. Set-up lists, managed from Settings -> Team & departments.
 create table if not exists public.dp_departments (
@@ -31,6 +32,13 @@ insert into public.dp_departments (id, name, sort) values
   ('bd', 'Business Development', 1), ('marketing', 'Marketing', 2), ('ops', 'Operations', 3), ('mgmt', 'Management', 4)
 on conflict (id) do nothing;
 insert into public.dp_projects (id, name) values ('connectdx', 'CONNECTD X') on conflict (id) do nothing;
+-- Departments whose staff also get the Marketing performance tab. The Marketing department starts ticked (first run only).
+do $$ begin
+  if not exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'dp_departments' and column_name = 'marketing') then
+    alter table public.dp_departments add column marketing boolean not null default false;
+    update public.dp_departments set marketing = true where id = 'marketing';
+  end if;
+end $$;
 
 -- 2. The work. A task is kept once and carried to the next day until it is Done; each day's progress is a new update row.
 create table if not exists public.dp_tasks (
@@ -107,6 +115,23 @@ language sql stable security definer set search_path = public as $$
   select public.is_editor() or exists (select 1 from public.dp_people where email = public.dp_my_email() and active and role = 'director');
 $$;
 
+-- Staff in a department with the Marketing tab ticked. Tracker admins already have it through the editor policies.
+create or replace function public.dp_is_marketer() returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.dp_people p join public.dp_departments d on d.id = p.dept_id
+                 where p.email = public.dp_my_email() and p.active and d.active and d.marketing);
+$$;
+grant execute on function public.dp_is_marketer() to authenticated;
+
+-- Marketing staff can read and save the Marketing performance section of the tracker, and nothing else in it.
+drop policy if exists "marketers read marketing" on public.tracker;
+drop policy if exists "marketers insert marketing" on public.tracker;
+drop policy if exists "marketers update marketing" on public.tracker;
+create policy "marketers read marketing" on public.tracker for select to authenticated using (key = 'marketing' and public.dp_is_marketer());
+create policy "marketers insert marketing" on public.tracker for insert to authenticated with check (key = 'marketing' and public.dp_is_marketer());
+create policy "marketers update marketing" on public.tracker for update to authenticated
+  using (key = 'marketing' and public.dp_is_marketer()) with check (key = 'marketing' and public.dp_is_marketer());
+
 -- Can the caller see this task (and its updates)?
 create or replace function public.dp_can_see(t public.dp_tasks) returns boolean
 language sql stable security definer set search_path = public as $$
@@ -140,6 +165,7 @@ language sql stable security definer set search_path = public as $$
     'email', public.dp_my_email(),
     'admin', public.is_editor(),
     'director', public.dp_is_director(),
+    'marketer', public.is_editor() or public.dp_is_marketer(),
     'person', (select to_jsonb(p) from public.dp_people p where p.email = public.dp_my_email()),
     'pmOf', coalesce((select jsonb_agg(j.id) from public.dp_projects j where lower(j.pm_email) = public.dp_my_email()), '[]'),
     'departments', coalesce((select jsonb_agg(to_jsonb(d) order by d.sort, d.name) from public.dp_departments d), '[]'),
@@ -296,13 +322,16 @@ begin
 end $$;
 
 -- 6. Settings -> Team & departments. Directors only.
-create or replace function public.dp_set_department(p_id text, p_name text, p_sort int default 0, p_active boolean default true) returns void
+-- p_marketing: whether the department's staff get the Marketing performance tab (left out = unchanged).
+drop function if exists public.dp_set_department(text, text, int, boolean);
+create or replace function public.dp_set_department(p_id text, p_name text, p_sort int default 0, p_active boolean default true, p_marketing boolean default null) returns void
 language plpgsql security definer set search_path = public as $$
 begin
   if not public.dp_is_director() then raise exception 'Only directors can change departments'; end if;
   if coalesce(trim(p_name), '') = '' then raise exception 'Add a department name'; end if;
-  insert into public.dp_departments (id, name, sort, active) values (p_id, trim(p_name), coalesce(p_sort, 0), coalesce(p_active, true))
-  on conflict (id) do update set name = excluded.name, sort = excluded.sort, active = excluded.active;
+  insert into public.dp_departments (id, name, sort, active, marketing) values (p_id, trim(p_name), coalesce(p_sort, 0), coalesce(p_active, true), coalesce(p_marketing, false))
+  on conflict (id) do update set name = excluded.name, sort = excluded.sort, active = excluded.active,
+    marketing = coalesce(p_marketing, public.dp_departments.marketing);
 end $$;
 
 create or replace function public.dp_set_project(p_id text, p_name text, p_pm text, p_active boolean default true) returns void
@@ -344,5 +373,5 @@ $$;
 revoke execute on function public.dp_is_director(), public.dp_can_see(public.dp_tasks), public.dp_can_read_comments(public.dp_tasks), public.dp_can_comment(public.dp_tasks) from public;
 grant execute on function public.dp_me(), public.dp_board(date), public.dp_history(bigint), public.dp_add_task(text, text, text), public.dp_edit_task(bigint, text, text),
   public.dp_save_update(bigint, text, text, text), public.dp_submit(text, date), public.dp_unsubmit(text), public.dp_remove_task(bigint), public.dp_comment(bigint, text),
-  public.dp_set_department(text, text, int, boolean), public.dp_set_project(text, text, text, boolean), public.dp_set_person(text, text, text, text, boolean)
+  public.dp_set_department(text, text, int, boolean, boolean), public.dp_set_project(text, text, text, boolean), public.dp_set_person(text, text, text, text, boolean)
   to authenticated;
