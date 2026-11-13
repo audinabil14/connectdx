@@ -2721,6 +2721,8 @@ VIEWS.contractor = () => {
   <div class="strip">${stat(cnt('sec'), 'booths occupied')}${cnt('hold') ? stat(cnt('hold'), 'booths reserved') : ''}${stat(cnt('av'), 'booths available')}${cnt('org') ? stat(cnt('org'), 'organiser booths') : ''}${cnt('na') ? stat(cnt('na'), 'not for sale') : ''}</div>
   <div class="card">${floorPlan()}</div>`;
   h += `<div class="s-sec"><h2>Occupied booths</h2><p class="s-sub">${taken.length} booth${taken.length === 1 ? '' : 's'}, by booth number.</p><div class="card">${taken.length ? `<div class="tbl-wrap"><table class="tbl c-tbl"><thead><tr><th style="width:90px">Booth</th><th>Company</th><th style="width:120px">Status</th></tr></thead><tbody>${taken.map(b => `<tr><td><b>${b.id}</b></td><td>${b.status === 'sec' ? esc(b.partner.name || 'Company to be confirmed') + (b.tbc ? ' <span class="muted">· booth no. to be confirmed</span>' : '') : b.status === 'org' ? '#businessSynergy (organiser)' : esc(b.partner.name || 'Company to be confirmed')}</td><td>${SL[b.status]}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">No booths occupied yet.</div>'}</div></div>`;
+  const ag = get('programme').agenda;
+  h += `<div class="s-sec"><h2>Tentative programme</h2><p class="s-sub">Subject to change. Updates live.</p><div class="card">${ag.length ? `<div class="agenda-cols">${agendaCols()}</div>` : '<div class="empty">Programme coming soon.</div>'}</div></div>`;
   return h;
 };
 
